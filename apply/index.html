@@ -104,41 +104,6 @@ h1{font-size:1.9rem;font-weight:800;margin:0 0 .35rem}
   transition:color .14s ease,border-color .14s ease}
 .done .again:hover,.done .again:focus-visible{outline:none;color:var(--fg);border-color:var(--lav)}
 
-/* --- admin review (owner-only) --- */
-.admin-bar{display:flex;align-items:center;justify-content:space-between;gap:.6rem;
-  background:rgba(255,143,207,.1);border:1px solid rgba(255,143,207,.4);border-radius:10px;
-  padding:.5rem .5rem .5rem .85rem;margin:0 0 1.3rem;font-size:.85rem;color:var(--fg)}
-.admin-lock{background:transparent;border:1px solid var(--card-border);color:var(--dim);
-  font:inherit;font-size:.8rem;padding:.3rem .65rem;border-radius:7px;cursor:pointer;
-  transition:color .14s ease,border-color .14s ease}
-.admin-lock:hover,.admin-lock:focus-visible{outline:none;color:var(--fg);border-color:var(--lav)}
-#admin-apps[hidden]{display:none}
-.admin-apps-head{display:flex;align-items:baseline;justify-content:space-between;margin:2rem 0 .7rem;gap:.5rem}
-.admin-apps-head h2{font-size:1.05rem;font-weight:700;margin:0}
-.admin-apps-head .count{font-size:.82rem;color:var(--dim)}
-ul.apps{list-style:none;margin:0;padding:0;display:grid;gap:.8rem}
-.app{position:relative;background:var(--card-bg);border:1px solid var(--card-border);
-  border-radius:12px;padding:.9rem 1rem .95rem}
-.app-top{display:flex;flex-wrap:wrap;align-items:baseline;gap:.5rem;margin:0 2rem .35rem 0}
-.app-char{font-size:1.05rem;font-weight:700}
-.app-meta{font-size:.85rem;color:var(--dim)}
-.app dl{margin:.4rem 0 0;display:grid;gap:.35rem}
-.app dt{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin-top:.3rem}
-.app dd{margin:0;white-space:pre-wrap;word-break:break-word;font-size:.92rem}
-.app dd a{color:var(--sky)}
-.app-badges{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.6rem}
-.badge{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700;
-  padding:.18rem .5rem;border-radius:999px;border:1px solid var(--card-border);color:var(--dim)}
-.badge.sent{color:#1a1030;background:var(--mint);border-color:transparent}
-.badge.failed{color:#1a1030;background:var(--peach);border-color:transparent}
-.badge.off{color:var(--dim)}
-.app-del{position:absolute;top:.65rem;right:.7rem;background:transparent;border:none;cursor:pointer;
-  color:var(--dim);font-size:1rem;line-height:1;padding:.3rem .45rem;border-radius:8px;
-  transition:color .14s ease,background .14s ease}
-.app-del:hover,.app-del:focus-visible{outline:none;color:var(--pink);background:rgba(255,143,207,.14)}
-.app-del:focus-visible{box-shadow:0 0 0 2px rgba(192,160,255,.55)}
-.apps-empty{text-align:center;color:var(--dim);padding:1.4rem .5rem;font-size:.95rem}
-
 @media (prefers-reduced-motion:reduce){
   *{transition:none !important}
   .apply-btn:hover{transform:none}
@@ -227,14 +192,6 @@ footer a:hover,footer a:focus-visible{color:var(--sky)}
     <p>Thanks for applying. We'll go over it and get back to you on Discord.</p>
     <p>One more thing: send a friend request or DM <strong>@ivorycrayon</strong> on Discord so we can reach you.</p>
     <button type="button" class="again" id="apply-again">Submit another</button>
-  </section>
-
-  <section id="admin-apps" hidden aria-labelledby="apps-heading">
-    <div class="admin-apps-head">
-      <h2 id="apps-heading">Applications</h2>
-      <span class="count" id="apps-count" aria-live="polite"></span>
-    </div>
-    <ul class="apps" id="apps"></ul>
   </section>
 </main>
 

@@ -79,66 +79,6 @@
     if (window.turnstile && tsWidget !== null) { try { window.turnstile.reset(tsWidget); } catch (e) {} }
   }
 
-  // --- admin mode (owner-only delete) --------------------------------------
-  // Gated by a bearer token the server holds (set via configure-admin.sh).
-  // Unlock at /guild-names/?admin, paste the token; it's kept in localStorage
-  // and sent as X-Admin-Token. Server does the real authorization — the UI
-  // just shows the delete controls once the token checks out.
-  var ADMIN_KEY = "guildVote.adminToken.v1";
-  var adminToken = null, adminOn = false;
-
-  async function adminPing(tok) {
-    try {
-      var r = await fetch("/api/admin/ping", { headers: { "X-Admin-Token": tok }, credentials: "same-origin" });
-      return r.ok;
-    } catch (e) { return false; }
-  }
-
-  async function initAdmin() {
-    var url = new URL(location.href);
-    var asking = url.searchParams.has("admin");
-    var tok = null;
-    try { tok = localStorage.getItem(ADMIN_KEY); } catch (e) {}
-    if (asking && !tok) { tok = window.prompt("Admin token:"); }
-    if (tok && await adminPing(tok)) {
-      adminToken = tok; adminOn = true;
-      try { localStorage.setItem(ADMIN_KEY, tok); } catch (e) {}
-      document.body.classList.add("is-admin");
-      showAdminBar();
-    } else if (tok) {
-      try { localStorage.removeItem(ADMIN_KEY); } catch (e) {}
-      if (asking) setStatus("Admin token not accepted.", "err");
-    }
-    if (asking) { url.searchParams.delete("admin"); history.replaceState({}, "", url.toString()); }
-  }
-
-  function showAdminBar() {
-    if ($("#admin-bar")) return;
-    var bar = el("div", "admin-bar"); bar.id = "admin-bar";
-    var span = el("span"); span.textContent = "Admin mode — delete controls enabled.";
-    var lock = el("button", "admin-lock"); lock.type = "button"; lock.textContent = "Exit admin";
-    lock.addEventListener("click", function () {
-      try { localStorage.removeItem(ADMIN_KEY); } catch (e) {}
-      location.reload();
-    });
-    bar.appendChild(span); bar.appendChild(lock);
-    var main = document.querySelector("main");
-    main.insertBefore(bar, main.querySelector("header").nextSibling);
-  }
-
-  async function deleteIdea(id, name) {
-    if (!adminOn) return;
-    if (!window.confirm('Delete "' + name + '"? This removes the name and its votes.')) return;
-    try {
-      var r = await fetch("/api/ideas/" + encodeURIComponent(id), {
-        method: "DELETE", headers: { "X-Admin-Token": adminToken }, credentials: "same-origin"
-      });
-      if (!r.ok) throw new Error("Delete failed (" + r.status + ").");
-      setStatus("Deleted “" + name + ".”", "ok");
-      await load();
-    } catch (e) { setStatus(e.message, "err"); }
-  }
-
   // --- rendering -----------------------------------------------------------
   var listEl = $("#ideas");
   var loadingEl = $("#loading");
@@ -181,15 +121,6 @@
     if (idea.why) { var why = el("p", "idea-why"); why.textContent = idea.why; body.appendChild(why); }
 
     li.appendChild(votes); li.appendChild(body);
-
-    if (adminOn) {
-      var del = el("button", "admin-del");
-      del.type = "button"; del.textContent = "✕";
-      del.title = "Delete (admin)";
-      del.setAttribute("aria-label", "Delete " + idea.name + " (admin)");
-      del.addEventListener("click", function () { deleteIdea(idea.id, idea.name); });
-      li.appendChild(del);
-    }
     return li;
   }
 
@@ -305,5 +236,5 @@
   }
 
   setupTurnstile();
-  initAdmin().then(load);
+  load();
 })();

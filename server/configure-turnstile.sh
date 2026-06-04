@@ -6,8 +6,8 @@
 # never lands in shell history, the repo, or this terminal's scrollback.
 #
 # Upserts: re-running rotates ONLY the Turnstile keys and preserves everything
-# else already in the file (ADMIN_TOKEN, the apply delivery secrets). Same
-# pattern as configure-apply.sh / configure-admin.sh.
+# else already in the file (the apply delivery secrets). Same pattern as
+# configure-apply.sh.
 #
 # Get both from the Cloudflare dashboard: Turnstile > add a widget for
 # getajob.swagcounty.com (Managed mode). Then run:  bash server/configure-turnstile.sh
