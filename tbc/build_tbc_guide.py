@@ -600,9 +600,9 @@ for grp, rows in KEY_GROUPS:
                      f'<span class="cbx" aria-hidden="true"></span></label></td>'
                      f'<td class="name">{maybe_link_entity(d)}</td><td class="num">{esc(lvl)}</td>'
                      f'<td>{nv}</td><td><span class="keyitem hero">{hero}</span></td></tr>')
-keys_html = (f'<table class="keys keys-check"><thead><tr><th class="ck" title="obtained">&#10003;</th>'
+keys_html = (f'<div class="tbl-scroll"><table class="keys keys-check"><thead><tr><th class="ck" title="obtained">&#10003;</th>'
              f'<th>Dungeon</th><th>Lvl</th><th>Normal key</th><th>Heroic key</th></tr></thead>'
-             f'<tbody>{key_rows}</tbody></table>')
+             f'<tbody>{key_rows}</tbody></table></div>')
 
 # ---- Raids table ----
 raid_rows = ""
@@ -658,8 +658,8 @@ for q, req, rew, zone, fac in QUESTS:
     quest_rows += (f'<tr><td class="name">{wh_link(q, label=q)}</td><td>{esc(req)}</td>'
                    f'<td class="rew">{rew}</td><td><span class="zone {zc}">{maybe_link_entity(zone)}</span></td>'
                    f'<td>{facd}</td></tr>')
-quests_html = (f'<table class="quests"><thead><tr><th>Quest</th><th>Requires</th><th>Reward</th>'
-               f'<th>Zone</th><th>Faction</th></tr></thead><tbody>{quest_rows}</tbody></table>')
+quests_html = (f'<div class="tbl-scroll"><table class="quests"><thead><tr><th>Quest</th><th>Requires</th><th>Reward</th>'
+               f'<th>Zone</th><th>Faction</th></tr></thead><tbody>{quest_rows}</tbody></table></div>')
 
 golden_html = "".join(f"<li>{g}</li>" for g in GOLDEN_RULES)
 
@@ -699,6 +699,7 @@ nav .navin{max-width:1180px;margin:0 auto;padding:0 18px;display:flex;flex-wrap:
 nav a{font-size:12.5px;color:var(--muted);padding:5px 11px;border-radius:20px;border:1px solid transparent;
   text-transform:uppercase;letter-spacing:.6px}
 nav a:hover{color:var(--fel-bright);border-color:var(--fel-dim);background:rgba(155,214,47,.07)}
+nav a:focus-visible{color:var(--fel-bright);border-color:var(--fel-dim);background:rgba(155,214,47,.07);outline:2px solid var(--fel-bright);outline-offset:2px}
 
 section{padding-top:46px}
 h2.sec{font-size:25px;color:var(--fel);margin-bottom:4px;
@@ -773,6 +774,7 @@ td.num{color:var(--gold);font-variant-numeric:tabular-nums;text-align:center;wid
 td.empty,.empty{color:#3c4633;text-align:center}
 .twocol{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 .tblcap{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:0 0 7px}
+.tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 
 /* difficulty */
 .diffwrap{display:grid;grid-template-columns:1fr 1fr;gap:26px}
@@ -795,7 +797,7 @@ tr.grouprow td{background:linear-gradient(90deg,rgba(155,214,47,.1),transparent)
   text-transform:uppercase}
 
 /* QM */
-.qmblock{margin-bottom:20px}
+.qmblock{margin-bottom:20px;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .qmtier{display:inline-block;font-family:"Cinzel",serif;font-size:14px;font-weight:700;text-transform:capitalize;
   padding:4px 16px;border-radius:8px 8px 0 0;color:#0c0f0a}
 .qm-honored{background:var(--honored)} .qm-revered{background:var(--revered)} .qm-exalted{background:var(--exalted)}
@@ -834,9 +836,11 @@ footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--line);
   color:var(--muted);text-decoration:none;border:1px solid var(--line);border-radius:20px;
   padding:5px 13px;transition:color .14s,border-color .14s,background .14s}
 .portal-back:hover{color:var(--fel-bright);border-color:var(--fel-dim);background:rgba(155,214,47,.08)}
+.portal-back:focus-visible{color:var(--fel-bright);border-color:var(--fel-dim);background:rgba(155,214,47,.08);outline:2px solid var(--fel-bright);outline-offset:2px}
 .foot-links{margin-bottom:9px;font-size:13px}
-.foot-links a{color:var(--muted);padding:0 2px}
+.foot-links a{color:var(--muted);min-height:44px;display:inline-flex;align-items:center;vertical-align:middle;padding:0 .5rem}
 .foot-links a:hover{color:var(--fel-bright)}
+.foot-links a:focus-visible{color:var(--fel-bright);outline:2px solid var(--fel-bright);outline-offset:2px}
 .foot-note{color:#6b745e;font-size:11.5px;max-width:640px;margin:0 auto;line-height:1.5}
 .foot-note a{color:var(--muted);text-decoration:underline;text-underline-offset:2px}
 .foot-note a:hover{color:var(--fel-bright)}
@@ -857,7 +861,7 @@ a.wh-q:hover{color:var(--fel-bright);border-bottom-color:currentColor}
 
 /* ============ Interactive route (Goal 1) ============ */
 /* sticky progress bar */
-.progress{position:sticky;top:0;z-index:40;margin:0 0 20px;
+.progress{position:sticky;top:44px;z-index:40;margin:0 0 20px;
   background:linear-gradient(180deg,rgba(12,15,10,.975),rgba(12,15,10,.93));
   backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:12px;
   padding:12px 16px;box-shadow:0 8px 22px rgba(0,0,0,.5)}
@@ -929,7 +933,7 @@ input:checked + .cbx::after{transform:rotate(45deg) scale(1)}
   50%{box-shadow:0 0 0 4px var(--fel-bright),0 0 26px rgba(155,214,47,.95)}}
 .node.current .card{border-color:var(--fel-dim);
   box-shadow:0 8px 26px rgba(0,0,0,.4),0 0 0 1px rgba(155,214,47,.35),inset 0 0 0 1px rgba(155,214,47,.1)}
-@media(prefers-reduced-motion:reduce){.node.current .lvlbadge{animation:none}}
+@media(prefers-reduced-motion:reduce){.node.current .lvlbadge{animation:none}html{scroll-behavior:auto}}
 
 /* faction rep-goal checkbox */
 .fachead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
@@ -951,8 +955,10 @@ input:checked + .cbx::after{transform:rotate(45deg) scale(1)}
   .flow::before{left:38px}
   .hero h1{font-size:30px}
   table{font-size:12.5px}
-  .progress{padding:10px 12px}
+  .progress{top:72px;padding:10px 12px}
   .progress .plabel{font-size:14px}
+  nav .navin{gap:3px;padding:0 8px}
+  nav a{font-size:10px;padding:3px 6px;letter-spacing:.2px}
   .cardtop{gap:8px}
   .stepcheck .lbl{display:none}
 }
@@ -964,7 +970,7 @@ input:checked + .cbx::after{transform:rotate(45deg) scale(1)}
 # plain string (not an f-string) so the JS object braces are literal.
 WH_HEAD = (
     '<script>const whTooltips = {colorLinks:true, iconizeLinks:false, renameLinks:false};</script>\n'
-    '<script src="https://wow.zamimg.com/js/tooltips.js"></script>'
+    '<script async src="https://wow.zamimg.com/js/tooltips.js"></script>'
 )
 
 # Client-side progress: real checkboxes -> localStorage (one JSON object, keyed
@@ -1007,7 +1013,7 @@ PROGRESS_JS = """
     }
     Array.prototype.forEach.call(document.querySelectorAll(".node.current"),
       function (n) { n.classList.remove("current"); });
-    if (elFill) { elFill.style.width = (total ? (doneCount / total * 100) : 0) + "%"; }
+    if (elFill) { elFill.style.width = (total ? (doneCount / total * 100) : 0) + "%"; elFill.setAttribute("aria-valuenow", doneCount); }
     if (doneCount >= total) {
       if (elProg) { elProg.classList.add("complete"); }
       if (elLabel) { elLabel.innerHTML = "Complete &mdash; all " + total + " steps done"; }
@@ -1022,11 +1028,16 @@ PROGRESS_JS = """
     }
   }
 
+  var prefersReducedMotion = window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+
   function scrollToCurrent() {
     var node = document.querySelector(".node.current");
     if (!node) { return; }
-    var y = node.getBoundingClientRect().top + window.pageYOffset - 96;
-    window.scrollTo({ top: y, behavior: "smooth" });
+    var navEl = document.querySelector("nav");
+    var progEl = document.querySelector(".progress");
+    var stickyOffset = (navEl ? navEl.offsetHeight : 0) + (progEl ? progEl.offsetHeight : 0) + 16;
+    var y = node.getBoundingClientRect().top + window.pageYOffset - stickyOffset;
+    window.scrollTo({ top: y, behavior: prefersReducedMotion ? "auto" : "smooth" });
   }
 
   // restore saved state on load
@@ -1058,7 +1069,7 @@ PROGRESS_JS = """
       state = {}; save(state);
       boxes.forEach(function (cb) { cb.checked = false; applyState(cb); });
       recompute();
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: prefersReducedMotion ? "auto" : "smooth" });
     });
   }
 })();
@@ -1076,14 +1087,23 @@ HTML = f"""<!doctype html>
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <meta name="theme-color" content="#0c0f0a">
+<link rel="canonical" href="https://getajob.swagcounty.com/tbc/">
 <meta property="og:title" content="TBC Dungeon Rep Leveling Guide">
 <meta property="og:description" content="The dungeon-rep leveling route, 58 to 70 and into raids. Checkable, Wowhead-linked, saved in your browser.">
 <meta property="og:url" content="https://getajob.swagcounty.com/tbc/">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://getajob.swagcounty.com/assets/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="TBC Dungeon Rep Leveling Guide — Get a Job">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="TBC Dungeon Rep Leveling Guide">
+<meta name="twitter:description" content="The dungeon-rep leveling route, 58 to 70 and into raids. Checkable, Wowhead-linked, saved in your browser.">
+<meta name="twitter:image" content="https://getajob.swagcounty.com/assets/og-card.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&display=swap"></noscript>
 <style>{CSS}</style>
 {WH_HEAD}
 </head>
@@ -1108,20 +1128,20 @@ HTML = f"""<!doctype html>
   <a href="#quests">Notable Quests</a>
 </div></nav>
 
-<div class="wrap">
+<main class="wrap">
 
   <section id="route">
     <h2 class="sec">The Leveling Route</h2>
-    <p class="lead">Follow the path top to bottom. Each node is a milestone &mdash; the big circle is your level, the card tells you what to do and when to move on. <b>Tick off each step</b> (click the circle or the checkbox) and your progress saves automatically in this browser.</p>
+    <p class="lead">Follow the path top to bottom. Each node is a milestone: the big circle is your level, the card tells you what to do and when to move on. <b>Tick off each step</b> (click the circle or the checkbox) and your progress saves automatically in this browser.</p>
     <div class="progress" id="progress" role="group" aria-label="Leveling route progress">
       <div class="ptop">
-        <span class="plabel" id="plabel">Step 1 / {len(ROUTE)}</span>
+        <span class="plabel" id="plabel" aria-live="polite" aria-atomic="true">Step 1 / {len(ROUTE)}</span>
         <div class="pright">
           <span class="pcount" id="pcount">0 / {len(ROUTE)} done</span>
           <button type="button" class="resetbtn" id="resetbtn">Reset progress</button>
         </div>
       </div>
-      <div class="pbar"><div class="pfill" id="pfill"></div></div>
+      <div class="pbar"><div class="pfill" id="pfill" role="progressbar" aria-valuemin="0" aria-valuemax="{len(ROUTE)}" aria-valuenow="0" aria-labelledby="plabel"></div></div>
     </div>
     <div class="rules"><ul>{golden_html}</ul></div>
     {route_html}
@@ -1144,7 +1164,7 @@ HTML = f"""<!doctype html>
 
   <section id="difficulty">
     <h2 class="sec">Dungeon Difficulty</h2>
-    <p class="lead">Relative difficulty so you can pick fights that match your group.</p>
+    <p class="lead">Relative difficulty by mob density, crowd-control demands, and gear check. Match the fight to your group.</p>
     <div class="diffwrap">
       <div><p class="tblcap">Normal &mdash; high-level dungeons</p>{diff_block(NORMAL_DIFF)}</div>
       <div><p class="tblcap">Heroic dungeons</p>{diff_block(HEROIC_DIFF)}</div>
@@ -1168,13 +1188,13 @@ HTML = f"""<!doctype html>
 
   <section id="rep">
     <h2 class="sec">Where the Rep Comes From</h2>
-    <p class="lead">Approximate reputation available per source for each faction &mdash; handy when you&rsquo;re short of a breakpoint.</p>
+    <p class="lead">Approximate reputation available per source for each faction. Handy when you&rsquo;re short of a breakpoint.</p>
     {rep_html}
   </section>
 
   <section id="quests">
     <h2 class="sec">Notable Open-World Quests (pre-70)</h2>
-    <p class="lead">Group quests and chains that reward blues. Most require a group but the gear is worth it.</p>
+    <p class="lead">Group quests and chains that reward blues. Most need a group, so grab guildies before you head out.</p>
     {quests_html}
   </section>
 
@@ -1188,7 +1208,7 @@ HTML = f"""<!doctype html>
     <a href="https://docs.google.com/spreadsheets/d/1RHHzSHiiNO9rMCYkYavtA2Rqx5huSLAS/edit?gid=797198729#gid=797198729" rel="noopener" target="_blank">Stamaka&rsquo;s &ldquo;TBC dungeon rep leveling&rdquo; spreadsheet</a>
     &middot; data links to Wowhead (TBC Classic).</div>
   </footer>
-</div>
+</main>
 {PROGRESS_JS}
 </body>
 </html>"""
