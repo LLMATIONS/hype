@@ -1214,7 +1214,12 @@ HTML = f"""<!doctype html>
 </body>
 </html>"""
 
-import io
-with io.open("index.html", "w", encoding="utf-8") as f:
+import io, os
+# Anchor the output to this script's directory so cwd doesn't matter — running
+# `python3 tbc/build_tbc_guide.py` from the repo root must still land at
+# tbc/index.html, never clobber the hub's root index.html. (Mirrors hub/build_hub.py.)
+HERE = os.path.dirname(os.path.abspath(__file__))
+OUT = os.path.join(HERE, "index.html")
+with io.open(OUT, "w", encoding="utf-8") as f:
     f.write(HTML)
-print("Wrote index.html  (%d chars)" % len(HTML))
+print("Wrote %s  (%d chars)" % (OUT, len(HTML)))
