@@ -8,6 +8,7 @@
   "use strict";
 
   var NAME_MAX = 24, WHY_MAX = 200;  // NAME_MAX = WoW's guild-name cap
+  var NAME_RE = /^[\p{L} ]+$/u;       // WoW guild-name charset: letters + spaces only
 
   // --- anonymous per-browser id (the vote key) -----------------------------
   // Generated once, kept in localStorage. Clearing site data gets you a new
@@ -185,6 +186,20 @@
   var nameIn = $("#name");
   var whyIn = $("#why");
 
+  // Live-restrict the name to the WoW guild-name charset (letters + spaces),
+  // mirroring the server. Registered before the counter so it reflects the
+  // filtered length; preserves the caret so editing mid-string isn't jumpy.
+  function filterName() {
+    var v = nameIn.value;
+    var f = v.replace(/[^\p{L} ]/gu, "");
+    if (f !== v) {
+      var pos = nameIn.selectionStart - (v.length - f.length);
+      nameIn.value = f;
+      try { nameIn.setSelectionRange(pos, pos); } catch (e) {}
+    }
+  }
+  nameIn.addEventListener("input", filterName);
+
   function wireCounter(input, counterId, max) {
     var c = $("#" + counterId);
     function upd() { c.textContent = input.value.length + " / " + max; }
@@ -197,6 +212,7 @@
     ev.preventDefault();
     var name = nameIn.value.trim();
     if (name.length < 2) { setStatus("Give it a real name first.", "err"); nameIn.focus(); return; }
+    if (!NAME_RE.test(name)) { setStatus("Letters and spaces only — like a WoW guild name.", "err"); nameIn.focus(); return; }
     btn.disabled = true;
     setStatus("Pitching…");
     try {
