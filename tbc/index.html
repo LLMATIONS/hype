@@ -157,6 +157,11 @@ td.empty,.empty{color:#3c4633;text-align:center}
 .keys td .keyitem{background:rgba(78,163,255,.12);color:var(--blue);border:1px solid #1f3a52;
   padding:2px 8px;border-radius:6px;font-size:12.5px;font-weight:600}
 .keys td .keyitem.hero{background:rgba(199,123,255,.12);color:var(--epic);border-color:#4a3060}
+/* Keep key names whole — a pill like "Shadow Labyrinth Key" should never break
+   mid-name when the column narrows. Scoped to the dungeon-keys table, which is
+   wrapped in .tbl-scroll (so extreme narrow widths scroll, not clip); the raids
+   table is left free to wrap its longer attunement phrases. */
+.keys-check td .keyitem{white-space:nowrap}
 tr.grouprow td{background:linear-gradient(90deg,rgba(155,214,47,.1),transparent);
   color:var(--fel);font-family:"Cinzel",serif;font-weight:700;font-size:13px;letter-spacing:.5px;
   text-transform:uppercase}
