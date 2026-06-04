@@ -55,8 +55,8 @@ from pydantic import BaseModel
 # DB path is host-side and gitignored; default keeps preview self-contained.
 DB_PATH = Path(os.environ.get("GUILDNAMES_DB", "./data/guildnames.db")).expanduser()
 
-NAME_MAX = 40          # WoW caps guild names at 24; this is generous headroom
-NAME_MIN = 2
+NAME_MAX = 24          # WoW's hard cap on guild names (in-game range is 2–24)
+NAME_MIN = 2           # matches WoW's floor
 WHY_MAX = 200          # one-liner pitch
 VOTER_ID_MAX = 64      # a UUID is 36; allow slack but cap to stop abuse
 MAX_IDEAS = 500        # global ceiling so the table can't be flooded
@@ -589,7 +589,7 @@ def submit_idea(body: SubmitBody, request: Request):
     if len(name) < NAME_MIN or not _has_content(name):
         return _err(422, "Give it a real name — at least a couple of characters.")
     if len(name) > NAME_MAX:
-        return _err(422, f"Keep it under {NAME_MAX} characters.")
+        return _err(422, f"WoW caps guild names at {NAME_MAX} characters.")
 
     why = _clean(body.why or "")
     if len(why) > WHY_MAX:

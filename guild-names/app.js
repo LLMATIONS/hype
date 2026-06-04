@@ -7,7 +7,7 @@
 (function () {
   "use strict";
 
-  var NAME_MAX = 40, WHY_MAX = 200;
+  var NAME_MAX = 24, WHY_MAX = 200;  // NAME_MAX = WoW's guild-name cap
 
   // --- anonymous per-browser id (the vote key) -----------------------------
   // Generated once, kept in localStorage. Clearing site data gets you a new
