@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+# One-time host setup for the guild-name voting backend.
+#
+# Creates the systemd unit and a tightly-scoped passwordless sudoers entry that
+# lets the unattended deploy restart the service (only that one systemctl verb,
+# nothing else). Host-specific values (user, home) are read from the environment
+# at install time, so this script — and the repo — carry no literal paths.
+#
+# Run on the serving host:   sudo -E bash server/install.sh
+# Then deploy the code:       bash server/deploy.sh
+set -euo pipefail
+
+SVC_USER="${SUDO_USER:-$USER}"
+SVC_HOME="$(getent passwd "$SVC_USER" | cut -d: -f6)"
+RUNTIME="$SVC_HOME/getajob-vote"
+PORT="${GUILDNAMES_PORT:-8794}"
+UNIT="getajob-vote.service"
+UNIT_PATH="/etc/systemd/system/$UNIT"
+SUDOERS_PATH="/etc/sudoers.d/getajob-vote-restart"
+
+if [ "$(id -u)" -ne 0 ]; then
+  echo "install: re-run with sudo (sudo -E bash server/install.sh)" >&2
+  exit 1
+fi
+
+# --- systemd unit: loopback-only, hardened, auto-restart --------------------
+cat > "$UNIT_PATH" <<UNIT_EOF
+[Unit]
+Description=Get a Job — guild-name voting backend
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=$SVC_USER
+WorkingDirectory=$RUNTIME
+Environment=GUILDNAMES_DB=$RUNTIME/data/guildnames.db
+ExecStart=$RUNTIME/venv/bin/python -m uvicorn app:app --host 127.0.0.1 --port $PORT
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=$RUNTIME/data
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_INET AF_INET6
+LockPersonality=true
+
+[Install]
+WantedBy=multi-user.target
+UNIT_EOF
+chmod 644 "$UNIT_PATH"
+
+# --- scoped sudoers: only the one restart verb, validated before install ----
+TMP_SUDOERS="$(mktemp)"
+trap 'rm -f "$TMP_SUDOERS"' EXIT
+printf '%s ALL=(root) NOPASSWD: /bin/systemctl restart %s\n' "$SVC_USER" "$UNIT" > "$TMP_SUDOERS"
+visudo -cf "$TMP_SUDOERS"
+install -m 0440 -o root -g root "$TMP_SUDOERS" "$SUDOERS_PATH"
+
+systemctl daemon-reload
+systemctl enable "$UNIT"
+echo "install: $UNIT_PATH + $SUDOERS_PATH written. Now run: bash server/deploy.sh"

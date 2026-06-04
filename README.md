@@ -8,7 +8,8 @@ Lives at <https://getajob.swagcounty.com>.
 
 - `index.html` — the portal hub. Static, vanilla, no build step.
 - `tbc/` — the TBC dungeon-rep leveling guide. `build_tbc_guide.py` is the source of truth; it renders `tbc/index.html`. Edit the generator, never the HTML.
-- `guild-names/` — submit and vote on guild-name ideas, up/down, Reddit-style. *(in progress)*
+- `guild-names/` — submit and vote on guild-name ideas, up/down, Reddit-style. Static page + a loopback `/api/*` backend (`server/`).
+- `server/` — the guild-name voting backend (FastAPI + SQLite, loopback-only). See `server/README.md`.
 - `assets/` — branding, favicons, social card.
 - `privacy.html` — what each tool stores and what leaves your browser.
 

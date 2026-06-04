@@ -24,6 +24,7 @@ h1{font-size:2rem;font-weight:800;margin:0 0 .35rem}
 .lede{font-size:1.15rem;font-weight:800;background:var(--rainbow);-webkit-background-clip:text;background-clip:text;color:transparent;margin:.25rem 0 .5rem}
 .effective{font-size:.85rem;color:var(--dim);margin:0 0 2rem}
 h2{font-size:1.15rem;font-weight:700;margin:2rem 0 .5rem;color:var(--fg)}
+h3{font-size:1rem;font-weight:700;margin:1.3rem 0 .35rem;color:var(--fg)}
 p{margin:.5rem 0;color:var(--fg)}ul{margin:.5rem 0;padding-left:1.3rem}li{margin:.3rem 0}
 a{color:var(--sky);text-decoration:underline;text-underline-offset:3px}a:hover{color:var(--lav)}
 strong{font-weight:700;color:var(--yellow)}
@@ -38,11 +39,11 @@ footer a:hover{color:var(--sky)}
 <a class="home-link" href="/">&larr; Back to Get a Job</a>
 
 <h1>Privacy</h1>
-<p class="lede">Get a Job is a guild fan site. Your guide progress stays in your own browser; the only data that leaves your device goes to Wowhead so tooltips work.</p>
+<p class="lede">Get a Job is a guild fan site. The leveling guide keeps your progress in your own browser; the name vote sends what you pitch and how you vote to our server; tooltips go to Wowhead. Here is the whole map.</p>
 <p class="effective">Effective 2026-06-03</p>
 
 <h2>What we store about you</h2>
-<p>Nothing on our server, for the pages that exist today. The hub and the leveling guide are static pages — no account, no signup, no analytics, no advertising, no tracking pixels.</p>
+<p>The hub and the leveling guide are static pages: no account, no signup, no analytics, no advertising, no tracking pixels, and nothing about you kept on our server. The guild-name vote is the one exception: it has to remember the names and votes people submit. That gets its own section below.</p>
 
 <h2>The leveling guide and your browser</h2>
 <p>The TBC leveling guide remembers which steps, keys, and rep goals you have checked off using <strong>localStorage</strong> in your browser, under the key <code>tbcGuide.progress.v1</code>. That data:</p>
@@ -64,11 +65,26 @@ footer a:hover{color:var(--sky)}
 <h2>Server logs</h2>
 <p>Our web server keeps standard access logs (IP address, user agent, request path, status code) for a limited time, for debugging and abuse prevention. They are not used to profile you or shared with anyone.</p>
 
-<h2>The guild-name vote (not live yet)</h2>
-<p>A guild-name voting tool is in the works. Unlike the guide, voting is shared, so it will store the names people submit and the votes cast on our own server. When it launches, this page will gain a section spelling out exactly what it keeps, how long, and how it stops one person from stuffing the ballot — written from the real data flow, like the rest of this policy. Until then, there is nothing to disclose because it does not exist.</p>
+<h2>The guild-name vote</h2>
+<p>Voting is shared, so unlike the guide it has to keep some data on our own server (a small SQLite database). Here is everything it stores:</p>
+<ul>
+  <li>the <strong>guild names</strong> people pitch, and the optional one-line reason attached to each;</li>
+  <li>each <strong>vote</strong>: which name it is on, whether it is up or down, and when it was cast or last changed;</li>
+  <li>an <strong>anonymous browser id</strong> that ties your own votes together so each name gets one effective vote from you.</li>
+</ul>
+
+<h3>The anonymous browser id</h3>
+<p>The first time you open the vote page, your browser makes up a random id and saves it in <strong>localStorage</strong> under <code>guildVote.voterId.v1</code>. It rides along with each name you submit and each vote you cast, and it is the only thing connecting your votes to each other. It is not an account, it is not linked to your name or email, and it says nothing about who you are. Clear your site data for this domain and it is gone — you get a fresh id, and your earlier votes are no longer tied to you.</p>
+
+<h3>Your IP address</h3>
+<p>When you submit a name or cast a vote, our server reads your IP address to <strong>rate-limit</strong> the request — that is what stops one source from flooding the ballot with submissions or spamming votes. This use is transient: the IP is <strong>not written into the voting database</strong> next to your votes. (Our general web-server access logs still record IPs the same way they do for any page, as described above.)</p>
+
+<h3>How long it is kept, and how ballot-stuffing is handled</h3>
+<p>Names and votes stay as long as the tool is running; it is a live tally, so there is no automatic expiry. One effective vote per name per browser is enforced through that anonymous id: switching your vote or clearing it just updates the same record, and duplicate names are merged so the same idea cannot appear twice. None of this is airtight — someone determined can wipe their browser storage or hop networks and vote again. It is a guild-name vote, not an election, and the defenses are sized to match.</p>
+<p>The names and votes are never sold, shared, or used to profile anyone. They exist to pick a guild name, and that is the end of it.</p>
 
 <h2>Your rights</h2>
-<p>The current pages hold no personal data about you on our side, so there is nothing for us to export, correct, or delete. If you are in the EU, UK, or California and want to exercise a data right anyway, email the address below and we will confirm in writing what we hold (which, today, is nothing beyond transient server logs).</p>
+<p>The guide holds no personal data about you on our side. The vote keeps an anonymous browser id and the votes tied to it; because that id is random and not linked to your identity, we generally cannot connect it to a specific person on our own. If you are in the EU, UK, or California and want a name you pitched or the votes from your browser removed, email the address below and bring your browser id (it is in localStorage under <code>guildVote.voterId.v1</code>), and we will delete the records tied to it.</p>
 
 <h2>Contact</h2>
 <p>Privacy questions, data requests, or anything else: <a href="mailto:nerds@swagcounty.com">nerds@swagcounty.com</a>.</p>
