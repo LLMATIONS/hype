@@ -47,8 +47,12 @@ h1,h2,h3{font-family:"Cinzel","Trebuchet MS",Georgia,serif;letter-spacing:.5px;m
 .wrap{max-width:1180px;margin:0 auto;padding:0 22px 90px}
 
 /* hero */
-header.hero{padding:54px 22px 30px;text-align:center;border-bottom:1px solid var(--line);
-  background:linear-gradient(180deg, rgba(155,214,47,.06), transparent);}
+/* No top-edge background here: the portal back-link sits in a bare strip above
+   the hero, so any gradient anchored to the hero's top draws a hard seam that
+   reads as a stray bar across the top of the page. The hero glow comes from the
+   h1 text-shadow + the body's fixed radial wash instead. (#12 anchored the body
+   wash with background-attachment:fixed; the seam was this overlay.) */
+header.hero{padding:54px 22px 30px;text-align:center;border-bottom:1px solid var(--line);}
 .hero h1{font-size:40px;color:var(--fel-bright);text-shadow:0 0 22px rgba(155,214,47,.45),0 2px 0 #000;}
 .hero .sub{color:var(--gold);margin-top:8px;font-size:17px;letter-spacing:2px;text-transform:uppercase}
 .hero .src{color:var(--muted);font-size:13px;margin-top:12px}
