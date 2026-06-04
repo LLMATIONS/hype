@@ -135,6 +135,9 @@
       setStatus("");
       doneEl.hidden = false;
       doneEl.scrollIntoView({ behavior: "smooth", block: "center" });
+      // Move focus to the confirmation so screen-reader users land on it.
+      var doneHeading = doneEl.querySelector("h2");
+      if (doneHeading) { doneHeading.setAttribute("tabindex", "-1"); doneHeading.focus({ preventScroll: true }); }
     } catch (e) {
       setStatus(e.message, "err");
     } finally {
