@@ -31,9 +31,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubunt
   color:var(--fg);line-height:1.65;min-height:100dvh;display:flex;flex-direction:column;
   background-color:var(--bg);background-image:linear-gradient(160deg,var(--bg) 0%,var(--bg2) 100%);background-attachment:fixed}
 main{max-width:700px;margin:0 auto;padding:2.4rem 1.5rem 3rem;flex:1;width:100%}
-.home-link{display:inline-block;font-size:.85rem;color:var(--dim);text-decoration:none;margin-bottom:1.5rem;letter-spacing:.02em}
-.home-link:hover{color:var(--sky)}
-.home-link:focus-visible{color:var(--sky);outline:2px solid var(--sky);outline-offset:3px}
+.home-link{display:inline-flex;align-items:center;gap:.4rem;font-size:.8rem;letter-spacing:.02em;color:var(--dim);text-decoration:none;border:1px solid var(--card-border);border-radius:999px;padding:.4rem .9rem;margin-bottom:1.5rem;transition:color .14s ease,border-color .14s ease,background .14s ease}
+.home-link:hover,.home-link:focus-visible{color:var(--fg);border-color:var(--lav);background:rgba(192,160,255,.08);outline:none}
+.home-link:focus-visible{outline:2px solid var(--sky);outline-offset:2px}
 h1{font-size:2rem;font-weight:800;margin:0 0 .35rem}
 .lede{font-size:1.15rem;font-weight:800;background:var(--rainbow);-webkit-background-clip:text;background-clip:text;color:transparent;margin:.25rem 0 .5rem}
 .effective{font-size:.85rem;color:var(--dim);margin:0 0 2rem}
@@ -51,7 +51,7 @@ footer a:focus-visible{color:var(--sky);outline:2px solid var(--sky);outline-off
 </head>
 <body>
 <main>
-<a class="home-link" href="/">&larr; Back to Get a Job</a>
+<a class="home-link" href="/">&larr; Get a Job</a>
 
 <h1>Privacy</h1>
 <p class="lede">Get a Job is a guild fan site. The leveling guide keeps your progress in your own browser; the name vote sends what you pitch and how you vote to our server; the apply form sends your raid application to the guild's officers; tooltips go to Wowhead. Here is the whole map.</p>
