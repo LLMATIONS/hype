@@ -1,0 +1,22 @@
+name: hub-build
+
+# index.html is generated from hub/shell.html + hub/tiles/*.html (see hub/README.md).
+# This fails the PR if index.html was hand-edited or someone forgot to rebuild.
+on:
+  pull_request:
+    paths:
+      - hub/**
+      - index.html
+  push:
+    branches: [main]
+    paths:
+      - hub/**
+      - index.html
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: index.html is in sync with hub/ sources
+        run: python3 hub/build_hub.py --check
