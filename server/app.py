@@ -37,6 +37,7 @@ import sqlite3
 import threading
 import time
 import unicodedata
+import urllib.error
 import urllib.parse
 import urllib.request
 import uuid
@@ -44,6 +45,7 @@ from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
+from zoneinfo import ZoneInfo
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
@@ -58,12 +60,24 @@ NAME_MIN = 2
 WHY_MAX = 200          # one-liner pitch
 VOTER_ID_MAX = 64      # a UUID is 36; allow slack but cap to stop abuse
 MAX_IDEAS = 500        # global ceiling so the table can't be flooded
-MAX_BODY = 4096        # request body cap (bytes); names + a UUID + token are tiny
+MAX_BODY = 16384       # request body cap (bytes); an application is two short
+                       # paragraphs + a few fields + a ~2 KB Turnstile token
+
+# Guild-application field caps (the /apply page). Free text is cleaned and
+# length-capped, then stored faithfully and rendered with textContent.
+CHAR_MAX = 40          # character name
+DISCORD_MAX = 64       # discord handle
+CLASS_MAX = 32         # class (free text — no expansion pinned)
+EXPERIENCE_MAX = 1500  # raiding-experience paragraph
+WHY_APPLY_MAX = 1500   # why-join paragraph
+LOGS_MAX = 300         # optional logs URL
+MAX_APPLICATIONS = 2000  # global ceiling so the table can't be flooded
 
 # per-IP sliding-window limits: (max events, window seconds)
 SUBMIT_LIMIT = (6, 600)    # 6 new ideas per 10 minutes
 VOTE_LIMIT = (90, 60)      # 90 vote actions per minute (covers fast toggling)
 ADMIN_LIMIT = (30, 60)     # admin actions per minute per IP (brute-force throttle)
+APPLY_LIMIT = (4, 600)     # 4 guild applications per 10 minutes per IP
 
 # Cloudflare Turnstile (bot gate on submissions). Both come from the service
 # env file, never the repo. With no secret set, verification is skipped so the
@@ -79,7 +93,20 @@ TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverif
 # mode-600 service env file, never the repo.
 ADMIN_TOKEN = os.environ.get("ADMIN_TOKEN", "").strip()
 
+# Guild-application delivery. Each channel is independent and best-effort: an
+# unset secret means that channel is skipped (status "off"), so the form works
+# while delivery is still being wired up. All three live only in the mode-600
+# service env file (set via server/configure-apply.sh), never the repo.
+DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL", "").strip()
+RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "").strip()
+APPLY_MAIL_FROM = os.environ.get("APPLY_MAIL_FROM", "").strip()
+APPLY_MAIL_TO = os.environ.get("APPLY_MAIL_TO", "").strip()  # comma-separated
+RESEND_API_URL = "https://api.resend.com/emails"
+APPLY_CONTACT = "@ivorycrayon"  # the Discord handle applicants are told to reach
+
 _WS_RUN = re.compile(r"\s+")
+_INLINE_WS = re.compile(r"[^\S\n]+")   # whitespace except newline (for paragraphs)
+_BLANKLINES = re.compile(r"\n{3,}")
 _VOTER_RE = re.compile(r"^[A-Za-z0-9._:-]{8,%d}$" % VOTER_ID_MAX)
 
 
@@ -94,7 +121,7 @@ async def lifespan(_app: FastAPI):
 
 
 app = FastAPI(
-    title="Get a Job — guild-name vote",
+    title="Get a Job — backend (guild-name vote + applications)",
     docs_url=None,
     redoc_url=None,
     lifespan=lifespan,
@@ -151,6 +178,22 @@ def _connect() -> sqlite3.Connection:
             PRIMARY KEY (idea_id, voter_id)
         );
         CREATE INDEX IF NOT EXISTS idx_votes_idea ON votes(idea_id);
+
+        CREATE TABLE IF NOT EXISTS applications (
+            id                TEXT PRIMARY KEY,
+            character         TEXT NOT NULL,
+            discord           TEXT NOT NULL,
+            experience        TEXT NOT NULL,
+            wow_class         TEXT NOT NULL,
+            why               TEXT NOT NULL,
+            logs              TEXT,
+            ack_consumables   INTEGER NOT NULL,
+            ack_friend        INTEGER NOT NULL,
+            created_at        TEXT NOT NULL,
+            delivered_discord TEXT,   -- 'sent' | 'failed' | 'off'
+            delivered_email   TEXT
+        );
+        CREATE INDEX IF NOT EXISTS idx_apps_created ON applications(created_at);
         """
     )
     conn.commit()
@@ -217,9 +260,52 @@ def _clean(text: str) -> str:
     return text.strip()
 
 
+def _clean_multiline(text: str) -> str:
+    """Like _clean but for paragraphs — keeps newlines, kills everything else hostile.
+
+    NFC-normalize, drop every control / format character EXCEPT newline (that
+    still removes zero-width spaces/joiners, bidi overrides, the BOM, stray
+    control bytes, and CR), collapse inline whitespace runs, trim each line, and
+    cap blank-line runs to one so the stored text can't be a screenful of voids.
+    """
+    text = unicodedata.normalize("NFC", text)
+    text = text.replace("\r\n", "\n").replace("\r", "\n")
+    # Collapse inline whitespace (tabs included) to a single space BEFORE dropping
+    # control chars — a tab is itself a Cc char, so stripping first would delete it
+    # and weld the words on either side together.
+    text = _INLINE_WS.sub(" ", text)
+    text = "".join(ch for ch in text if ch == "\n" or unicodedata.category(ch) not in ("Cc", "Cf"))
+    text = "\n".join(line.strip() for line in text.split("\n"))
+    text = _BLANKLINES.sub("\n\n", text)
+    return text.strip()
+
+
 def _has_content(text: str) -> bool:
     """True if the cleaned text has at least one letter or number (any script)."""
     return any(unicodedata.category(ch)[0] in ("L", "N") for ch in text)
+
+
+def _is_http_url(s: str) -> bool:
+    """True if s parses as an http(s) URL with a host — for the optional logs link."""
+    try:
+        u = urllib.parse.urlparse(s)
+    except Exception:
+        return False
+    return u.scheme in ("http", "https") and bool(u.netloc)
+
+
+_PT = ZoneInfo("America/Los_Angeles")
+
+
+def _pacific(iso_utc: str) -> str:
+    """Render a stored UTC ISO timestamp in Pacific for display (Discord/email)."""
+    try:
+        dt = datetime.fromisoformat(iso_utc)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return dt.astimezone(_PT).strftime("%b %-d, %Y %-I:%M %p %Z")
+    except Exception:
+        return iso_utc
 
 
 def _name_key(name: str) -> str:
@@ -321,6 +407,130 @@ def _one_idea(idea_id: str, voter_id: Optional[str]) -> Optional[dict]:
     return _row_to_idea(row, yv)
 
 
+# --- guild-application delivery ---------------------------------------------
+# An application is stored first (so it's never lost), then pushed to a Discord
+# webhook and emailed via Resend. Both are best-effort and independent: a
+# missing secret -> "off" (skipped), a network/HTTP error -> "failed". The
+# applicant always gets a success response; the stored row + the admin page are
+# the safety net for anything that didn't deliver.
+
+_MD_SPECIAL = set("\\*_~`|>[]()")
+
+
+def _escape_md(s: str) -> str:
+    """Backslash-escape Discord markdown so applicant text can't render as
+    bold/italic/code/quotes or a masked [label](link). Mentions are separately
+    neutralized by allowed_mentions; this stops the formatting/link vectors."""
+    return "".join("\\" + ch if ch in _MD_SPECIAL else ch for ch in s)
+
+
+def _http_post_json(url: str, payload: dict, headers: Optional[dict] = None) -> int:
+    """POST JSON and return the HTTP status (or 0 on transport error). 8s cap."""
+    data = json.dumps(payload).encode("utf-8")
+    hdrs = {"Content-Type": "application/json"}
+    if headers:
+        hdrs.update(headers)
+    req = urllib.request.Request(url, data=data, headers=hdrs, method="POST")
+    try:
+        with urllib.request.urlopen(req, timeout=8) as resp:
+            return resp.status
+    except urllib.error.HTTPError as e:
+        return e.code
+    except Exception:
+        return 0
+
+
+def _post_discord(a: dict) -> str:
+    """Post the application to the configured Discord webhook as a rich embed."""
+    if not DISCORD_WEBHOOK_URL:
+        return "off"
+
+    def field(name: str, value: Optional[str], inline: bool = False) -> dict:
+        v = _escape_md(value) if value else "—"
+        if len(v) > 1024:
+            v = v[:1023] + "…"
+        return {"name": name, "value": v, "inline": inline}
+
+    fields = [
+        field("Character", a["character"], True),
+        field("Class", a["wow_class"], True),
+        field("Discord", a["discord"], True),
+        field("Raiding experience", a["experience"]),
+        field("Why they want to join", a["why"]),
+    ]
+    if a.get("logs"):
+        fields.append(field("Logs", a["logs"]))
+    fields.append(field(
+        "Acknowledged",
+        "✅ Full consumables, gear gemmed + enchanted\n✅ Will reach out to "
+        + APPLY_CONTACT + " on Discord",
+    ))
+    fields.append(field("Submitted", _pacific(a["created_at"]), True))
+
+    embed = {
+        "title": "New guild application",
+        "color": 0xC0A0FF,
+        "fields": fields,
+    }
+    payload = {
+        "username": "Get a Job — applications",
+        "embeds": [embed],
+        "allowed_mentions": {"parse": []},  # applicant text can never ping
+    }
+    status = _http_post_json(DISCORD_WEBHOOK_URL, payload)
+    return "sent" if 200 <= status < 300 else "failed"
+
+
+def _email_text(a: dict) -> str:
+    """Plaintext application body — no HTML, so nothing in it can be injected."""
+    lines = [
+        "New guild application — Get a Job",
+        "",
+        "Character:  " + a["character"],
+        "Class:      " + a["wow_class"],
+        "Discord:    " + a["discord"],
+        "Submitted:  " + _pacific(a["created_at"]),
+        "",
+        "Raiding experience",
+        "------------------",
+        a["experience"],
+        "",
+        "Why they want to join",
+        "---------------------",
+        a["why"],
+        "",
+        "Logs: " + (a["logs"] if a.get("logs") else "(none provided)"),
+        "",
+        "Acknowledged",
+        "------------",
+        "[x] Brings full consumables; gear fully gemmed and enchanted",
+        "[x] Will send a friend request / DM " + APPLY_CONTACT + " on Discord",
+        "",
+        "--",
+        "Sent by the Get a Job apply form. Manage entries on the admin review page.",
+    ]
+    return "\n".join(lines)
+
+
+def _send_email(a: dict) -> str:
+    """Email the application to the configured recipient list via Resend."""
+    if not (RESEND_API_KEY and APPLY_MAIL_FROM and APPLY_MAIL_TO):
+        return "off"
+    to_list = [x.strip() for x in APPLY_MAIL_TO.split(",") if x.strip()]
+    if not to_list:
+        return "off"
+    payload = {
+        "from": APPLY_MAIL_FROM,
+        "to": to_list,
+        "subject": "New guild application — " + a["character"],  # cleaned: single line
+        "text": _email_text(a),
+    }
+    status = _http_post_json(
+        RESEND_API_URL, payload, {"Authorization": "Bearer " + RESEND_API_KEY}
+    )
+    return "sent" if 200 <= status < 300 else "failed"
+
+
 # --- request models ---------------------------------------------------------
 class SubmitBody(BaseModel):
     name: str
@@ -332,6 +542,18 @@ class SubmitBody(BaseModel):
 class VoteBody(BaseModel):
     voter_id: str
     value: int  # -1, 0 (clear), or 1
+
+
+class ApplyBody(BaseModel):
+    character: str
+    discord: str
+    experience: str
+    wow_class: str
+    why: str
+    logs: Optional[str] = None
+    ack_consumables: bool = False
+    ack_friend: bool = False
+    token: Optional[str] = None   # Cloudflare Turnstile token
 
 
 # --- routes -----------------------------------------------------------------
@@ -457,6 +679,121 @@ def delete_idea(idea_id: str, request: Request):
     if not deleted:
         return _err(404, "That idea's already gone.")
     return {"ok": True, "deleted": idea_id}
+
+
+# --- guild applications -----------------------------------------------------
+@app.post("/api/apply")
+def submit_application(body: ApplyBody, request: Request):
+    """Public: accept a guild application, store it, fan it out to Discord + email."""
+    character = _clean(body.character or "")
+    if not character or not _has_content(character):
+        return _err(422, "Your character name's required.")
+    if len(character) > CHAR_MAX:
+        return _err(422, f"Keep the character name under {CHAR_MAX} characters.")
+
+    discord = _clean(body.discord or "")
+    if not discord or not _has_content(discord):
+        return _err(422, "Your Discord username's required.")
+    if len(discord) > DISCORD_MAX:
+        return _err(422, f"Keep the Discord username under {DISCORD_MAX} characters.")
+
+    wow_class = _clean(body.wow_class or "")
+    if not wow_class or not _has_content(wow_class):
+        return _err(422, "Your class is required.")
+    if len(wow_class) > CLASS_MAX:
+        return _err(422, f"Keep the class under {CLASS_MAX} characters.")
+
+    experience = _clean_multiline(body.experience or "")
+    if not _has_content(experience):
+        return _err(422, "Tell us a bit about your raiding experience.")
+    if len(experience) > EXPERIENCE_MAX:
+        return _err(422, f"Keep the experience under {EXPERIENCE_MAX} characters.")
+
+    why = _clean_multiline(body.why or "")
+    if not _has_content(why):
+        return _err(422, "Tell us why you want to join.")
+    if len(why) > WHY_APPLY_MAX:
+        return _err(422, f"Keep the reason under {WHY_APPLY_MAX} characters.")
+
+    logs = _clean(body.logs or "")
+    if logs:
+        if len(logs) > LOGS_MAX:
+            return _err(422, f"Keep the logs link under {LOGS_MAX} characters.")
+        if not _is_http_url(logs):
+            return _err(422, "That logs link needs to start with http:// or https://.")
+    logs = logs or None
+
+    if not body.ack_consumables:
+        return _err(422, "Please confirm the consumables and gear requirement.")
+    if not body.ack_friend:
+        return _err(422, "Please confirm you'll reach out on Discord.")
+
+    ip = _client_ip(request)
+    if not _turnstile_ok(body.token, ip):
+        return _err(403, "Bot check didn't pass. Refresh the page and try again.")
+
+    app_id = uuid.uuid4().hex
+    created = _now()
+    with _lock:
+        if not _rate_ok("apply", ip, APPLY_LIMIT):
+            return _err(429, "Slow down a sec — too many applications just now.")
+        total = _db.execute("SELECT COUNT(*) AS n FROM applications").fetchone()["n"]
+        if total >= MAX_APPLICATIONS:
+            return _err(409, "We can't take applications right now. Reach out on Discord.")
+        _db.execute(
+            """INSERT INTO applications
+                 (id, character, discord, experience, wow_class, why, logs,
+                  ack_consumables, ack_friend, created_at)
+               VALUES (?,?,?,?,?,?,?,?,?,?)""",
+            (app_id, character, discord, experience, wow_class, why, logs, 1, 1, created),
+        )
+        _db.commit()
+
+    # Deliver OUTSIDE the lock — these are network calls and must not serialize
+    # every other request behind a slow webhook. The row is already safe.
+    record = {
+        "id": app_id, "character": character, "discord": discord,
+        "experience": experience, "wow_class": wow_class, "why": why,
+        "logs": logs, "created_at": created,
+    }
+    d_status = _post_discord(record)
+    e_status = _send_email(record)
+    with _lock:
+        _db.execute(
+            "UPDATE applications SET delivered_discord = ?, delivered_email = ? WHERE id = ?",
+            (d_status, e_status, app_id),
+        )
+        _db.commit()
+
+    return JSONResponse({"ok": True}, status_code=201)
+
+
+@app.get("/api/applications")
+def list_applications(request: Request):
+    """Admin-only: every stored application, newest first, with delivery status."""
+    err = _guard_admin(request)
+    if err:
+        return err
+    with _lock:
+        rows = _db.execute(
+            "SELECT * FROM applications ORDER BY created_at DESC"
+        ).fetchall()
+    return {"applications": [dict(r) for r in rows]}
+
+
+@app.delete("/api/applications/{app_id}")
+def delete_application(app_id: str, request: Request):
+    """Admin-only: remove an application (handled, or spam)."""
+    err = _guard_admin(request)
+    if err:
+        return err
+    with _lock:
+        cur = _db.execute("DELETE FROM applications WHERE id = ?", (app_id,))
+        _db.commit()
+        deleted = cur.rowcount
+    if not deleted:
+        return _err(404, "That application's already gone.")
+    return {"ok": True, "deleted": app_id}
 
 
 if __name__ == "__main__":
