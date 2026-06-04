@@ -295,7 +295,7 @@ ROUTE = [
      "do": ["<b>Nightbane:</b> at honored with Violet Eye, return to Archmage Alturus; take <b>[Medivh&rsquo;s Journal]</b> and finish the chain.",
             "<b>SSC:</b> find <b>[Skar&rsquo;this the Heretic]</b> in heroic Slave Pens &rarr; <b>[The Cudgel of Kar&rsquo;desh]</b>.",
             "<b>TK:</b> Shadowmoon Valley &rarr; <b>[Earthmender Sophurus]</b> / <b>[Earthmender Splinthoof]</b>; take <b>[The Hand of Gul&rsquo;dan]</b>, finish the long chain, then visit A&rsquo;dal for 4 trials.",
-            "<b>BT / Hyjal:</b> attunes aren&rsquo;t available until phase 2."],
+            "<b>BT / Hyjal:</b> attunes aren&rsquo;t available until phase 3."],
      "leave": "",
      "tips": []},
 ]
