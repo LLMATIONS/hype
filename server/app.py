@@ -293,6 +293,13 @@ def _has_content(text: str) -> bool:
     return any(unicodedata.category(ch)[0] in ("L", "N") for ch in text)
 
 
+def _letters_and_spaces(text: str) -> bool:
+    """True if every character is a Unicode letter or an ASCII space — the WoW
+    guild-name charset. Rejects digits, punctuation (incl. apostrophes/hyphens),
+    and symbols. Accented letters pass (WoW allows them in some locales)."""
+    return all(ch == " " or unicodedata.category(ch).startswith("L") for ch in text)
+
+
 def _is_http_url(s: str) -> bool:
     """True if s parses as an http(s) URL with a host — for the optional logs link."""
     try:
@@ -595,6 +602,8 @@ def submit_idea(body: SubmitBody, request: Request):
         return _err(422, "Give it a real name — at least a couple of characters.")
     if len(name) > NAME_MAX:
         return _err(422, f"WoW caps guild names at {NAME_MAX} characters.")
+    if not _letters_and_spaces(name):
+        return _err(422, "Guild names can only use letters and spaces.")
 
     why = _clean(body.why or "")
     if len(why) > WHY_MAX:
