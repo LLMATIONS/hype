@@ -61,6 +61,8 @@ h1{font-size:1.9rem;font-weight:800;margin:0 0 .35rem}
 .field input::placeholder{color:var(--dim);opacity:.7}
 .field input:focus-visible{outline:none;border-color:var(--lav);box-shadow:0 0 0 3px rgba(192,160,255,.25)}
 .counter{display:block;text-align:right;font-size:.72rem;color:var(--dim);margin-top:.25rem;font-variant-numeric:tabular-nums}
+.cf-widget{margin:.4rem 0 .9rem}
+.cf-widget[hidden]{display:none}
 .pitch-btn{width:100%;border:none;cursor:pointer;font:inherit;font-weight:800;font-size:1rem;color:#1a1030;
   padding:.7rem 1rem;border-radius:10px;background:var(--rainbow);
   transition:transform .14s ease,box-shadow .14s ease,filter .14s ease}
@@ -126,17 +128,18 @@ footer a:hover,footer a:focus-visible{color:var(--sky)}
     <h2>Pitch a name</h2>
     <div class="field">
       <label for="name">Guild name</label>
-      <input id="name" name="name" type="text" maxlength="60" required autocomplete="off"
+      <input id="name" name="name" type="text" maxlength="40" required autocomplete="off"
              autocapitalize="words" spellcheck="false" placeholder="e.g. Loot Goblins"
              aria-describedby="name-count">
-      <span class="counter" id="name-count" aria-hidden="true">0 / 60</span>
+      <span class="counter" id="name-count" aria-hidden="true">0 / 40</span>
     </div>
     <div class="field">
       <label for="why">Why? <span class="opt">(optional)</span></label>
-      <input id="why" name="why" type="text" maxlength="140" autocomplete="off"
+      <input id="why" name="why" type="text" maxlength="200" autocomplete="off"
              placeholder="Sell it in one line." aria-describedby="why-count">
-      <span class="counter" id="why-count" aria-hidden="true">0 / 140</span>
+      <span class="counter" id="why-count" aria-hidden="true">0 / 200</span>
     </div>
+    <div id="cf-widget" class="cf-widget" hidden></div>
     <button type="submit" class="pitch-btn" id="pitch-btn">Pitch it</button>
     <p class="status" id="form-status" role="status" aria-live="polite"></p>
   </form>
@@ -159,203 +162,6 @@ footer a:hover,footer a:focus-visible{color:var(--sky)}
   <a href="/privacy.html">Privacy</a>
 </footer>
 
-<script>
-(function () {
-  "use strict";
-
-  // --- anonymous per-browser id (the vote key) -----------------------------
-  // Generated once, kept in localStorage. Clearing site data gets you a new
-  // identity — which is the honest limit of one-vote-per-browser without login.
-  var ID_KEY = "guildVote.voterId.v1";
-  function voterId() {
-    var id = null;
-    try { id = localStorage.getItem(ID_KEY); } catch (e) {}
-    if (!id) {
-      id = (window.crypto && crypto.randomUUID)
-        ? crypto.randomUUID()
-        : "vid-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 12);
-      try { localStorage.setItem(ID_KEY, id); } catch (e) {}
-    }
-    return id;
-  }
-  var VID = voterId();
-
-  // --- tiny dom + fetch helpers --------------------------------------------
-  var $ = function (sel, root) { return (root || document).querySelector(sel); };
-  function el(tag, cls) { var e = document.createElement(tag); if (cls) e.className = cls; return e; }
-
-  async function api(path, opts) {
-    opts = opts || {};
-    var res = await fetch(path, {
-      method: opts.method || "GET",
-      headers: opts.body ? { "Content-Type": "application/json" } : undefined,
-      body: opts.body ? JSON.stringify(opts.body) : undefined,
-      credentials: "same-origin"
-    });
-    var data = null;
-    try { data = await res.json(); } catch (e) {}
-    if (!res.ok) {
-      var msg = (data && data.error) || "Something went sideways (" + res.status + "). Try again.";
-      var err = new Error(msg); err.status = res.status; err.data = data; throw err;
-    }
-    return data;
-  }
-
-  // --- rendering -----------------------------------------------------------
-  var listEl = $("#ideas");
-  var loadingEl = $("#loading");
-  var countEl = $("#idea-count");
-  var statusEl = $("#form-status");
-
-  function setStatus(msg, kind) {
-    statusEl.textContent = msg || "";
-    statusEl.className = "status" + (kind ? " " + kind : "");
-  }
-
-  function scoreClass(n) { return n > 0 ? "score pos" : n < 0 ? "score neg" : "score"; }
-  function fmtScore(n) { return (n > 0 ? "+" : "") + n; }
-
-  function ideaNode(idea) {
-    var li = el("li", "idea");
-    li.dataset.id = idea.id;
-
-    var votes = el("div", "votes");
-    var up = el("button", "vote up");
-    up.type = "button"; up.textContent = "▲"; // ▲
-    up.setAttribute("aria-label", "Upvote " + idea.name);
-    var score = el("span", scoreClass(idea.score));
-    score.textContent = fmtScore(idea.score);
-    var down = el("button", "vote down");
-    down.type = "button"; down.textContent = "▼"; // ▼
-    down.setAttribute("aria-label", "Downvote " + idea.name);
-
-    up.setAttribute("aria-pressed", idea.your_vote === 1 ? "true" : "false");
-    down.setAttribute("aria-pressed", idea.your_vote === -1 ? "true" : "false");
-    up.addEventListener("click", function () { castVote(idea.id, 1); });
-    down.addEventListener("click", function () { castVote(idea.id, -1); });
-
-    votes.appendChild(up); votes.appendChild(score); votes.appendChild(down);
-
-    var body = el("div", "body");
-    var name = el("p", "idea-name"); name.textContent = idea.name; // textContent => XSS-safe
-    body.appendChild(name);
-    if (idea.why) { var why = el("p", "idea-why"); why.textContent = idea.why; body.appendChild(why); }
-
-    li.appendChild(votes); li.appendChild(body);
-    return li;
-  }
-
-  function render(ideas) {
-    listEl.textContent = "";
-    if (!ideas.length) {
-      var p = el("p", "empty");
-      p.textContent = "No names yet. Pitch the first one — set the tone.";
-      listEl.appendChild(p);
-    } else {
-      ideas.forEach(function (idea) { listEl.appendChild(ideaNode(idea)); });
-    }
-    countEl.textContent = ideas.length
-      ? ideas.length + (ideas.length === 1 ? " idea" : " ideas")
-      : "";
-  }
-
-  // Update a single card in place after a vote (no reorder — the cards don't
-  // jump under your cursor; the list re-sorts on the next load or submit).
-  function patchCard(idea) {
-    var li = listEl.querySelector('.idea[data-id="' + (window.CSS && CSS.escape ? CSS.escape(idea.id) : idea.id) + '"]');
-    if (!li) return;
-    var score = $(".score", li);
-    score.textContent = fmtScore(idea.score);
-    score.className = scoreClass(idea.score);
-    $(".vote.up", li).setAttribute("aria-pressed", idea.your_vote === 1 ? "true" : "false");
-    $(".vote.down", li).setAttribute("aria-pressed", idea.your_vote === -1 ? "true" : "false");
-  }
-
-  function flash(id) {
-    var li = listEl.querySelector('.idea[data-id="' + (window.CSS && CSS.escape ? CSS.escape(id) : id) + '"]');
-    if (!li) return;
-    li.scrollIntoView({ behavior: "smooth", block: "center" });
-    li.classList.add("flash");
-    setTimeout(function () { li.classList.remove("flash"); }, 1600);
-  }
-
-  // --- actions -------------------------------------------------------------
-  var voting = {}; // de-dupe rapid clicks per idea
-
-  async function castVote(id, dir) {
-    if (voting[id]) return;
-    var li = listEl.querySelector('.idea[data-id="' + (window.CSS && CSS.escape ? CSS.escape(id) : id) + '"]');
-    var pressed = li && $(".vote." + (dir === 1 ? "up" : "down"), li).getAttribute("aria-pressed") === "true";
-    var value = pressed ? 0 : dir; // clicking your active vote clears it
-    voting[id] = true;
-    try {
-      var data = await api("/api/ideas/" + encodeURIComponent(id) + "/vote", {
-        method: "POST", body: { voter_id: VID, value: value }
-      });
-      patchCard(data.idea);
-      setStatus("");
-    } catch (e) {
-      setStatus(e.message, "err");
-    } finally {
-      voting[id] = false;
-    }
-  }
-
-  var form = $("#pitch");
-  var btn = $("#pitch-btn");
-  var nameIn = $("#name");
-  var whyIn = $("#why");
-
-  function wireCounter(input, counterId, max) {
-    var c = $("#" + counterId);
-    function upd() { c.textContent = input.value.length + " / " + max; }
-    input.addEventListener("input", upd); upd();
-  }
-  wireCounter(nameIn, "name-count", 60);
-  wireCounter(whyIn, "why-count", 140);
-
-  form.addEventListener("submit", async function (ev) {
-    ev.preventDefault();
-    var name = nameIn.value.trim();
-    if (name.length < 2) { setStatus("Give it a real name first.", "err"); nameIn.focus(); return; }
-    btn.disabled = true;
-    setStatus("Pitching…");
-    try {
-      var data = await api("/api/ideas", {
-        method: "POST",
-        body: { name: name, why: whyIn.value.trim() || null, voter_id: VID }
-      });
-      form.reset();
-      wireCounter(nameIn, "name-count", 60); // reset counters
-      wireCounter(whyIn, "why-count", 140);
-      setStatus("On the ballot. Go rally some votes.", "ok");
-      await load();
-      flash(data.idea.id);
-      nameIn.focus();
-    } catch (e) {
-      setStatus(e.message, "err");
-      if (e.status === 409 && e.data && e.data.existing_id) { flash(e.data.existing_id); }
-    } finally {
-      btn.disabled = false;
-    }
-  });
-
-  // --- initial load --------------------------------------------------------
-  async function load() {
-    try {
-      var data = await api("/api/ideas?voter_id=" + encodeURIComponent(VID));
-      render(data.ideas || []);
-    } catch (e) {
-      listEl.textContent = "";
-      var p = el("p", "empty");
-      p.textContent = "Couldn’t load the ballot. Refresh in a sec.";
-      listEl.appendChild(p);
-    } finally {
-      loadingEl.style.display = "none";
-    }
-  }
-  load();
-})();
-</script>
+<script src="/guild-names/app.js" defer></script>
 </body>
 </html>

@@ -79,6 +79,9 @@ footer a:hover{color:var(--sky)}
 <h3>Your IP address</h3>
 <p>When you submit a name or cast a vote, our server reads your IP address to <strong>rate-limit</strong> the request — that is what stops one source from flooding the ballot with submissions or spamming votes. This use is transient: the IP is <strong>not written into the voting database</strong> next to your votes. (Our general web-server access logs still record IPs the same way they do for any page, as described above.)</p>
 
+<h3>Bot check on submissions (Cloudflare Turnstile)</h3>
+<p>To keep bots from stuffing the ballot, submitting a name runs a <strong>Cloudflare Turnstile</strong> check. Your browser loads a small widget from Cloudflare and gets a one-time token, and our server hands that token back to Cloudflare to confirm before it stores the name. Cloudflare therefore receives your IP address and the token for that check; what it does with them is covered by <a href="https://www.cloudflare.com/privacypolicy/">Cloudflare's privacy policy</a>, not ours. The token is single-use and we do not store it. Voting up or down does not trigger a check.</p>
+
 <h3>How long it is kept, and how ballot-stuffing is handled</h3>
 <p>Names and votes stay as long as the tool is running; it is a live tally, so there is no automatic expiry. One effective vote per name per browser is enforced through that anonymous id: switching your vote or clearing it just updates the same record, and duplicate names are merged so the same idea cannot appear twice. None of this is airtight — someone determined can wipe their browser storage or hop networks and vote again. It is a guild-name vote, not an election, and the defenses are sized to match.</p>
 <p>The names and votes are never sold, shared, or used to profile anyone. They exist to pick a guild name, and that is the end of it.</p>

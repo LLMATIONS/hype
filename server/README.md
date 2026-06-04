@@ -7,24 +7,55 @@ same-origin at `/api/*`.
 ## What it does
 
 - `GET  /api/health` — liveness check.
+- `GET  /api/config` — public front-end config (the Turnstile sitekey, or null).
 - `GET  /api/ideas?voter_id=<id>` — all ideas, highest score first, each tagged
   with the caller's current vote.
-- `POST /api/ideas` — submit `{name, why?, voter_id}`. Trims and length-caps the
-  name (2–60) and reason (≤140), rejects blanks and case-insensitive duplicates,
-  and counts the submitter as the first upvote.
+- `POST /api/ideas` — submit `{name, why?, voter_id, token?}`. Trims and
+  length-caps the name (2–40) and reason (≤200), strips control / zero-width /
+  bidi-override characters and NFC-normalizes, rejects blanks and
+  case-insensitive duplicates, and counts the submitter as the first upvote.
 - `POST /api/ideas/{id}/vote` — `{voter_id, value}` with `value` of `1` / `-1` /
-  `0` (clear). Upserts, so one effective vote per browser per idea.
+  `0` (clear). Validates the idea exists and the value is in-set; upserts, so
+  one effective vote per browser per idea.
+
+All writes require `Content-Type: application/json` and a body under 4 KB. SQL
+uses bound parameters throughout. Names are stored faithfully (after
+normalization) and escaped at render time by the browser (`textContent`) — the
+output encoding is the XSS defense, not input scrubbing.
 
 ## Anti-ballot-stuffing (best-effort, not airtight)
 
-There's no login, so two cheap defenses stack:
+There's no login, so the defenses stack rather than rely on any one:
 
-1. **Per-browser id** — the page generates an anonymous UUID and keeps it in
+1. **Cloudflare Turnstile** — gates submissions. The page renders the widget
+   (only if a sitekey is configured) and sends the token; the server verifies it
+   via `siteverify` before storing. Votes are not gated (a challenge per upvote
+   is annoying); the rate limit and browser id cover those.
+2. **Per-browser id** — the page generates an anonymous UUID and keeps it in
    `localStorage`; it's the vote key. Clearing storage gets you a new identity,
    so this stops casual double-voting, not a determined one.
-2. **Per-IP rate limit** — a sliding window on writes (submits and votes),
+3. **Per-IP rate limit** — a sliding window on writes (submits and votes),
    keyed on the real client IP (`CF-Connecting-IP`, else `X-Forwarded-For`).
-   The IP is used only for the limiter and is never written to the database.
+   The IP is used only for the limiter (and the Turnstile check) and is never
+   written to the database.
+
+A Cloudflare WAF rate-limit rule on `POST /api/*` belongs on top of these, at
+the edge — configure it in the dashboard.
+
+## Turnstile setup
+
+Turnstile is optional and config-driven: with no secret set the tool works and
+submissions aren't gated; once configured, a missing or invalid token is
+rejected (and a verify error fails closed). Keys live only in the mode-600
+service env file, never in the repo.
+
+```sh
+bash server/configure-turnstile.sh   # prompts for sitekey (echoed) + secret (hidden), restarts
+```
+
+Create the widget in the Cloudflare dashboard (Turnstile → add a widget for the
+site's hostname). The script writes `TURNSTILE_SITEKEY` + `TURNSTILE_SECRET` to
+`~/getajob-vote/getajob-vote.env` (mode 600) and restarts the unit.
 
 ## Runtime layout
 

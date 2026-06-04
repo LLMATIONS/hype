@@ -35,6 +35,7 @@ Type=simple
 User=$SVC_USER
 WorkingDirectory=$RUNTIME
 Environment=GUILDNAMES_DB=$RUNTIME/data/guildnames.db
+EnvironmentFile=-$RUNTIME/getajob-vote.env
 ExecStart=$RUNTIME/venv/bin/python -m uvicorn app:app --host 127.0.0.1 --port $PORT
 Restart=on-failure
 RestartSec=3
@@ -52,6 +53,17 @@ LockPersonality=true
 WantedBy=multi-user.target
 UNIT_EOF
 chmod 644 "$UNIT_PATH"
+
+# --- secret env file (Turnstile keys) — mode 600, never in the repo ---------
+# EnvironmentFile above is optional (the `-`), so the service runs without it.
+# Populate it with server/configure-turnstile.sh.
+install -d -o "$SVC_USER" -g "$SVC_USER" "$RUNTIME"
+ENV_FILE="$RUNTIME/getajob-vote.env"
+if [ ! -f "$ENV_FILE" ]; then
+  printf '# Turnstile keys. Set via server/configure-turnstile.sh. Never commit.\n# TURNSTILE_SITEKEY=\n# TURNSTILE_SECRET=\n' > "$ENV_FILE"
+  chown "$SVC_USER:$SVC_USER" "$ENV_FILE"
+  chmod 600 "$ENV_FILE"
+fi
 
 # --- scoped sudoers: only the one restart verb, validated before install ----
 TMP_SUDOERS="$(mktemp)"
