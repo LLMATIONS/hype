@@ -679,6 +679,7 @@ body{margin:0;background:
    radial-gradient(1200px 600px at 80% -10%, #1a2b12 0%, transparent 60%),
    radial-gradient(900px 500px at 10% 0%, #241236 0%, transparent 55%),
    var(--bg);
+  background-attachment:fixed;
   color:var(--ink);font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   font-size:15px;line-height:1.5;}
 a{color:var(--fel-bright);text-decoration:none}
