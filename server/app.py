@@ -103,6 +103,11 @@ APPLY_MAIL_FROM = os.environ.get("APPLY_MAIL_FROM", "").strip()
 APPLY_MAIL_TO = os.environ.get("APPLY_MAIL_TO", "").strip()  # comma-separated
 RESEND_API_URL = "https://api.resend.com/emails"
 APPLY_CONTACT = "@ivorycrayon"  # the Discord handle applicants are told to reach
+# Outbound calls MUST send a descriptive User-Agent. Discord's API is behind
+# Cloudflare, which 403s the default "Python-urllib/x.y" UA as bot traffic; a
+# named UA is also what Discord's API guidelines require. Resend is fine either
+# way, but gets the same header for consistency.
+APPLY_UA = "GetAJob-Apply/1.0 (+https://getajob.swagcounty.com)"
 
 _WS_RUN = re.compile(r"\s+")
 _INLINE_WS = re.compile(r"[^\S\n]+")   # whitespace except newline (for paragraphs)
@@ -427,7 +432,7 @@ def _escape_md(s: str) -> str:
 def _http_post_json(url: str, payload: dict, headers: Optional[dict] = None) -> int:
     """POST JSON and return the HTTP status (or 0 on transport error). 8s cap."""
     data = json.dumps(payload).encode("utf-8")
-    hdrs = {"Content-Type": "application/json"}
+    hdrs = {"Content-Type": "application/json", "User-Agent": APPLY_UA}
     if headers:
         hdrs.update(headers)
     req = urllib.request.Request(url, data=data, headers=hdrs, method="POST")
