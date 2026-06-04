@@ -1184,8 +1184,8 @@ HTML = f"""<!doctype html>
       <a href="https://swagcounty.com">Swag County</a> &middot;
       <a href="/privacy.html">Privacy</a>
     </div>
-    <div class="foot-note">A guild fan project &middot; not affiliated with Blizzard. Reworked from the
-    <a href="https://docs.google.com/spreadsheets/d/1RHHzSHiiNO9rMCYkYavtA2Rqx5huSLAS/edit?gid=797198729#gid=797198729" rel="noopener" target="_blank">original &ldquo;TBC dungeon rep leveling&rdquo; spreadsheet</a>
+    <div class="foot-note">A guild fan project &middot; not affiliated with Blizzard. Reworked from
+    <a href="https://docs.google.com/spreadsheets/d/1RHHzSHiiNO9rMCYkYavtA2Rqx5huSLAS/edit?gid=797198729#gid=797198729" rel="noopener" target="_blank">Stamaka&rsquo;s &ldquo;TBC dungeon rep leveling&rdquo; spreadsheet</a>
     &middot; data links to Wowhead (TBC Classic).</div>
   </footer>
 </div>
