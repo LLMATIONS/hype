@@ -6,10 +6,13 @@ Lives at <https://getajob.swagcounty.com>.
 
 ## What's in here
 
-- `index.html` — the portal hub. Static, vanilla, no build step.
+- `index.html` — the portal hub. **Generated** from `hub/shell.html` + `hub/tiles/*.html` by `hub/build_hub.py`; never hand-edit it (CI blocks drift). See `hub/README.md`.
+- `hub/` — the hub source: the page shell, one fragment per tile, and the generator.
 - `tbc/` — the TBC dungeon-rep leveling guide. `build_tbc_guide.py` is the source of truth; it renders `tbc/index.html`. Edit the generator, never the HTML.
 - `guild-names/` — submit and vote on guild-name ideas, up/down, Reddit-style. Static page + a loopback `/api/*` backend (`server/`).
-- `server/` — the guild-name voting backend (FastAPI + SQLite, loopback-only). See `server/README.md`.
+- `apply/` — the raid-application form. Static page that posts to the same loopback `/api/*` backend.
+- `rules/` — the guild rules (static page).
+- `server/` — the backend for the vote and apply form (FastAPI + SQLite, loopback-only). See `server/README.md`.
 - `assets/` — branding, favicons, social card.
 - `privacy.html` — what each tool stores and what leaves your browser.
 
