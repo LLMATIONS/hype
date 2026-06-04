@@ -85,8 +85,11 @@
   var ackFriend = $("#ack_friend");
 
   wireCounter(fields.character, "character-count", CAPS.character);
+  wireCounter(fields.discord, "discord-count", CAPS.discord);
+  wireCounter(fields.wow_class, "wow_class-count", CAPS.wow_class);
   wireCounter(fields.experience, "experience-count", CAPS.experience);
   wireCounter(fields.why, "why-count", CAPS.why);
+  wireCounter(fields.logs, "logs-count", CAPS.logs);
 
   function setStatus(msg, kind) {
     statusEl.textContent = msg || "";
@@ -150,9 +153,10 @@
   if (againBtn) {
     againBtn.addEventListener("click", function () {
       form.reset();
-      wireCounter(fields.character, "character-count", CAPS.character);
-      wireCounter(fields.experience, "experience-count", CAPS.experience);
-      wireCounter(fields.why, "why-count", CAPS.why);
+      // Counters are wired once at load; reset() doesn't fire 'input', so nudge
+      // the existing listeners to refresh the displays instead of re-wiring
+      // (re-wiring would stack duplicate listeners on every "submit another").
+      Object.keys(fields).forEach(function (k) { fields[k].dispatchEvent(new Event("input")); });
       doneEl.hidden = true;
       form.hidden = false;
       turnstileReset();

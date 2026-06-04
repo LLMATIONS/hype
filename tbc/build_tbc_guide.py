@@ -154,7 +154,7 @@ def maybe_link_entity(text):
     parts = str(text).split(" / ")
     out = []
     for p in parts:
-        out.append(wh_link(p, label=p) if _wh_key(p) in WOWHEAD else p)
+        out.append(wh_link(p, label=p) if _wh_key(p) in WOWHEAD else esc(p))
     return " / ".join(out)
 
 def link_faction(name):
@@ -582,7 +582,7 @@ fac_html = '<div class="facgrid">' + "".join(fac_cards) + '</div>'
 # ---- Level-range tables ----
 def lvl_table(rows, head):
     body = "".join(f'<tr><td class="name">{maybe_link_entity(n)}</td><td class="num">{esc(a)}</td><td class="num">{esc(b)}</td></tr>' for n,a,b in rows)
-    return f'<table class="lvl"><thead><tr><th>{head}</th><th>Lvl range</th><th>NPC lvl</th></tr></thead><tbody>{body}</tbody></table>'
+    return f'<table class="lvl"><thead><tr><th scope="col">{head}</th><th scope="col">Lvl range</th><th scope="col">NPC lvl</th></tr></thead><tbody>{body}</tbody></table>'
 
 # ---- Keys table ----
 # Optional bonus: each dungeon row is checkable ("key / attune obtained"),
@@ -600,8 +600,8 @@ for grp, rows in KEY_GROUPS:
                      f'<span class="cbx" aria-hidden="true"></span></label></td>'
                      f'<td class="name">{maybe_link_entity(d)}</td><td class="num">{esc(lvl)}</td>'
                      f'<td>{nv}</td><td><span class="keyitem hero">{hero}</span></td></tr>')
-keys_html = (f'<div class="tbl-scroll"><table class="keys keys-check"><thead><tr><th class="ck" title="obtained">&#10003;</th>'
-             f'<th>Dungeon</th><th>Lvl</th><th>Normal key</th><th>Heroic key</th></tr></thead>'
+keys_html = (f'<div class="tbl-scroll"><table class="keys keys-check"><thead><tr><th class="ck" title="obtained" scope="col">&#10003;</th>'
+             f'<th scope="col">Dungeon</th><th scope="col">Lvl</th><th scope="col">Normal key</th><th scope="col">Heroic key</th></tr></thead>'
              f'<tbody>{key_rows}</tbody></table></div>')
 
 # ---- Raids table ----
@@ -610,11 +610,11 @@ for name, ph, req in RAIDS:
     phb = f' <span class="ph">{ph}</span>' if ph else ""
     rv = "&ndash;" if req == "–" else f'<span class="keyitem">{wh_link(req, label=req)}</span>'
     raid_rows += f'<tr><td class="name">{wh_link(name, label=name)}{phb}</td><td>{rv}</td></tr>'
-raids_html = f'<table class="keys"><thead><tr><th>Raid</th><th>Attunement / requirement</th></tr></thead><tbody>{raid_rows}</tbody></table>'
+raids_html = f'<table class="keys"><thead><tr><th scope="col">Raid</th><th scope="col">Attunement / requirement</th></tr></thead><tbody>{raid_rows}</tbody></table>'
 
 # ---- QM tables ----
 def qm_table(tier):
-    head = "".join(f"<th>{r}</th>" for r in QM_ROLES)
+    head = "".join(f'<th scope="col">{r}</th>' for r in QM_ROLES)
     body = ""
     for row in QM[tier]:
         cells = ""
@@ -658,8 +658,8 @@ for q, req, rew, zone, fac in QUESTS:
     quest_rows += (f'<tr><td class="name">{wh_link(q, label=q)}</td><td>{esc(req)}</td>'
                    f'<td class="rew">{rew}</td><td><span class="zone {zc}">{maybe_link_entity(zone)}</span></td>'
                    f'<td>{facd}</td></tr>')
-quests_html = (f'<div class="tbl-scroll"><table class="quests"><thead><tr><th>Quest</th><th>Requires</th><th>Reward</th>'
-               f'<th>Zone</th><th>Faction</th></tr></thead><tbody>{quest_rows}</tbody></table></div>')
+quests_html = (f'<div class="tbl-scroll"><table class="quests"><thead><tr><th scope="col">Quest</th><th scope="col">Requires</th><th scope="col">Reward</th>'
+               f'<th scope="col">Zone</th><th scope="col">Faction</th></tr></thead><tbody>{quest_rows}</tbody></table></div>')
 
 golden_html = "".join(f"<li>{g}</li>" for g in GOLDEN_RULES)
 
@@ -842,7 +842,7 @@ footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--line);
 .foot-links a{color:var(--muted);min-height:44px;display:inline-flex;align-items:center;vertical-align:middle;padding:0 .5rem}
 .foot-links a:hover{color:var(--fel-bright)}
 .foot-links a:focus-visible{color:var(--fel-bright);outline:2px solid var(--fel-bright);outline-offset:2px}
-.foot-note{color:#6b745e;font-size:11.5px;max-width:640px;margin:0 auto;line-height:1.5}
+.foot-note{color:var(--muted);font-size:11.5px;max-width:640px;margin:0 auto;line-height:1.5}
 .foot-note a{color:var(--muted);text-decoration:underline;text-underline-offset:2px}
 .foot-note a:hover{color:var(--fel-bright)}
 
@@ -1118,7 +1118,7 @@ HTML = f"""<!doctype html>
   <div class="src">Reworked from &ldquo;TBC dungeon rep leveling (Stamaka).xlsx&rdquo; &middot; 58 &rarr; 70 &rarr; raids</div>
 </header>
 
-<nav><div class="navin">
+<nav aria-label="On this page"><div class="navin">
   <a href="#route">Leveling Route</a>
   <a href="#factions">Factions</a>
   <a href="#ranges">Level Ranges</a>

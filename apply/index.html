@@ -171,13 +171,15 @@ footer a:hover,footer a:focus-visible{color:var(--sky)}
     <div class="field">
       <label for="discord">Discord username</label>
       <input id="discord" name="discord" type="text" maxlength="64" required autocomplete="off"
-             autocapitalize="none" spellcheck="false" placeholder="e.g. yourname">
+             autocapitalize="none" spellcheck="false" placeholder="e.g. yourname" aria-describedby="discord-count">
+      <span class="counter" id="discord-count">0 / 64</span>
     </div>
 
     <div class="field">
       <label for="wow_class">Class</label>
       <input id="wow_class" name="wow_class" type="text" maxlength="32" required autocomplete="off"
-             autocapitalize="words" spellcheck="false" placeholder="e.g. Resto Druid">
+             autocapitalize="words" spellcheck="false" placeholder="e.g. Resto Druid" aria-describedby="wow_class-count">
+      <span class="counter" id="wow_class-count">0 / 32</span>
     </div>
 
     <div class="field">
@@ -199,7 +201,8 @@ footer a:hover,footer a:focus-visible{color:var(--sky)}
     <div class="field">
       <label for="logs">Logs <span class="opt">(optional)</span></label>
       <input id="logs" name="logs" type="url" inputmode="url" maxlength="300" autocomplete="off"
-             autocapitalize="none" spellcheck="false" placeholder="https://warcraftlogs.com/…">
+             autocapitalize="none" spellcheck="false" placeholder="https://warcraftlogs.com/…" aria-describedby="logs-count">
+      <span class="counter" id="logs-count">0 / 300</span>
     </div>
 
     <div class="check">
