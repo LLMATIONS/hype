@@ -1,0 +1,5 @@
+# Guild-name voting backend. Pinned to compatible ranges; the service is tiny
+# and loopback-only, so the surface is small on purpose.
+fastapi>=0.110,<1.0
+uvicorn>=0.27,<1.0
+pydantic>=2.5,<3.0
