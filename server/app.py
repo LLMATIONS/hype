@@ -29,7 +29,6 @@ In production it is launched by the getajob-vote systemd unit via uvicorn.
 """
 from __future__ import annotations
 
-import hmac
 import json
 import os
 import re
@@ -87,11 +86,15 @@ TURNSTILE_SECRET = os.environ.get("TURNSTILE_SECRET", "").strip()
 TURNSTILE_SITEKEY = os.environ.get("TURNSTILE_SITEKEY", "").strip()
 TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify"
 
-# Admin moderation: a bearer token (set via server/configure-admin.sh) gates
-# deleting entries. Unset -> admin is disabled and every admin call 403s.
-# Anyone holding the token can delete, so keep it secret; it lives only in the
-# mode-600 service env file, never the repo.
-ADMIN_TOKEN = os.environ.get("ADMIN_TOKEN", "").strip()
+# Admin moderation runs on a separate, internal-only subdomain
+# (getajob-admin.swagcounty.com, not exposed to the public internet) that
+# Authentik forward-auth gates. Caddy
+# verifies the SSO session and injects the authenticated user's name in
+# X-Authentik-Username — overwriting any client-supplied copy — before proxying
+# here, so an unauthenticated request never reaches an admin endpoint. The
+# public origin never proxies /api/admin/* and never sets this header. There is
+# no app-managed admin secret: the gate is the SSO session, owned by Authentik.
+ADMIN_IDENTITY_HEADER = "x-authentik-username"
 
 # Guild-application delivery. Each channel is independent and best-effort: an
 # unset secret means that channel is skipped (status "off"), so the form works
@@ -338,12 +341,14 @@ def _turnstile_ok(token: Optional[str], ip: str) -> bool:
         return False  # fail closed when enforcement is on
 
 
+def _admin_identity(request: Request) -> str:
+    """The Authentik-asserted username, or '' when the header is absent."""
+    return (request.headers.get(ADMIN_IDENTITY_HEADER) or "").strip()
+
+
 def _admin_ok(request: Request) -> bool:
-    """Constant-time check of the admin bearer token."""
-    if not ADMIN_TOKEN:
-        return False
-    supplied = request.headers.get("x-admin-token", "")
-    return bool(supplied) and hmac.compare_digest(supplied, ADMIN_TOKEN)
+    """Authorized iff Authentik forward-auth injected an identity header."""
+    return bool(_admin_identity(request))
 
 
 def _guard_admin(request: Request) -> Optional[JSONResponse]:
@@ -664,14 +669,14 @@ def vote(idea_id: str, body: VoteBody, request: Request):
     return {"idea": idea}
 
 
-@app.get("/api/admin/ping")
-def admin_ping(request: Request):
-    """Validate the admin token so the UI can unlock its delete controls."""
+@app.get("/api/admin/whoami")
+def admin_whoami(request: Request):
+    """Return the signed-in admin's username for the admin page header."""
     err = _guard_admin(request)
-    return err or {"ok": True}
+    return err or {"username": _admin_identity(request)}
 
 
-@app.delete("/api/ideas/{idea_id}")
+@app.delete("/api/admin/ideas/{idea_id}")
 def delete_idea(idea_id: str, request: Request):
     """Admin-only: remove an idea and its votes (e.g. to take down abuse)."""
     err = _guard_admin(request)
@@ -773,7 +778,7 @@ def submit_application(body: ApplyBody, request: Request):
     return JSONResponse({"ok": True}, status_code=201)
 
 
-@app.get("/api/applications")
+@app.get("/api/admin/applications")
 def list_applications(request: Request):
     """Admin-only: every stored application, newest first, with delivery status."""
     err = _guard_admin(request)
@@ -786,7 +791,7 @@ def list_applications(request: Request):
     return {"applications": [dict(r) for r in rows]}
 
 
-@app.delete("/api/applications/{app_id}")
+@app.delete("/api/admin/applications/{app_id}")
 def delete_application(app_id: str, request: Request):
     """Admin-only: remove an application (handled, or spam)."""
     err = _guard_admin(request)

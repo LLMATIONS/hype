@@ -58,22 +58,26 @@ Create the widget in the Cloudflare dashboard (Turnstile → add a widget for th
 site's hostname). The script writes `TURNSTILE_SITEKEY` + `TURNSTILE_SECRET` to
 `~/getajob-vote/getajob-vote.env` (mode 600) and restarts the unit.
 
-## Admin moderation (owner-only delete)
+## Admin moderation (owner-only)
 
-`DELETE /api/ideas/{id}` removes a name and its votes — for taking down abuse.
-It is gated by a bearer token (`X-Admin-Token`), compared in constant time and
-rate-limited; with no token set the endpoint always 403s, so admin is off until
-configured. The token lives only in the mode-600 env file.
+The admin endpoints — `GET /api/admin/whoami`, `DELETE /api/admin/ideas/{id}`,
+`GET /api/admin/applications`, `DELETE /api/admin/applications/{id}` — are
+authorized by the `X-Authentik-Username` header. There is **no app-managed admin
+secret**.
 
-```sh
-bash server/configure-admin.sh   # generates a token, prints it once, restarts
-```
+The gate lives one layer out: the admin UI is served on its own subdomain
+(`getajob-admin.swagcounty.com`) behind Authentik forward-auth. That subdomain
+is deliberately internal-only (not a public hostname), so the moderation
+surface never touches the public internet. The reverse proxy
+verifies the SSO session and injects `X-Authentik-Username` — overwriting any
+client-supplied copy — before forwarding to this service; an unauthenticated
+request never reaches an admin endpoint, and the request reaching the app
+carries a trustworthy identity. The public origin never proxies `/api/admin/*`
+and never sets that header, so the same endpoints are unreachable from it
+(belt-and-suspenders: the app also returns 403 without the header).
 
-Save the printed token (it is shown once). To moderate, open `/guild-names/?admin`
-and paste it — the page checks it against `GET /api/admin/ping`, stores it in
-`localStorage`, and shows a delete control on each entry. "Exit admin" clears it.
-Anyone holding the token can delete, so treat it like a password; rotate by
-re-running the script.
+To moderate, open `https://getajob-admin.swagcounty.com/` from the internal
+network and sign in with your usual SSO. No token to set, save, or rotate.
 
 ## Runtime layout
 

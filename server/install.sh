@@ -63,8 +63,8 @@ if [ ! -f "$ENV_FILE" ]; then
   printf '%s\n' \
     '# Get a Job backend secrets — mode 600, never commit.' \
     '# Turnstile (configure-turnstile.sh): TURNSTILE_SITEKEY, TURNSTILE_SECRET' \
-    '# Admin     (configure-admin.sh):     ADMIN_TOKEN' \
     '# Apply     (configure-apply.sh):     DISCORD_WEBHOOK_URL, RESEND_API_KEY, APPLY_MAIL_FROM, APPLY_MAIL_TO' \
+    '# Admin: no secret here — moderation is Authentik SSO on getajob-admin.swagcounty.com' \
     > "$ENV_FILE"
   chown "$SVC_USER:$SVC_USER" "$ENV_FILE"
   chmod 600 "$ENV_FILE"

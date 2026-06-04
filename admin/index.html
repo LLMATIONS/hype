@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin — Get a Job</title>
+<meta name="description" content="Owner-only moderation for the Get a Job guild portal.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#0c0a14">
+<style>
+:root{
+  color-scheme: dark;
+  --bg:#0c0a14; --bg2:#170f2b; --fg:#f1ecfb; --dim:#a79fc0;
+  --card-bg:rgba(255,255,255,.03); --card-border:rgba(180,150,255,.18);
+  --pink:#ff8fcf; --peach:#ffbf8f; --yellow:#ffe46b; --mint:#8ff3c2; --sky:#8fd0ff; --lav:#c0a0ff;
+  --rainbow:linear-gradient(100deg,var(--pink),var(--peach),var(--yellow),var(--mint),var(--sky),var(--lav));
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+button,a{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,sans-serif;
+  color:var(--fg); line-height:1.6; min-height:100dvh; display:flex; flex-direction:column;
+  background-color:var(--bg);
+  background-image:
+    radial-gradient(900px 460px at 50% -8%, rgba(192,160,255,.22), transparent 60%),
+    linear-gradient(160deg,var(--bg) 0%,var(--bg2) 100%);
+  background-attachment:fixed;
+}
+.visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+main{max-width:760px;margin:0 auto;padding:1.8rem 1.5rem 2rem;flex:1;width:100%}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:.6rem;margin-bottom:1.4rem;flex-wrap:wrap}
+.home-link{display:inline-flex;align-items:center;gap:.4rem;font-size:.8rem;letter-spacing:.02em;color:var(--dim);text-decoration:none;border:1px solid var(--card-border);border-radius:999px;padding:.4rem .9rem;transition:color .14s ease,border-color .14s ease,background .14s ease}
+.home-link:hover,.home-link:focus-visible{color:var(--fg);border-color:var(--lav);background:rgba(192,160,255,.08);outline:none}
+.home-link:focus-visible{outline:2px solid var(--sky);outline-offset:2px}
+.whoami{font-size:.8rem;color:var(--dim);font-variant-numeric:tabular-nums}
+.whoami b{color:var(--mint);font-weight:700}
+
+header{margin-bottom:1.6rem}
+h1{font-size:1.9rem;font-weight:800;margin:0 0 .2rem}
+.sub{color:var(--dim);margin:0;max-width:42rem;font-size:.97rem;text-wrap:pretty}
+
+.status{min-height:1.2rem;margin:0 0 1rem;font-size:.88rem;color:var(--dim)}
+.status.err{color:var(--peach)}
+.status.ok{color:var(--mint)}
+
+.list-head{display:flex;align-items:baseline;justify-content:space-between;margin:1.8rem 0 .7rem;gap:.5rem}
+.list-head h2{font-size:1.15rem;font-weight:700;margin:0}
+.list-head .count{font-size:.82rem;color:var(--dim)}
+.loading,.empty{text-align:center;color:var(--dim);padding:1.4rem .5rem;font-size:.95rem}
+
+/* --- guild names --- */
+ul.ideas{list-style:none;margin:0;padding:0;display:grid;gap:.6rem}
+.idea{position:relative;display:flex;gap:.9rem;align-items:center;background:var(--card-bg);
+  border:1px solid var(--card-border);border-radius:12px;padding:.7rem 2.4rem .7rem 1rem}
+.idea .score{font-size:1rem;font-weight:800;font-variant-numeric:tabular-nums;color:var(--dim);min-width:2.4rem;text-align:center;flex:0 0 auto}
+.idea .score.pos{color:var(--mint)} .idea .score.neg{color:var(--peach)}
+.idea .body{flex:1;min-width:0}
+.idea-name{margin:0;font-size:1.02rem;font-weight:700;word-break:break-word}
+.idea-why{margin:.15rem 0 0;font-size:.88rem;color:var(--dim);word-break:break-word}
+.idea-meta{margin:.15rem 0 0;font-size:.74rem;color:var(--dim)}
+
+/* --- applications --- */
+ul.apps{list-style:none;margin:0;padding:0;display:grid;gap:.8rem}
+.app{position:relative;background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:12px;padding:.9rem 1rem .95rem}
+.app-top{display:flex;flex-wrap:wrap;align-items:baseline;gap:.5rem;margin:0 2rem .35rem 0}
+.app-char{font-size:1.05rem;font-weight:700}
+.app-meta{font-size:.85rem;color:var(--dim)}
+.app dl{margin:.4rem 0 0;display:grid;gap:.35rem}
+.app dt{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin-top:.3rem}
+.app dd{margin:0;white-space:pre-wrap;word-break:break-word;font-size:.92rem}
+.app dd a{color:var(--sky)}
+.app-badges{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.6rem}
+.badge{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700;
+  padding:.18rem .5rem;border-radius:999px;border:1px solid var(--card-border);color:var(--dim)}
+.badge.sent{color:#1a1030;background:var(--mint);border-color:transparent}
+.badge.failed{color:#1a1030;background:var(--peach);border-color:transparent}
+.badge.off{color:var(--dim)}
+
+/* --- delete control (shared) --- */
+.del{position:absolute;top:.6rem;right:.6rem;background:transparent;border:none;cursor:pointer;
+  color:var(--dim);font-size:1rem;line-height:1;padding:.3rem .45rem;border-radius:8px;
+  transition:color .14s ease,background .14s ease}
+.del:hover,.del:focus-visible{outline:none;color:var(--pink);background:rgba(255,143,207,.14)}
+.del:focus-visible{box-shadow:0 0 0 2px rgba(192,160,255,.55)}
+
+@media (prefers-reduced-motion:reduce){ *{transition:none !important} }
+@media (max-width:420px){ main{padding:1.4rem 1rem 1.6rem} }
+
+footer{border-top:1px solid var(--card-border);padding:1.4rem;text-align:center;font-size:.85rem;color:var(--dim)}
+footer a{display:inline-block;padding:.4rem .3rem;color:var(--dim);text-decoration:underline;
+  text-decoration-color:var(--card-border);text-underline-offset:3px;transition:color .14s ease}
+footer a:hover,footer a:focus-visible{color:var(--sky)}
+</style>
+</head>
+<body>
+<main>
+  <div class="topbar">
+    <a class="home-link" href="https://getajob.swagcounty.com">&larr; Get a Job</a>
+    <span class="whoami" id="whoami"></span>
+  </div>
+
+  <header>
+    <h1>Admin</h1>
+    <p class="sub">Moderate guild-name pitches and review raid applications. You're seeing this because Authentik let you in &mdash; there's no token to enter.</p>
+  </header>
+
+  <p class="status" id="status" role="status" aria-live="polite"></p>
+
+  <section aria-labelledby="names-heading">
+    <div class="list-head">
+      <h2 id="names-heading">Guild names</h2>
+      <span class="count" id="names-count" aria-live="polite"></span>
+    </div>
+    <ul class="ideas" id="ideas"></ul>
+    <p class="loading" id="names-loading">Loading names&hellip;</p>
+  </section>
+
+  <section aria-labelledby="apps-heading">
+    <div class="list-head">
+      <h2 id="apps-heading">Applications</h2>
+      <span class="count" id="apps-count" aria-live="polite"></span>
+    </div>
+    <ul class="apps" id="apps"></ul>
+    <p class="loading" id="apps-loading">Loading applications&hellip;</p>
+  </section>
+</main>
+
+<footer>
+  <a href="https://getajob.swagcounty.com">&larr; Get a Job</a>
+  &nbsp;&middot;&nbsp;
+  <a href="/outpost.goauthentik.io/sign_out">Sign out</a>
+</footer>
+
+<script src="/admin/app.js" defer></script>
+</body>
+</html>
