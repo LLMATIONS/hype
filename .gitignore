@@ -1,0 +1,43 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+.vscode/
+
+# Python (the guide generator + the voting backend)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Node (in case a sub-tool uses it)
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# Secrets — never commit. The voting service keeps its config out of the repo.
+.env
+.env.*
+*.key
+*secret*
+*token*
+*creds*
+
+# Voting service runtime data (the SQLite DB lives on the host, not in git)
+*.db
+*.sqlite
+*.sqlite3
+data/
+
+# Logs
+*.log
+logs/
+
+# Local tooling state (e.g. agent review-gate marker) — never committed
+.claude/

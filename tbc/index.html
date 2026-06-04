@@ -1,0 +1,1028 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TBC Dungeon Rep Leveling Guide &middot; Get a Job</title>
+<meta name="description" content="The Burning Crusade dungeon-reputation leveling route, 58 to 70 and into raids. Checkable steps, Wowhead tooltips, progress saved in your browser.">
+<link rel="icon" href="/assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#0c0f0a">
+<meta property="og:title" content="TBC Dungeon Rep Leveling Guide">
+<meta property="og:description" content="The dungeon-rep leveling route, 58 to 70 and into raids. Checkable, Wowhead-linked, saved in your browser.">
+<meta property="og:url" content="https://getajob.swagcounty.com/tbc/">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://getajob.swagcounty.com/assets/og-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --fel:#9bd62f; --fel-bright:#c2ff5e; --fel-dim:#6f9c1f;
+  --gold:#f3c969; --bg:#0c0f0a; --bg2:#11150e; --panel:#161b12;
+  --panel2:#1c2317; --line:#2a3420; --ink:#e7eede; --muted:#9aa890;
+  --blue:#4ea3ff; --epic:#c77bff; --honored:#5ec24a; --revered:#3b9bd6; --exalted:#c77bff;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:
+   radial-gradient(1200px 600px at 80% -10%, #1a2b12 0%, transparent 60%),
+   radial-gradient(900px 500px at 10% 0%, #241236 0%, transparent 55%),
+   var(--bg);
+  color:var(--ink);font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  font-size:15px;line-height:1.5;}
+a{color:var(--fel-bright);text-decoration:none}
+h1,h2,h3{font-family:"Cinzel","Trebuchet MS",Georgia,serif;letter-spacing:.5px;margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding:0 22px 90px}
+
+/* hero */
+header.hero{padding:54px 22px 30px;text-align:center;border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg, rgba(155,214,47,.06), transparent);}
+.hero h1{font-size:40px;color:var(--fel-bright);text-shadow:0 0 22px rgba(155,214,47,.45),0 2px 0 #000;}
+.hero .sub{color:var(--gold);margin-top:8px;font-size:17px;letter-spacing:2px;text-transform:uppercase}
+.hero .src{color:var(--muted);font-size:13px;margin-top:12px}
+
+/* sticky nav */
+nav{position:sticky;top:0;z-index:30;background:rgba(10,12,8,.92);backdrop-filter:blur(6px);
+  border-bottom:1px solid var(--line);padding:9px 0}
+nav .navin{max-width:1180px;margin:0 auto;padding:0 18px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+nav a{font-size:12.5px;color:var(--muted);padding:5px 11px;border-radius:20px;border:1px solid transparent;
+  text-transform:uppercase;letter-spacing:.6px}
+nav a:hover{color:var(--fel-bright);border-color:var(--fel-dim);background:rgba(155,214,47,.07)}
+
+section{padding-top:46px}
+h2.sec{font-size:25px;color:var(--fel);margin-bottom:4px;
+  display:flex;align-items:center;gap:12px}
+h2.sec::before{content:"";width:8px;height:26px;background:linear-gradient(var(--fel),var(--fel-dim));
+  border-radius:2px;box-shadow:0 0 10px var(--fel-dim)}
+.lead{color:var(--muted);margin:0 0 20px;max-width:760px}
+
+/* golden rules */
+.rules{background:linear-gradient(135deg,rgba(243,201,105,.1),rgba(243,201,105,.03));
+  border:1px solid #4a3f1e;border-left:4px solid var(--gold);border-radius:10px;padding:14px 20px;margin:22px 0}
+.rules ul{margin:0;padding-left:20px}
+.rules li{margin:5px 0;color:#f0e7cf}
+
+/* ---- flowchart ---- */
+.flow{position:relative;margin-top:26px;padding-left:8px}
+.flow::before{content:"";position:absolute;left:46px;top:14px;bottom:14px;width:3px;
+  background:linear-gradient(var(--fel),var(--fel-dim) 60%,transparent);border-radius:2px;
+  box-shadow:0 0 14px rgba(155,214,47,.4)}
+.node{position:relative;display:flex;gap:22px;margin-bottom:18px;align-items:flex-start}
+.lvlbadge{flex:0 0 auto;width:78px;min-height:78px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  font-family:"Cinzel",serif;font-weight:700;font-size:15px;line-height:1.05;padding:6px;
+  color:#0c0f0a;background:radial-gradient(circle at 35% 30%,var(--fel-bright),var(--fel-dim));
+  border:3px solid #0c0f0a;box-shadow:0 0 0 3px var(--fel-dim),0 0 18px rgba(155,214,47,.5);
+  position:relative;z-index:2}
+.card{flex:1;background:linear-gradient(180deg,var(--panel2),var(--panel));
+  border:1px solid var(--line);border-radius:12px;padding:15px 20px;
+  box-shadow:0 8px 26px rgba(0,0,0,.4)}
+.card h3{font-size:19px;color:var(--gold);margin-bottom:9px}
+.card ul.do{margin:0;padding-left:19px}
+.card ul.do li{margin:4px 0}
+ul.tips{margin:10px 0 0;padding:9px 14px 9px 30px;list-style:none;position:relative;
+  background:rgba(78,163,255,.07);border:1px solid #1f3a52;border-radius:8px}
+ul.tips li{margin:3px 0;color:#bcd6ee;position:relative}
+ul.tips li::before{content:"\1F4A1";position:absolute;left:-22px}
+.leave{margin-top:11px;padding-top:10px;border-top:1px dashed var(--line);color:var(--fel-bright);font-weight:600}
+.leave-label{display:inline-block;font-size:11px;text-transform:uppercase;letter-spacing:1px;
+  color:#0c0f0a;background:var(--fel);padding:1px 8px;border-radius:4px;margin-right:8px;font-weight:700;vertical-align:middle}
+
+/* rep badges */
+.rep{font-size:10.5px;text-transform:uppercase;letter-spacing:.6px;font-weight:700;
+  padding:2px 9px;border-radius:11px;margin-left:auto;white-space:nowrap}
+.rep-honored{background:rgba(94,194,74,.18);color:var(--honored);border:1px solid #2f6a25}
+.rep-exalted{background:rgba(199,123,255,.16);color:var(--exalted);border:1px solid #5a3a7a}
+
+/* faction grid */
+.facgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.faccard{background:var(--panel);border:1px solid var(--line);border-radius:11px;overflow:hidden;
+  display:flex;flex-direction:column}
+.fachead{padding:11px 15px;background:linear-gradient(180deg,var(--panel2),var(--panel));
+  border-bottom:1px solid var(--line)}
+.facname{display:block;font-weight:700;color:var(--gold);font-size:15.5px}
+.facname .ph,.ph{font-size:10px;background:var(--epic);color:#1a0a26;padding:1px 6px;border-radius:9px;
+  vertical-align:middle;font-weight:700;letter-spacing:.4px}
+.hq{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+.faclist{list-style:none;margin:0;padding:8px 15px 12px}
+.faclist li{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px dotted #232c1b}
+.faclist li:last-child{border-bottom:none}
+.dg{flex:1}
+
+/* generic tables */
+table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);
+  border-radius:10px;overflow:hidden;font-size:13.5px}
+thead th{background:var(--panel2);color:var(--fel);text-align:left;padding:9px 13px;font-size:11.5px;
+  text-transform:uppercase;letter-spacing:.7px;border-bottom:1px solid var(--line)}
+tbody td{padding:8px 13px;border-bottom:1px solid #1d2416}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:rgba(155,214,47,.045)}
+td.name{font-weight:600;color:var(--ink)}
+td.num{color:var(--gold);font-variant-numeric:tabular-nums;text-align:center;width:90px}
+td.empty,.empty{color:#3c4633;text-align:center}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.tblcap{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:0 0 7px}
+
+/* difficulty */
+.diffwrap{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.diffrow{display:flex;gap:12px;align-items:flex-start;margin:11px 0}
+.diff{flex:0 0 78px;text-align:center;font-size:11px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.6px;padding:5px 0;border-radius:7px;margin-top:2px}
+.diff-easy{background:rgba(94,194,74,.16);color:#7ed463;border:1px solid #2f6a25}
+.diff-medium{background:rgba(243,201,105,.14);color:var(--gold);border:1px solid #5a4d20}
+.diff-hard{background:rgba(255,140,60,.14);color:#ff9b4d;border:1px solid #6b4321}
+.diff-veryhard{background:rgba(255,80,80,.14);color:#ff6b6b;border:1px solid #6b2424}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:3px 11px;font-size:12.5px}
+
+/* keys */
+.keys td .keyitem{background:rgba(78,163,255,.12);color:var(--blue);border:1px solid #1f3a52;
+  padding:2px 8px;border-radius:6px;font-size:12.5px;font-weight:600}
+.keys td .keyitem.hero{background:rgba(199,123,255,.12);color:var(--epic);border-color:#4a3060}
+tr.grouprow td{background:linear-gradient(90deg,rgba(155,214,47,.1),transparent);
+  color:var(--fel);font-family:"Cinzel",serif;font-weight:700;font-size:13px;letter-spacing:.5px;
+  text-transform:uppercase}
+
+/* QM */
+.qmblock{margin-bottom:20px}
+.qmtier{display:inline-block;font-family:"Cinzel",serif;font-size:14px;font-weight:700;text-transform:capitalize;
+  padding:4px 16px;border-radius:8px 8px 0 0;color:#0c0f0a}
+.qm-honored{background:var(--honored)} .qm-revered{background:var(--revered)} .qm-exalted{background:var(--exalted)}
+table.qm{border-top-left-radius:0}
+table.qm td{font-size:12.5px}
+table.qm thead th{width:20%}
+
+/* rep grid */
+.repgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:13px}
+.repcard{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.rephead{padding:9px 14px;background:var(--panel2);border-bottom:1px solid var(--line);
+  font-weight:700;color:var(--gold);font-size:14px}
+.replist{list-style:none;margin:0;padding:7px 14px 11px}
+.replist li{display:flex;justify-content:space-between;gap:10px;padding:3px 0;border-bottom:1px dotted #232c1b}
+.replist li:last-child{border-bottom:none}
+.src{color:var(--muted)}
+.amt{color:var(--gold);font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+
+/* quests */
+.quests td.rew{color:var(--fel-bright);font-style:italic}
+.zone{font-size:11.5px;padding:2px 9px;border-radius:11px;white-space:nowrap;border:1px solid}
+.z-hfp{background:rgba(196,84,52,.15);color:#ff8a66;border-color:#5c2f20}
+.z-shat{background:rgba(243,201,105,.13);color:var(--gold);border-color:#5a4d20}
+.z-zang{background:rgba(78,200,160,.13);color:#56d6a8;border-color:#205045}
+.z-tero{background:rgba(120,160,90,.16);color:#a7d06a;border-color:#3c4d23}
+.z-nag{background:rgba(120,200,230,.13);color:#7fd0ec;border-color:#234a55}
+.z-bem{background:rgba(200,150,90,.14);color:#e0a35c;border-color:#5a4324}
+.z-neth{background:rgba(160,120,230,.14);color:#b594f0;border-color:#3f3060}
+.z-smv{background:rgba(220,80,90,.14);color:#f06b78;border-color:#5c242a}
+
+footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:12.5px;text-align:center}
+
+/* portal chrome (part of the Get a Job site) */
+.portal-back{display:inline-block;margin:14px 0 -8px 18px;font-size:12px;letter-spacing:.4px;
+  color:var(--muted);text-decoration:none;border:1px solid var(--line);border-radius:20px;
+  padding:5px 13px;transition:color .14s,border-color .14s,background .14s}
+.portal-back:hover{color:var(--fel-bright);border-color:var(--fel-dim);background:rgba(155,214,47,.08)}
+.foot-links{margin-bottom:9px;font-size:13px}
+.foot-links a{color:var(--muted);padding:0 2px}
+.foot-links a:hover{color:var(--fel-bright)}
+.foot-note{color:#6b745e;font-size:11.5px;max-width:640px;margin:0 auto;line-height:1.5}
+
+/* ============ Wowhead links (Goal 2) ============ */
+a.wh{color:var(--fel-bright);border-bottom:1px dotted transparent;transition:border-color .12s,color .12s}
+a.wh:hover{border-bottom-color:currentColor}
+/* In dense tables, headings and chips, links inherit local colour so the
+   layout the guide hand-tuned isn't disrupted. Wowhead's colorLinks still
+   rarity-tints resolved item/quest links via inline styles. */
+.card h3 a.wh, table a.wh, .chip a.wh, .zone a.wh, .keyitem a.wh,
+.faclist a.wh, .replist a.wh{color:inherit;border-bottom-color:transparent}
+.card h3 a.wh:hover, table a.wh:hover, .chip a.wh:hover,
+.faclist a.wh:hover, .replist a.wh:hover{color:var(--fel-bright)}
+/* search-fallback links (no id, no tooltip) stay quiet */
+a.wh-q{color:inherit;border-bottom:1px dotted rgba(155,214,47,.26)}
+a.wh-q:hover{color:var(--fel-bright);border-bottom-color:currentColor}
+
+/* ============ Interactive route (Goal 1) ============ */
+/* sticky progress bar */
+.progress{position:sticky;top:0;z-index:40;margin:0 0 20px;
+  background:linear-gradient(180deg,rgba(12,15,10,.975),rgba(12,15,10,.93));
+  backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:12px;
+  padding:12px 16px;box-shadow:0 8px 22px rgba(0,0,0,.5)}
+.progress .ptop{display:flex;align-items:center;justify-content:space-between;
+  gap:12px 16px;margin-bottom:9px;flex-wrap:wrap}
+.progress .plabel{font-family:"Cinzel",serif;font-weight:700;font-size:15.5px;color:var(--gold)}
+.progress .plabel b{color:var(--fel-bright)}
+.progress .pright{display:flex;align-items:center;gap:12px}
+.progress .pcount{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.pbar{height:12px;border-radius:7px;background:rgba(0,0,0,.4);border:1px solid var(--line);overflow:hidden}
+.pfill{height:100%;width:0;border-radius:7px;
+  background:linear-gradient(90deg,var(--fel-dim),var(--fel-bright));
+  box-shadow:0 0 12px rgba(155,214,47,.6);transition:width .35s ease}
+.progress.complete .pfill{background:linear-gradient(90deg,var(--gold),#ffe39a);
+  box-shadow:0 0 14px rgba(243,201,105,.7)}
+.progress.complete .plabel{color:var(--gold)}
+.resetbtn{font:inherit;font-size:11px;text-transform:uppercase;letter-spacing:.7px;font-weight:700;
+  color:var(--muted);background:rgba(255,255,255,.03);border:1px solid var(--line);
+  border-radius:8px;padding:5px 11px;cursor:pointer;transition:all .15s}
+.resetbtn:hover{color:#ff8a66;border-color:#5c2f20;background:rgba(196,84,52,.1)}
+.resetbtn:focus-visible{outline:2px solid var(--fel-bright);outline-offset:2px}
+
+/* card header that holds the checkbox */
+.cardtop{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.cardtop h3{margin-bottom:0}
+.stepcheck{display:inline-flex;align-items:center;gap:7px;cursor:pointer;flex:0 0 auto;
+  user-select:none;padding:3px 5px;border-radius:8px}
+.stepcheck .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:700}
+.stepcheck:hover .lbl{color:var(--ink)}
+.node.done .stepcheck .lbl{color:var(--gold)}
+
+/* the visually-hidden native checkbox stays keyboard-focusable; the .cbx span
+   is the painted box */
+.stepcheck input,.goalcheck input,.rowcheck input{
+  position:absolute;width:1px;height:1px;opacity:0;margin:0;pointer-events:none}
+.cbx{display:inline-block;width:20px;height:20px;flex:0 0 auto;border-radius:6px;
+  border:2px solid var(--fel-dim);background:rgba(0,0,0,.3);position:relative;transition:all .15s}
+.cbx::after{content:"";position:absolute;left:5px;top:1px;width:6px;height:11px;
+  border:solid #0c0f0a;border-width:0 3px 3px 0;transform:rotate(45deg) scale(0);
+  transform-origin:center;transition:transform .15s}
+input:checked + .cbx{background:radial-gradient(circle at 35% 30%,var(--gold),#b8902f);border-color:var(--gold)}
+input:checked + .cbx::after{transform:rotate(45deg) scale(1)}
+.stepcheck input:focus-visible + .cbx,.goalcheck input:focus-visible + .cbx,
+.rowcheck input:focus-visible + .cbx{outline:2px solid var(--fel-bright);outline-offset:2px}
+
+/* level badge is now a clickable label */
+.lvlbadge{cursor:pointer}
+.lvlbadge .lvl{transition:opacity .15s}
+.lvlbadge .check{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:36px;color:#0c0f0a;opacity:0;transform:scale(.4);transition:all .18s}
+
+/* done step: gold/filled node, dimmed + struck card */
+.node{transition:opacity .2s}
+.node.done .card{opacity:.58}
+.node.done .card h3{text-decoration:line-through;text-decoration-color:rgba(243,201,105,.6)}
+.node.done .lvlbadge{background:radial-gradient(circle at 35% 30%,var(--gold),#b8902f);
+  box-shadow:0 0 0 3px #8a6a1e,0 0 18px rgba(243,201,105,.55)}
+.node.done .lvlbadge .lvl{opacity:.3}
+.node.done .lvlbadge .check{opacity:1;transform:scale(1)}
+
+/* current step: "you are here" */
+.node.current::after{content:"you are here";position:absolute;left:2px;top:-13px;
+  font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#0c0f0a;
+  background:var(--fel-bright);padding:2px 9px;border-radius:8px;
+  box-shadow:0 0 12px rgba(155,214,47,.6);z-index:3}
+.node.current .lvlbadge{animation:youarehere 1.8s ease-in-out infinite}
+@keyframes youarehere{
+  0%,100%{box-shadow:0 0 0 3px var(--fel-bright),0 0 12px rgba(155,214,47,.5)}
+  50%{box-shadow:0 0 0 4px var(--fel-bright),0 0 26px rgba(155,214,47,.95)}}
+.node.current .card{border-color:var(--fel-dim);
+  box-shadow:0 8px 26px rgba(0,0,0,.4),0 0 0 1px rgba(155,214,47,.35),inset 0 0 0 1px rgba(155,214,47,.1)}
+@media(prefers-reduced-motion:reduce){.node.current .lvlbadge{animation:none}}
+
+/* faction rep-goal checkbox */
+.fachead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.factext{min-width:0}
+.goalcheck{cursor:pointer;flex:0 0 auto;padding:2px;border-radius:6px;display:inline-flex}
+.faccard.done{opacity:.62}
+.faccard.done .facname{text-decoration:line-through;text-decoration-color:rgba(243,201,105,.5)}
+
+/* keys table row checkbox */
+.keys-check th.ck,.keys-check td.ck{width:36px;text-align:center;color:var(--fel-dim)}
+.rowcheck{display:inline-flex;cursor:pointer;vertical-align:middle}
+.keys-check tbody tr.done{opacity:.5}
+.keys-check tbody tr.done td.name{text-decoration:line-through}
+
+@media(max-width:760px){
+  .twocol,.diffwrap{grid-template-columns:1fr}
+  .lvlbadge{width:62px;min-height:62px;font-size:13px}
+  .lvlbadge .check{font-size:30px}
+  .flow::before{left:38px}
+  .hero h1{font-size:30px}
+  table{font-size:12.5px}
+  .progress{padding:10px 12px}
+  .progress .plabel{font-size:14px}
+  .cardtop{gap:8px}
+  .stepcheck .lbl{display:none}
+}
+</style>
+<script>const whTooltips = {colorLinks:true, iconizeLinks:false, renameLinks:false};</script>
+<script src="https://wow.zamimg.com/js/tooltips.js"></script>
+</head>
+<body>
+
+<a class="portal-back" href="/">&larr; Get a Job</a>
+
+<header class="hero">
+  <h1>The Burning Crusade</h1>
+  <div class="sub">Dungeon Reputation Leveling Route</div>
+  <div class="src">Reworked from &ldquo;TBC dungeon rep leveling (Stamaka).xlsx&rdquo; &middot; 58 &rarr; 70 &rarr; raids</div>
+</header>
+
+<nav><div class="navin">
+  <a href="#route">Leveling Route</a>
+  <a href="#factions">Factions</a>
+  <a href="#ranges">Level Ranges</a>
+  <a href="#difficulty">Difficulty</a>
+  <a href="#keys">Keys &amp; Attunes</a>
+  <a href="#gear">Quartermaster Gear</a>
+  <a href="#rep">Rep Sources</a>
+  <a href="#quests">Notable Quests</a>
+</div></nav>
+
+<div class="wrap">
+
+  <section id="route">
+    <h2 class="sec">The Leveling Route</h2>
+    <p class="lead">Follow the path top to bottom. Each node is a milestone &mdash; the big circle is your level, the card tells you what to do and when to move on. <b>Tick off each step</b> (click the circle or the checkbox) and your progress saves automatically in this browser.</p>
+    <div class="progress" id="progress" role="group" aria-label="Leveling route progress">
+      <div class="ptop">
+        <span class="plabel" id="plabel">Step 1 / 17</span>
+        <div class="pright">
+          <span class="pcount" id="pcount">0 / 17 done</span>
+          <button type="button" class="resetbtn" id="resetbtn">Reset progress</button>
+        </div>
+      </div>
+      <div class="pbar"><div class="pfill" id="pfill"></div></div>
+    </div>
+    <div class="rules"><ul><li>Don&rsquo;t turn in <b>any</b> quests with a faction until you&rsquo;re <b>honored</b> (5999/6000 friendly).</li><li>When you reach honored, visit that faction&rsquo;s quartermaster — there are good low-level options.</li></ul></div>
+    <div class="flow">
+      <div class="node" id="node-route-hellfire-ramparts" data-step-id="route-hellfire-ramparts">
+        <label class="lvlbadge" for="cb-route-hellfire-ramparts" title="Toggle this step complete">
+          <span class="lvl">58 / 60</span><span class="check" aria-hidden="true">&#10003;</span>
+        </label>
+        <div class="card">
+          <div class="cardtop">
+            <h3><a class="wh" href="https://www.wowhead.com/tbc/zone=3562" target="_blank" rel="noopener">Hellfire Ramparts</a></h3>
+            <label class="stepcheck">
+              <input type="checkbox" id="cb-route-hellfire-ramparts" data-step="route-hellfire-ramparts" data-route="1" aria-label="Mark step complete: Hellfire Ramparts">
+              <span class="cbx" aria-hidden="true"></span><span class="lbl">Done</span>
+            </label>
+          </div>
+          <ul class="do"><li>Run Hellfire Ramparts.</li><li>Complete the quests outside until you get <b>[<a class="wh" href="https://www.wowhead.com/tbc/quest=9575" target="_blank" rel="noopener">Weaken the Ramparts</a>]</b>.</li></ul>
+          
+          <div class="leave"><span class="leave-label">leave when</span> Honored with Honor Hold / Thrallmar</div>
+        </div>
+      </div>
+      <div class="node" id="node-route-the-blood-furnace" data-step-id="route-the-blood-furnace">
+        <label class="lvlbadge" for="cb-route-the-blood-furnace" title="Toggle this step complete">
+          <span class="lvl">~61</span><span class="check" aria-hidden="true">&#10003;</span>
+        </label>
+        <div class="card">
+          <div class="cardtop">
+            <h3><a class="wh" href="https://www.wowhead.com/tbc/zone=3713" target="_blank" rel="noopener">The Blood Furnace</a></h3>
+            <label class="stepcheck">
+              <input type="checkbox" id="cb-route-the-blood-furnace" data-step="route-the-blood-furnace" data-route="1" aria-label="Mark step complete: The Blood Furnace">
+              <span class="cbx" aria-hidden="true"></span><span class="lbl">Done</span>
+            </label>
+          </div>
+          <ul class="do"><li>Run The Blood Furnace once for the quests.</li><li>Do quests out in Hellfire Peninsula.</li></ul>
+          <ul class="tips"><li>Consider grabbing <b>[<a class="wh" href="https://www.wowhead.com/tbc/item=27921" target="_blank" rel="noopener">Mark of Conquest</a>]</b>, <b>[<a class="wh" href="https://www.wowhead.com/tbc/item=27922" target="_blank" rel="noopener">Mark of Defiance</a>]</b> or <b>[<a class="wh" href="https://www.wowhead.com/tbc/item=27927" target="_blank" rel="noopener">Mark of Vindication</a>]</b> for easier farming.</li><li>Learn your new skills.</li></ul>
+          <div class="leave"><span class="leave-label">leave when</span> Revered with Honor Hold / Thrallmar &nbsp;·&nbsp; if not yet 62, stay till 62</div>
+        </div>
+      </div>
+      <div class="node" id="node-route-the-slave-pens" data-step-id="route-the-slave-pens">
+        <label class="lvlbadge" for="cb-route-the-slave-pens" title="Toggle this step complete">
+          <span class="lvl">62</span><span class="check" aria-hidden="true">&#10003;</span>
+        </label>
+        <div class="card">
+          <div class="cardtop">
+            <h3><a class="wh" href="https://www.wowhead.com/tbc/zone=3717" target="_blank" rel="noopener">The Slave Pens</a></h3>
+            <label class="stepcheck">
+              <input type="checkbox" id="cb-route-the-slave-pens" data-step="route-the-slave-pens" data-route="1" aria-label="Mark step complete: The Slave Pens">
+              <span class="cbx" aria-hidden="true"></span><span class="lbl">Done</span>
+            </label>
+          </div>
+          <ul class="do"><li>Kill all slaves before the slavehandlers.</li><li>Turn in 10 <b>[<a class="wh" href="https://www.wowhead.com/tbc/item=24401" target="_blank" rel="noopener">Unidentified Plant Parts</a>]</b> once — sell the rest.</li><li>Go to <b><a class="wh" href="https://www.wowhead.com/tbc/npc=17923" target="_blank" rel="noopener">Fahssn</a></b> and run repeatable quests until <b>friendly with Sporeggar</b>.</li><li>Grab <b>[<a class="wh" href="https://www.wowhead.com/tbc/quest=9717" target="_blank" rel="noopener">Oh, It&rsquo;s On!</a>]</b> and <b>[<a class="wh" href="https://www.wowhead.com/tbc/quest=9719" target="_blank" rel="noopener">Stalk the Stalker</a>]</b> (good farming trinkets).</li></ul>
+          
+          <div class="leave"><span class="leave-label">leave when</span> Honored with Cenarion Expedition</div>
+        </div>
+      </div>
+      <div class="node" id="node-route-the-underbog" data-step-id="route-the-underbog">
+        <label class="lvlbadge" for="cb-route-the-underbog" title="Toggle this step complete">
+          <span class="lvl">63</span><span class="check" aria-hidden="true">&#10003;</span>
+        </label>
+        <div class="card">
+          <div class="cardtop">
+            <h3><a class="wh" href="https://www.wowhead.com/tbc/zone=3716" target="_blank" rel="noopener">The Underbog</a></h3>
+            <label class="stepcheck">
+              <input type="checkbox" id="cb-route-the-underbog" data-step="route-the-underbog" data-route="1" aria-label="Mark step complete: The Underbog">
+              <span class="cbx" aria-hidden="true"></span><span class="lbl">Done</span>
+            </label>
+          </div>
+          <ul class="do"><li>Run it once for the quests.</li><li>Do quests out in Zangarmarsh.</li></ul>
+          <ul class="tips"><li>Learn your new skills.</li></ul>
+          <div class="leave"><span class="leave-label">leave when</span> Revered with Cenarion Expedition &nbsp;·&nbsp; if not yet 64, stay till 64</div>
+        </div>
+      </div>
+      <div class="node" id="node-route-mana-tombs" data-step-id="route-mana-tombs">
+        <label class="lvlbadge" for="cb-route-mana-tombs" title="Toggle this step complete">
+          <span class="lvl">64</span><span class="check" aria-hidden="true">&#10003;</span>
+        </label>
+        <div class="card">
+          <div class="cardtop">
+            <h3><a class="wh" href="https://www.wowhead.com/tbc/zone=3792" target="_blank" rel="noopener">Mana-Tombs</a></h3>
+            <label class="stepcheck">
+              <input type="checkbox" id="cb-route-mana-tombs" data-step="route-mana-tombs" data-route="1" aria-label="Mark step complete: Mana-Tombs">
+              <span class="cbx" aria-hidden="true"></span><span class="lbl">Done</span>
+            </label>
+          </div>
+          <ul class="do"><li>If not yet 65: farm Mark of Kil&rsquo;jaeden / Firewing Signet (up to 220), or quest in Terokkar / Nagrand till 65.</li><li>Go to <b>[<a class="wh" href="https://www.wowhead.com/tbc/npc=19684" target="_blank" rel="noopener">Haggard War Veteran</a>]</b> in Shattrath and run the <b>[<a class="wh" href="https://www.wowhead.com/tbc/npc=18481" target="_blank" rel="noopener">A&rsquo;dal</a>]</b> chain to pick <b>Aldor or Scryers</b>.</li><li>Turn in your <b>[<a class="wh" href="https://www.wowhead.com/tbc/item=29425" target="_blank" rel="noopener">Mark of Kil&rsquo;jaeden</a>] / [<a class="wh" href="https://www.wowhead.com/tbc/item=29426" target="_blank" rel="noopener">Firewing Signet</a>]</b> until honored.</li></ul>
+          
+          <div class="leave"><span class="leave-label">leave when</span> Honored with Consortium</div>
+        </div>
+      </div>
+      <div class="node" id="node-route-nagrand-arena-ring-of-blood" data-step-id="route-nagrand-arena-ring-of-blood">
+        <label class="lvlbadge" for="cb-route-nagrand-arena-ring-of-blood" title="Toggle this step complete">
+          <span class="lvl">65</span><span class="check" aria-hidden="true">&#10003;</span>
+        </label>
+        <div class="card">
+          <div class="cardtop">
+            <h3>Nagrand Arena — Ring of Blood</h3>
+            <label class="stepcheck">
+              <input type="checkbox" id="cb-route-nagrand-arena-ring-of-blood" data-step="route-nagrand-arena-ring-of-blood" data-route="1" aria-label="Mark step complete: Nagrand Arena - Ring of Blood">
+              <span class="cbx" aria-hidden="true"></span><span class="lbl">Done</span>
+            </label>
+          </div>
+          <ul class="do"><li>See <b><a class="wh" href="https://www.wowhead.com/tbc/npc=18471" target="_blank" rel="noopener">Gurgthock</a></b> for the Ring of Blood chain.</li><li>Grab <b>[<a class="wh" href="https://www.wowhead.com/tbc/quest=10109" target="_blank" rel="noopener">I Must Have Them!</a>]</b> and <b>[<a class="wh" href="https://www.wowhead.com/tbc/quest=10111" target="_blank" rel="noopener">Bring Me The Egg!</a>]</b>.</li><li>Visit <b><a class="wh" href="https://www.wowhead.com/tbc/npc=19035" target="_blank" rel="noopener">Wazat</a></b> for a blue cape in 2 quests.</li></ul>
+          
+          
+        </div>
+      </div>
+      <div class="node" id="node-route-auchenai-crypts" data-step-id="route-auchenai-crypts">
+        <label class="lvlbadge" for="cb-route-auchenai-crypts" title="Toggle this step complete">
+          <span class="lvl">65</span><span class="check" aria-hidden="true">&#10003;</span>
+        </label>
+        <div class="card">
+          <div class="cardtop">
+            <h3><a class="wh" href="https://www.wowhead.com/tbc/zone=3790" target="_blank" rel="noopener">Auchenai Crypts</a></h3>
+            <label class="stepcheck">
+              <input type="checkbox" id="cb-route-auchenai-crypts" data-step="route-auchenai-crypts" data-route="1" aria-label="Mark step complete: Auchenai Crypts">
+              <span class="cbx" aria-hidden="true"></span><span class="lbl">Done</span>
+            </label>
+          </div>
+          <ul class="do"><li>Run it.</li><li>Learn your new skills.</li></ul>
+          
+          <div class="leave"><span class="leave-label">leave when</span> Ding 66</div>
+        </div>
+      </div>
+      <div class="node" id="node-route-old-hillsbrad-foothills" data-step-id="route-old-hillsbrad-foothills">
+        <label class="lvlbadge" for="cb-route-old-hillsbrad-foothills" title="Toggle this step complete">
+          <span class="lvl">66</span><span class="check" aria-hidden="true">&#10003;</span>
+        </label>
+        <div class="card">
+          <div class="cardtop">
+            <h3><a class="wh" href="https://www.wowhead.com/tbc/zone=2367" target="_blank" rel="noopener">Old Hillsbrad Foothills</a></h3>
+            <label class="stepcheck">
+              <input type="checkbox" id="cb-route-old-hillsbrad-foothills" data-step="route-old-hillsbrad-foothills" data-route="1" aria-label="Mark step complete: Old Hillsbrad Foothills">
+              <span class="cbx" aria-hidden="true"></span><span class="lbl">Done</span>
+            </label>
+          </div>
+          <ul class="do"><li>Run once to unlock access to <b><a class="wh" href="https://www.wowhead.com/tbc/zone=2366" target="_blank" rel="noopener">The Black Morass</a></b>.</li></ul>
+          
+          
+        </div>
+      </div>
+      <div class="node" id="node-route-sethekk-halls" data-step-id="route-sethekk-halls">
+        <label class="lvlbadge" for="cb-route-sethekk-halls" title="Toggle this step complete">
+          <span class="lvl">66</span><span class="check" aria-hidden="true">&#10003;</span>
+        </label>
+        <div class="card">
+          <div class="cardtop">
+            <h3><a class="wh" href="https://www.wowhead.com/tbc/zone=3791" target="_blank" rel="noopener">Sethekk Halls</a></h3>
+            <label class="stepcheck">
+              <input type="checkbox" id="cb-route-sethekk-halls" data-step="route-sethekk-halls" data-route="1" aria-label="Mark step complete: Sethekk Halls">
+              <span class="cbx" aria-hidden="true"></span><span class="lbl">Done</span>
+            </label>
+          </div>
+          <ul class="do"><li>The <b>Shadow Labyrinth key</b> drops inside.</li><li>Sell all your <b>[<a class="wh" href="https://www.wowhead.com/tbc/item=25719" target="_blank" rel="noopener">Arakkoa Feather</a>]</b>.</li><li>Learn your new skills.</li></ul>
+          
+          <div class="leave"><span class="leave-label">leave when</span> Ding 68</div>
+        </div>
+      </div>
+      <div class="node" id="node-route-start-karazhan-attunement" data-step-id="route-start-karazhan-attunement">
+        <label class="lvlbadge" for="cb-route-start-karazhan-attunement" title="Toggle this step complete">
+          <span class="lvl">68</span><span class="check" aria-hidden="true">&#10003;</span>
+        </label>
+        <div class="card">
+          <div class="cardtop">
+            <h3>Start Karazhan Attunement</h3>
+            <label class="stepcheck">
+              <input type="checkbox" id="cb-route-start-karazhan-attunement" data-step="route-start-karazhan-attunement" data-route="1" aria-label="Mark step complete: Start Karazhan Attunement">
+              <span class="cbx" aria-hidden="true"></span><span class="lbl">Done</span>
+            </label>
+          </div>
+          <ul class="do"><li>Go to Deadwind Pass &rarr; <b><a class="wh" href="https://www.wowhead.com/tbc/npc=17613" target="_blank" rel="noopener">Archmage Alturus</a></b>.</li><li>Run the Karazhan attunement chain until you get <b>[<a class="wh" href="https://www.wowhead.com/tbc/quest=9831" target="_blank" rel="noopener">Entry Into Karazhan</a>]</b>.</li></ul>
+          
+          
+        </div>
+      </div>
+      <div class="node" id="node-route-shadow-labyrinth" data-step-id="route-shadow-labyrinth">
+        <label class="lvlbadge" for="cb-route-shadow-labyrinth" title="Toggle this step complete">
+          <span class="lvl">68</span><span class="check" aria-hidden="true">&#10003;</span>
+        </label>
+        <div class="card">
+          <div class="cardtop">
+            <h3><a class="wh" href="https://www.wowhead.com/tbc/zone=3789" target="_blank" rel="noopener">Shadow Labyrinth</a></h3>
+            <label class="stepcheck">
+              <input type="checkbox" id="cb-route-shadow-labyrinth" data-step="route-shadow-labyrinth" data-route="1" aria-label="Mark step complete: Shadow Labyrinth">
+              <span class="cbx" aria-hidden="true"></span><span class="lbl">Done</span>
+            </label>
+          </div>
+          <ul class="do"><li>Run at least once for the attune.</li></ul>
+          
+          <div class="leave"><span class="leave-label">leave when</span> Revered with Lower City</div>
+        </div>
+      </div>
+      <div class="node" id="node-route-shattered-halls-key" data-step-id="route-shattered-halls-key">
+        <label class="lvlbadge" for="cb-route-shattered-halls-key" title="Toggle this step complete">
+          <span class="lvl">69</span><span class="check" aria-hidden="true">&#10003;</span>
+        </label>
+        <div class="card">
+          <div class="cardtop">
+            <h3>Shattered Halls Key</h3>
+            <label class="stepcheck">
+              <input type="checkbox" id="cb-route-shattered-halls-key" data-step="route-shattered-halls-key" data-route="1" aria-label="Mark step complete: Shattered Halls Key">
+              <span class="cbx" aria-hidden="true"></span><span class="lbl">Done</span>
+            </label>
+          </div>
+          <ul class="do"><li>Go to Shadowmoon Valley and kill <b><a class="wh" href="https://www.wowhead.com/tbc/npc=22037" target="_blank" rel="noopener">Smith Gorlunk</a></b>.</li><li>Bring 4&times;[<a class="wh" href="https://www.wowhead.com/tbc/item=23445" target="_blank" rel="noopener">Fel Iron Bar</a>], 4&times;[<a class="wh" href="https://www.wowhead.com/tbc/item=22574" target="_blank" rel="noopener">Mote of Fire</a>], 2&times;[<a class="wh" href="https://www.wowhead.com/tbc/item=22445" target="_blank" rel="noopener">Arcane Dust</a>].</li><li>Complete the chain to get the <b>[<a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Shattered%20Halls%20Key" target="_blank" rel="noopener">Shattered Halls Key</a>]</b>.</li></ul>
+          
+          
+        </div>
+      </div>
+      <div class="node" id="node-route-arcatraz-key-start" data-step-id="route-arcatraz-key-start">
+        <label class="lvlbadge" for="cb-route-arcatraz-key-start" title="Toggle this step complete">
+          <span class="lvl">69</span><span class="check" aria-hidden="true">&#10003;</span>
+        </label>
+        <div class="card">
+          <div class="cardtop">
+            <h3>Arcatraz Key (start)</h3>
+            <label class="stepcheck">
+              <input type="checkbox" id="cb-route-arcatraz-key-start" data-step="route-arcatraz-key-start" data-route="1" aria-label="Mark step complete: Arcatraz Key (start)">
+              <span class="cbx" aria-hidden="true"></span><span class="lbl">Done</span>
+            </label>
+          </div>
+          <ul class="do"><li>Go to Netherstorm &rarr; <b><a class="wh" href="https://www.wowhead.com/tbc/npc=19880" target="_blank" rel="noopener">Nether-Stalker Khay&rsquo;ji</a></b>.</li><li>Run the chain from <b>[<a class="wh" href="https://www.wowhead.com/tbc/npc=19641" target="_blank" rel="noopener">Warp-Raider Nesaad</a>]</b> until <b>[<a class="wh" href="https://www.wowhead.com/tbc/quest=10704" target="_blank" rel="noopener">How to Break Into the Arcatraz</a>]</b>.</li></ul>
+          
+          
+        </div>
+      </div>
+      <div class="node" id="node-route-the-steam-vaults" data-step-id="route-the-steam-vaults">
+        <label class="lvlbadge" for="cb-route-the-steam-vaults" title="Toggle this step complete">
+          <span class="lvl">69</span><span class="check" aria-hidden="true">&#10003;</span>
+        </label>
+        <div class="card">
+          <div class="cardtop">
+            <h3><a class="wh" href="https://www.wowhead.com/tbc/zone=3715" target="_blank" rel="noopener">The Steam Vaults</a></h3>
+            <label class="stepcheck">
+              <input type="checkbox" id="cb-route-the-steam-vaults" data-step="route-the-steam-vaults" data-route="1" aria-label="Mark step complete: The Steam Vaults">
+              <span class="cbx" aria-hidden="true"></span><span class="lbl">Done</span>
+            </label>
+          </div>
+          <ul class="do"><li>Run at least once for the attune.</li><li><i>Alternatively</i> run The Shattered Halls if you aren&rsquo;t revered with either.</li><li>Sell all your <b>[<a class="wh" href="https://www.wowhead.com/tbc/item=24368" target="_blank" rel="noopener">Coilfang Armaments</a>]</b>.</li><li>Learn your new skills.</li></ul>
+          
+          <div class="leave"><span class="leave-label">leave when</span> Ding 70</div>
+        </div>
+      </div>
+      <div class="node" id="node-route-hit-max-level" data-step-id="route-hit-max-level">
+        <label class="lvlbadge" for="cb-route-hit-max-level" title="Toggle this step complete">
+          <span class="lvl">70</span><span class="check" aria-hidden="true">&#10003;</span>
+        </label>
+        <div class="card">
+          <div class="cardtop">
+            <h3>Hit Max Level</h3>
+            <label class="stepcheck">
+              <input type="checkbox" id="cb-route-hit-max-level" data-step="route-hit-max-level" data-route="1" aria-label="Mark step complete: Hit Max Level">
+              <span class="cbx" aria-hidden="true"></span><span class="lbl">Done</span>
+            </label>
+          </div>
+          <ul class="do"><li>GZ! Go to <b><a class="wh" href="https://www.wowhead.com/tbc/npc=18940" target="_blank" rel="noopener">Nutral</a></b> in Shattrath and grab your flying mount.</li><li>Visit quartermasters — <b>Honor Hold/Thrallmar, Cenarion Expedition, Lower City</b> — for revered gear.</li><li>Aldor / Scryers: turn in items now till revered if you need to.</li><li>See <b><a class="wh" href="https://www.wowhead.com/tbc/npc=24370" target="_blank" rel="noopener">Nether-Stalker Mah&rsquo;duun</a></b> &amp; <b><a class="wh" href="https://www.wowhead.com/tbc/npc=24369" target="_blank" rel="noopener">Wind Trader Zhareem</a></b> in Shattrath for dailies.</li></ul>
+          
+          
+        </div>
+      </div>
+      <div class="node" id="node-route-heroic-attune-farm" data-step-id="route-heroic-attune-farm">
+        <label class="lvlbadge" for="cb-route-heroic-attune-farm" title="Toggle this step complete">
+          <span class="lvl">70</span><span class="check" aria-hidden="true">&#10003;</span>
+        </label>
+        <div class="card">
+          <div class="cardtop">
+            <h3>Heroic & Attune Farm</h3>
+            <label class="stepcheck">
+              <input type="checkbox" id="cb-route-heroic-attune-farm" data-step="route-heroic-attune-farm" data-route="1" aria-label="Mark step complete: Heroic &amp; Attune Farm">
+              <span class="cbx" aria-hidden="true"></span><span class="lbl">Done</span>
+            </label>
+          </div>
+          <ul class="do"><li>The Botanica, The Mechanar (take <b>[<a class="wh" href="https://www.wowhead.com/tbc/quest=10882" target="_blank" rel="noopener">Harbinger of Doom</a>]</b>), The Arcatraz, The Black Morass.</li><li>Farm <b><a class="wh" href="https://www.wowhead.com/tbc/zone=3847" target="_blank" rel="noopener">The Botanica</a></b> till revered with Sha&rsquo;tar.</li><li>Farm <b><a class="wh" href="https://www.wowhead.com/tbc/zone=2366" target="_blank" rel="noopener">The Black Morass</a></b> till revered with Keepers of Time.</li></ul>
+          
+          <div class="leave"><span class="leave-label">leave when</span> Fully attuned to T4 raids &amp; every heroic dungeon</div>
+        </div>
+      </div>
+      <div class="node" id="node-route-raid-attunements" data-step-id="route-raid-attunements">
+        <label class="lvlbadge" for="cb-route-raid-attunements" title="Toggle this step complete">
+          <span class="lvl">Raids</span><span class="check" aria-hidden="true">&#10003;</span>
+        </label>
+        <div class="card">
+          <div class="cardtop">
+            <h3>Raid Attunements</h3>
+            <label class="stepcheck">
+              <input type="checkbox" id="cb-route-raid-attunements" data-step="route-raid-attunements" data-route="1" aria-label="Mark step complete: Raid Attunements">
+              <span class="cbx" aria-hidden="true"></span><span class="lbl">Done</span>
+            </label>
+          </div>
+          <ul class="do"><li><b><a class="wh" href="https://www.wowhead.com/tbc/npc=17225" target="_blank" rel="noopener">Nightbane</a>:</b> at honored with Violet Eye, return to Archmage Alturus; take <b>[<a class="wh" href="https://www.wowhead.com/tbc/item=23933" target="_blank" rel="noopener">Medivh&rsquo;s Journal</a>]</b> and finish the chain.</li><li><b>SSC:</b> find <b>[<a class="wh" href="https://www.wowhead.com/tbc/npc=22421" target="_blank" rel="noopener">Skar&rsquo;this the Heretic</a>]</b> in heroic Slave Pens &rarr; <b>[<a class="wh" href="https://www.wowhead.com/tbc/quest=10901" target="_blank" rel="noopener">The Cudgel of Kar&rsquo;desh</a>]</b>.</li><li><b>TK:</b> Shadowmoon Valley &rarr; <b>[<a class="wh" href="https://www.wowhead.com/tbc/npc=21937" target="_blank" rel="noopener">Earthmender Sophurus</a>]</b> / <b>[<a class="wh" href="https://www.wowhead.com/tbc/npc=21938" target="_blank" rel="noopener">Earthmender Splinthoof</a>]</b>; take <b>[<a class="wh" href="https://www.wowhead.com/tbc/quest=10680" target="_blank" rel="noopener">The Hand of Gul&rsquo;dan</a>]</b>, finish the long chain, then visit A&rsquo;dal for 4 trials.</li><li><b>BT / Hyjal:</b> attunes aren&rsquo;t available until phase 2.</li></ul>
+          
+          
+        </div>
+      </div></div>
+  </section>
+
+  <section id="factions">
+    <h2 class="sec">Factions &amp; Their Dungeons</h2>
+    <p class="lead">Which dungeons and activities feed each reputation, where their home base is, and how far you typically grind it.</p>
+    <div class="facgrid">
+      <div class="faccard" data-step-id="fac-honor-hold-thrallmar">
+        <div class="fachead">
+          <div class="factext"><span class="facname"><a class="wh" href="https://www.wowhead.com/tbc/faction=946" target="_blank" rel="noopener">Honor Hold</a> / <a class="wh" href="https://www.wowhead.com/tbc/faction=947" target="_blank" rel="noopener">Thrallmar</a></span><span class="hq">Hellfire Peninsula</span></div>
+          <label class="goalcheck" title="Mark this reputation goal obtained">
+            <input type="checkbox" id="cb-fac-honor-hold-thrallmar" data-step="fac-honor-hold-thrallmar" data-goal="1" aria-label="Reputation goal obtained: Honor Hold / Thrallmar">
+            <span class="cbx" aria-hidden="true"></span>
+          </label>
+        </div>
+        <ul class="faclist"><li><span class="dg"><a class="wh" href="https://www.wowhead.com/tbc/zone=3562" target="_blank" rel="noopener">Hellfire Ramparts</a></span><span class="rep rep-honored">honored</span></li><li><span class="dg"><a class="wh" href="https://www.wowhead.com/tbc/zone=3713" target="_blank" rel="noopener">The Blood Furnace</a></span><span class="rep rep-honored">honored</span></li><li><span class="dg"><a class="wh" href="https://www.wowhead.com/tbc/zone=3714" target="_blank" rel="noopener">The Shattered Halls</a></span><span class="rep rep-exalted">exalted</span></li></ul>
+      </div>
+      <div class="faccard" data-step-id="fac-cenarion-expedition">
+        <div class="fachead">
+          <div class="factext"><span class="facname"><a class="wh" href="https://www.wowhead.com/tbc/faction=942" target="_blank" rel="noopener">Cenarion Expedition</a></span><span class="hq">Zangarmarsh</span></div>
+          <label class="goalcheck" title="Mark this reputation goal obtained">
+            <input type="checkbox" id="cb-fac-cenarion-expedition" data-step="fac-cenarion-expedition" data-goal="1" aria-label="Reputation goal obtained: Cenarion Expedition">
+            <span class="cbx" aria-hidden="true"></span>
+          </label>
+        </div>
+        <ul class="faclist"><li><span class="dg"><a class="wh" href="https://www.wowhead.com/tbc/zone=3717" target="_blank" rel="noopener">The Slave Pens</a></span><span class="rep rep-honored">honored</span></li><li><span class="dg"><a class="wh" href="https://www.wowhead.com/tbc/zone=3716" target="_blank" rel="noopener">The Underbog</a></span><span class="rep rep-honored">honored</span></li><li><span class="dg"><a class="wh" href="https://www.wowhead.com/tbc/item=24401" target="_blank" rel="noopener">Unidentified Plant Parts</a></span><span class="rep rep-honored">honored</span></li><li><span class="dg"><a class="wh" href="https://www.wowhead.com/tbc/zone=3715" target="_blank" rel="noopener">The Steam Vaults</a></span><span class="rep rep-exalted">exalted</span></li><li><span class="dg">Uncatalogued Species</span><span class="rep rep-exalted">exalted</span></li><li><span class="dg"><a class="wh" href="https://www.wowhead.com/tbc/item=24368" target="_blank" rel="noopener">Coilfang Armaments</a></span><span class="rep rep-exalted">exalted</span></li></ul>
+      </div>
+      <div class="faccard" data-step-id="fac-consortium">
+        <div class="fachead">
+          <div class="factext"><span class="facname"><a class="wh" href="https://www.wowhead.com/tbc/faction=933" target="_blank" rel="noopener">Consortium</a></span><span class="hq">Netherstorm / Nagrand</span></div>
+          <label class="goalcheck" title="Mark this reputation goal obtained">
+            <input type="checkbox" id="cb-fac-consortium" data-step="fac-consortium" data-goal="1" aria-label="Reputation goal obtained: Consortium">
+            <span class="cbx" aria-hidden="true"></span>
+          </label>
+        </div>
+        <ul class="faclist"><li><span class="dg"><a class="wh" href="https://www.wowhead.com/tbc/zone=3792" target="_blank" rel="noopener">Mana-Tombs</a></span><span class="rep rep-honored">honored</span></li></ul>
+      </div>
+      <div class="faccard" data-step-id="fac-lower-city">
+        <div class="fachead">
+          <div class="factext"><span class="facname"><a class="wh" href="https://www.wowhead.com/tbc/faction=1011" target="_blank" rel="noopener">Lower City</a></span><span class="hq">Shattrath City</span></div>
+          <label class="goalcheck" title="Mark this reputation goal obtained">
+            <input type="checkbox" id="cb-fac-lower-city" data-step="fac-lower-city" data-goal="1" aria-label="Reputation goal obtained: Lower City">
+            <span class="cbx" aria-hidden="true"></span>
+          </label>
+        </div>
+        <ul class="faclist"><li><span class="dg"><a class="wh" href="https://www.wowhead.com/tbc/zone=3790" target="_blank" rel="noopener">Auchenai Crypts</a></span><span class="rep rep-honored">honored</span></li><li><span class="dg"><a class="wh" href="https://www.wowhead.com/tbc/zone=3791" target="_blank" rel="noopener">Sethekk Halls</a></span><span class="rep rep-honored">honored</span></li><li><span class="dg"><a class="wh" href="https://www.wowhead.com/tbc/item=25719" target="_blank" rel="noopener">Arakkoa Feather</a></span><span class="rep rep-honored">honored</span></li><li><span class="dg"><a class="wh" href="https://www.wowhead.com/tbc/zone=3789" target="_blank" rel="noopener">Shadow Labyrinth</a></span><span class="rep rep-exalted">exalted</span></li></ul>
+      </div>
+      <div class="faccard" data-step-id="fac-keepers-of-time">
+        <div class="fachead">
+          <div class="factext"><span class="facname"><a class="wh" href="https://www.wowhead.com/tbc/faction=989" target="_blank" rel="noopener">Keepers of Time</a></span><span class="hq">Caverns of Time (Tanaris)</span></div>
+          <label class="goalcheck" title="Mark this reputation goal obtained">
+            <input type="checkbox" id="cb-fac-keepers-of-time" data-step="fac-keepers-of-time" data-goal="1" aria-label="Reputation goal obtained: Keepers of Time">
+            <span class="cbx" aria-hidden="true"></span>
+          </label>
+        </div>
+        <ul class="faclist"><li><span class="dg"><a class="wh" href="https://www.wowhead.com/tbc/zone=2367" target="_blank" rel="noopener">Old Hillsbrad Foothills</a></span><span class="rep rep-exalted">exalted</span></li><li><span class="dg"><a class="wh" href="https://www.wowhead.com/tbc/zone=2366" target="_blank" rel="noopener">The Black Morass</a></span><span class="rep rep-exalted">exalted</span></li></ul>
+      </div>
+      <div class="faccard" data-step-id="fac-sha-tar">
+        <div class="fachead">
+          <div class="factext"><span class="facname"><a class="wh" href="https://www.wowhead.com/tbc/faction=935" target="_blank" rel="noopener">Sha&rsquo;tar</a></span><span class="hq">Shattrath City</span></div>
+          <label class="goalcheck" title="Mark this reputation goal obtained">
+            <input type="checkbox" id="cb-fac-sha-tar" data-step="fac-sha-tar" data-goal="1" aria-label="Reputation goal obtained: Sha&#x27;tar">
+            <span class="cbx" aria-hidden="true"></span>
+          </label>
+        </div>
+        <ul class="faclist"><li><span class="dg">Shared rep with Aldor / <a class="wh" href="https://www.wowhead.com/tbc/faction=934" target="_blank" rel="noopener">Scryers</a></span><span class="rep rep-honored">honored</span></li><li><span class="dg"><a class="wh" href="https://www.wowhead.com/tbc/zone=3847" target="_blank" rel="noopener">The Botanica</a></span><span class="rep rep-exalted">exalted</span></li><li><span class="dg"><a class="wh" href="https://www.wowhead.com/tbc/zone=3849" target="_blank" rel="noopener">The Mechanar</a></span><span class="rep rep-exalted">exalted</span></li><li><span class="dg"><a class="wh" href="https://www.wowhead.com/tbc/zone=3848" target="_blank" rel="noopener">The Arcatraz</a></span><span class="rep rep-exalted">exalted</span></li></ul>
+      </div>
+      <div class="faccard" data-step-id="fac-aldor-scryers">
+        <div class="fachead">
+          <div class="factext"><span class="facname"><a class="wh" href="https://www.wowhead.com/tbc/faction=932" target="_blank" rel="noopener">Aldor</a> / <a class="wh" href="https://www.wowhead.com/tbc/faction=934" target="_blank" rel="noopener">Scryers</a></span><span class="hq">Shattrath City</span></div>
+          <label class="goalcheck" title="Mark this reputation goal obtained">
+            <input type="checkbox" id="cb-fac-aldor-scryers" data-step="fac-aldor-scryers" data-goal="1" aria-label="Reputation goal obtained: Aldor / Scryers">
+            <span class="cbx" aria-hidden="true"></span>
+          </label>
+        </div>
+        <ul class="faclist"><li><span class="dg"><a class="wh" href="https://www.wowhead.com/tbc/item=29425" target="_blank" rel="noopener">Mark of Kil&rsquo;jaeden</a> / <a class="wh" href="https://www.wowhead.com/tbc/item=29426" target="_blank" rel="noopener">Firewing Signet</a></span><span class="rep rep-honored">honored</span></li><li><span class="dg"><a class="wh" href="https://www.wowhead.com/tbc/item=30809" target="_blank" rel="noopener">Mark of Sargeras</a> / <a class="wh" href="https://www.wowhead.com/tbc/item=30810" target="_blank" rel="noopener">Sunfury Signet</a></span><span class="rep rep-exalted">exalted</span></li><li><span class="dg"><a class="wh" href="https://www.wowhead.com/tbc/item=29740" target="_blank" rel="noopener">Fel Armament</a> / <a class="wh" href="https://www.wowhead.com/tbc/item=29739" target="_blank" rel="noopener">Arcane Tome</a></span><span class="rep rep-exalted">exalted</span></li></ul>
+      </div>
+      <div class="faccard" data-step-id="fac-sha-tari-skyguard">
+        <div class="fachead">
+          <div class="factext"><span class="facname"><a class="wh" href="https://www.wowhead.com/tbc/faction=1031" target="_blank" rel="noopener">Sha&rsquo;tari Skyguard</a> <span class='ph'>p2</span></span><span class="hq">Terokkar Forest</span></div>
+          <label class="goalcheck" title="Mark this reputation goal obtained">
+            <input type="checkbox" id="cb-fac-sha-tari-skyguard" data-step="fac-sha-tari-skyguard" data-goal="1" aria-label="Reputation goal obtained: Sha&#x27;tari Skyguard">
+            <span class="cbx" aria-hidden="true"></span>
+          </label>
+        </div>
+        <ul class="faclist"><li><span class="dg">Mobs, dailies, quests, turn-ins</span></li></ul>
+      </div>
+      <div class="faccard" data-step-id="fac-kurenai-mag-har">
+        <div class="fachead">
+          <div class="factext"><span class="facname"><a class="wh" href="https://www.wowhead.com/tbc/faction=978" target="_blank" rel="noopener">Kurenai</a> / <a class="wh" href="https://www.wowhead.com/tbc/faction=941" target="_blank" rel="noopener">Mag&rsquo;har</a></span><span class="hq">Nagrand</span></div>
+          <label class="goalcheck" title="Mark this reputation goal obtained">
+            <input type="checkbox" id="cb-fac-kurenai-mag-har" data-step="fac-kurenai-mag-har" data-goal="1" aria-label="Reputation goal obtained: Kurenai / Mag&#x27;har">
+            <span class="cbx" aria-hidden="true"></span>
+          </label>
+        </div>
+        <ul class="faclist"><li><span class="dg">Mobs, quests, turn-ins</span></li></ul>
+      </div>
+      <div class="faccard" data-step-id="fac-netherwing">
+        <div class="fachead">
+          <div class="factext"><span class="facname"><a class="wh" href="https://www.wowhead.com/tbc/faction=1015" target="_blank" rel="noopener">Netherwing</a> <span class='ph'>p3</span></span><span class="hq">Shadowmoon Valley</span></div>
+          <label class="goalcheck" title="Mark this reputation goal obtained">
+            <input type="checkbox" id="cb-fac-netherwing" data-step="fac-netherwing" data-goal="1" aria-label="Reputation goal obtained: Netherwing">
+            <span class="cbx" aria-hidden="true"></span>
+          </label>
+        </div>
+        <ul class="faclist"><li><span class="dg">Dailies, quests, turn-ins</span></li></ul>
+      </div>
+      <div class="faccard" data-step-id="fac-ogri-la">
+        <div class="fachead">
+          <div class="factext"><span class="facname"><a class="wh" href="https://www.wowhead.com/tbc/faction=1038" target="_blank" rel="noopener">Ogri&rsquo;la</a> <span class='ph'>p2</span></span><span class="hq">Blade&rsquo;s Edge Mountains</span></div>
+          <label class="goalcheck" title="Mark this reputation goal obtained">
+            <input type="checkbox" id="cb-fac-ogri-la" data-step="fac-ogri-la" data-goal="1" aria-label="Reputation goal obtained: Ogri&#x27;la">
+            <span class="cbx" aria-hidden="true"></span>
+          </label>
+        </div>
+        <ul class="faclist"><li><span class="dg">Dailies, quests</span></li></ul>
+      </div>
+      <div class="faccard" data-step-id="fac-sporeggar">
+        <div class="fachead">
+          <div class="factext"><span class="facname"><a class="wh" href="https://www.wowhead.com/tbc/faction=970" target="_blank" rel="noopener">Sporeggar</a></span><span class="hq">Zangarmarsh</span></div>
+          <label class="goalcheck" title="Mark this reputation goal obtained">
+            <input type="checkbox" id="cb-fac-sporeggar" data-step="fac-sporeggar" data-goal="1" aria-label="Reputation goal obtained: Sporeggar">
+            <span class="cbx" aria-hidden="true"></span>
+          </label>
+        </div>
+        <ul class="faclist"><li><span class="dg"><a class="wh" href="https://www.wowhead.com/tbc/zone=3716" target="_blank" rel="noopener">The Underbog</a></span><span class="rep rep-exalted">exalted</span></li><li><span class="dg">Mobs, quests, repeatables, turn-ins</span></li></ul>
+      </div>
+      <div class="faccard" data-step-id="fac-violet-eye">
+        <div class="fachead">
+          <div class="factext"><span class="facname"><a class="wh" href="https://www.wowhead.com/tbc/faction=967" target="_blank" rel="noopener">Violet Eye</a></span><span class="hq">Deadwind Pass</span></div>
+          <label class="goalcheck" title="Mark this reputation goal obtained">
+            <input type="checkbox" id="cb-fac-violet-eye" data-step="fac-violet-eye" data-goal="1" aria-label="Reputation goal obtained: Violet Eye">
+            <span class="cbx" aria-hidden="true"></span>
+          </label>
+        </div>
+        <ul class="faclist"><li><span class="dg"><a class="wh" href="https://www.wowhead.com/tbc/zone=3457" target="_blank" rel="noopener">Karazhan</a></span></li></ul>
+      </div>
+      <div class="faccard" data-step-id="fac-ashtongue-deathsworn">
+        <div class="fachead">
+          <div class="factext"><span class="facname"><a class="wh" href="https://www.wowhead.com/tbc/faction=1012" target="_blank" rel="noopener">Ashtongue Deathsworn</a> <span class='ph'>p3</span></span><span class="hq">Shadowmoon Valley</span></div>
+          <label class="goalcheck" title="Mark this reputation goal obtained">
+            <input type="checkbox" id="cb-fac-ashtongue-deathsworn" data-step="fac-ashtongue-deathsworn" data-goal="1" aria-label="Reputation goal obtained: Ashtongue Deathsworn">
+            <span class="cbx" aria-hidden="true"></span>
+          </label>
+        </div>
+        <ul class="faclist"><li><span class="dg">Black Temple</span></li></ul>
+      </div>
+      <div class="faccard" data-step-id="fac-scale-of-the-sands">
+        <div class="fachead">
+          <div class="factext"><span class="facname"><a class="wh" href="https://www.wowhead.com/tbc/faction=990" target="_blank" rel="noopener">Scale of the Sands</a> <span class='ph'>p3</span></span><span class="hq">Caverns of Time</span></div>
+          <label class="goalcheck" title="Mark this reputation goal obtained">
+            <input type="checkbox" id="cb-fac-scale-of-the-sands" data-step="fac-scale-of-the-sands" data-goal="1" aria-label="Reputation goal obtained: Scale of the Sands">
+            <span class="cbx" aria-hidden="true"></span>
+          </label>
+        </div>
+        <ul class="faclist"><li><span class="dg">The Battle for Mount Hyjal</span></li></ul>
+      </div>
+      <div class="faccard" data-step-id="fac-shattered-sun-offensive">
+        <div class="fachead">
+          <div class="factext"><span class="facname"><a class="wh" href="https://www.wowhead.com/tbc/faction=1077" target="_blank" rel="noopener">Shattered Sun Offensive</a> <span class='ph'>p5</span></span><span class="hq">Isle of Quel&rsquo;Danas</span></div>
+          <label class="goalcheck" title="Mark this reputation goal obtained">
+            <input type="checkbox" id="cb-fac-shattered-sun-offensive" data-step="fac-shattered-sun-offensive" data-goal="1" aria-label="Reputation goal obtained: Shattered Sun Offensive">
+            <span class="cbx" aria-hidden="true"></span>
+          </label>
+        </div>
+        <ul class="faclist"><li><span class="dg"><a class="wh" href="https://www.wowhead.com/tbc/zone=4131" target="_blank" rel="noopener">Magisters&rsquo; Terrace</a></span></li></ul>
+      </div></div>
+  </section>
+
+  <section id="ranges">
+    <h2 class="sec">Level Ranges</h2>
+    <p class="lead">Where content is worth your time. &ldquo;Lvl range&rdquo; is the viable bracket; &ldquo;NPC lvl&rdquo; is the enemy level you&rsquo;ll face.</p>
+    <div class="twocol">
+      <div><p class="tblcap">Dungeon viability</p><table class="lvl"><thead><tr><th>Dungeon</th><th>Lvl range</th><th>NPC lvl</th></tr></thead><tbody><tr><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3562" target="_blank" rel="noopener">Hellfire Ramparts</a></td><td class="num">58-63</td><td class="num">59-62</td></tr><tr><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3713" target="_blank" rel="noopener">The Blood Furnace</a></td><td class="num">61-64</td><td class="num">61-63</td></tr><tr><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3717" target="_blank" rel="noopener">The Slave Pens</a></td><td class="num">62-65</td><td class="num">62-64</td></tr><tr><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3716" target="_blank" rel="noopener">The Underbog</a></td><td class="num">63-65</td><td class="num">62-65</td></tr><tr><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3792" target="_blank" rel="noopener">Mana-Tombs</a></td><td class="num">64-66</td><td class="num">63-66</td></tr><tr><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3790" target="_blank" rel="noopener">Auchenai Crypts</a></td><td class="num">65-67</td><td class="num">65-67</td></tr><tr><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=2367" target="_blank" rel="noopener">Old Hillsbrad Foothills</a></td><td class="num">66-68</td><td class="num">66-68</td></tr><tr><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3791" target="_blank" rel="noopener">Sethekk Halls</a></td><td class="num">66-69</td><td class="num">66-69</td></tr><tr><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3789" target="_blank" rel="noopener">Shadow Labyrinth</a></td><td class="num">68-70</td><td class="num">69-72</td></tr><tr><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3715" target="_blank" rel="noopener">The Steam Vaults</a></td><td class="num">69-70</td><td class="num">70-72</td></tr><tr><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3714" target="_blank" rel="noopener">The Shattered Halls</a></td><td class="num">69-70</td><td class="num">69-72</td></tr><tr><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=2366" target="_blank" rel="noopener">The Black Morass</a></td><td class="num">69-70</td><td class="num">70-72</td></tr><tr><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3847" target="_blank" rel="noopener">The Botanica</a></td><td class="num">70</td><td class="num">70-72</td></tr><tr><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3849" target="_blank" rel="noopener">The Mechanar</a></td><td class="num">70</td><td class="num">69-72</td></tr><tr><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3848" target="_blank" rel="noopener">The Arcatraz</a></td><td class="num">70</td><td class="num">70-72</td></tr></tbody></table></div>
+      <div><p class="tblcap">Open-world zone viability</p><table class="lvl"><thead><tr><th>Zone</th><th>Lvl range</th><th>NPC lvl</th></tr></thead><tbody><tr><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3483" target="_blank" rel="noopener">Hellfire Peninsula</a></td><td class="num">58-63</td><td class="num">57-63</td></tr><tr><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3521" target="_blank" rel="noopener">Zangarmarsh</a></td><td class="num">61-65</td><td class="num">60-64 (65)</td></tr><tr><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3519" target="_blank" rel="noopener">Terokkar Forest</a></td><td class="num">62-66</td><td class="num">62-66</td></tr><tr><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3518" target="_blank" rel="noopener">Nagrand</a></td><td class="num">64-68</td><td class="num">64-68 (71)</td></tr><tr><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3522" target="_blank" rel="noopener">Blade&rsquo;s Edge Mountains</a></td><td class="num">65-69</td><td class="num">65-68 (72)</td></tr><tr><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3523" target="_blank" rel="noopener">Netherstorm</a></td><td class="num">67-70</td><td class="num">66-70 (72)</td></tr><tr><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3520" target="_blank" rel="noopener">Shadowmoon Valley</a></td><td class="num">68-70</td><td class="num">67-71 (73)</td></tr></tbody></table></div>
+    </div>
+  </section>
+
+  <section id="difficulty">
+    <h2 class="sec">Dungeon Difficulty</h2>
+    <p class="lead">Relative difficulty so you can pick fights that match your group.</p>
+    <div class="diffwrap">
+      <div><p class="tblcap">Normal &mdash; high-level dungeons</p><div class="diffrow"><span class="diff diff-easy">easy</span><div class="chips"><span class="chip">The Botanica</span><span class="chip">Shadow Labyrinth</span></div></div><div class="diffrow"><span class="diff diff-medium">medium</span><div class="chips"><span class="chip">The Mechanar</span><span class="chip">The Steam Vaults</span><span class="chip">The Shattered Halls</span><span class="chip">The Black Morass</span></div></div><div class="diffrow"><span class="diff diff-hard">hard</span><div class="chips"><span class="chip">The Arcatraz</span></div></div></div>
+      <div><p class="tblcap">Heroic dungeons</p><div class="diffrow"><span class="diff diff-easy">easy</span><div class="chips"><span class="chip">Hellfire Ramparts</span><span class="chip">The Slave Pens</span><span class="chip">The Steam Vaults</span><span class="chip">Auchenai Crypts</span><span class="chip">The Botanica</span></div></div><div class="diffrow"><span class="diff diff-medium">medium</span><div class="chips"><span class="chip">The Underbog</span><span class="chip">Sethekk Halls</span><span class="chip">Shadow Labyrinth</span><span class="chip">The Mechanar</span></div></div><div class="diffrow"><span class="diff diff-hard">hard</span><div class="chips"><span class="chip">The Shattered Halls</span><span class="chip">Mana-Tombs</span><span class="chip">Old Hillsbrad Foothills</span><span class="chip">The Black Morass</span></div></div><div class="diffrow"><span class="diff diff-veryhard">very hard</span><div class="chips"><span class="chip">The Blood Furnace</span><span class="chip">The Arcatraz</span></div></div></div>
+    </div>
+  </section>
+
+  <section id="keys">
+    <h2 class="sec">Keys &amp; Attunements</h2>
+    <p class="lead">Normal-mode keys (where required) and the heroic key for each wing, plus raid entry requirements.</p>
+    <div class="twocol">
+      <div><p class="tblcap">Dungeon keys</p><table class="keys keys-check"><thead><tr><th class="ck" title="obtained">&#10003;</th><th>Dungeon</th><th>Lvl</th><th>Normal key</th><th>Heroic key</th></tr></thead><tbody><tr class="grouprow"><td colspan="5">Hellfire Citadel</td></tr><tr data-step-id="key-hellfire-ramparts"><td class="ck"><label class="rowcheck"><input type="checkbox" id="cb-key-hellfire-ramparts" data-step="key-hellfire-ramparts" data-goal="1" aria-label="Key or attune obtained: Hellfire Ramparts"><span class="cbx" aria-hidden="true"></span></label></td><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3562" target="_blank" rel="noopener">Hellfire Ramparts</a></td><td class="num">60</td><td>&ndash;</td><td><span class="keyitem hero">Flamewrought Key</span></td></tr><tr data-step-id="key-the-blood-furnace"><td class="ck"><label class="rowcheck"><input type="checkbox" id="cb-key-the-blood-furnace" data-step="key-the-blood-furnace" data-goal="1" aria-label="Key or attune obtained: The Blood Furnace"><span class="cbx" aria-hidden="true"></span></label></td><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3713" target="_blank" rel="noopener">The Blood Furnace</a></td><td class="num">61</td><td>&ndash;</td><td><span class="keyitem hero">Flamewrought Key</span></td></tr><tr data-step-id="key-the-shattered-halls"><td class="ck"><label class="rowcheck"><input type="checkbox" id="cb-key-the-shattered-halls" data-step="key-the-shattered-halls" data-goal="1" aria-label="Key or attune obtained: The Shattered Halls"><span class="cbx" aria-hidden="true"></span></label></td><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3714" target="_blank" rel="noopener">The Shattered Halls</a></td><td class="num">69</td><td><span class="keyitem">Shattered Halls Key</span></td><td><span class="keyitem hero">Flamewrought Key</span></td></tr><tr class="grouprow"><td colspan="5">Coilfang Reservoir</td></tr><tr data-step-id="key-the-slave-pens"><td class="ck"><label class="rowcheck"><input type="checkbox" id="cb-key-the-slave-pens" data-step="key-the-slave-pens" data-goal="1" aria-label="Key or attune obtained: The Slave Pens"><span class="cbx" aria-hidden="true"></span></label></td><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3717" target="_blank" rel="noopener">The Slave Pens</a></td><td class="num">62</td><td>&ndash;</td><td><span class="keyitem hero">Reservoir Key</span></td></tr><tr data-step-id="key-the-underbog"><td class="ck"><label class="rowcheck"><input type="checkbox" id="cb-key-the-underbog" data-step="key-the-underbog" data-goal="1" aria-label="Key or attune obtained: The Underbog"><span class="cbx" aria-hidden="true"></span></label></td><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3716" target="_blank" rel="noopener">The Underbog</a></td><td class="num">63</td><td>&ndash;</td><td><span class="keyitem hero">Reservoir Key</span></td></tr><tr data-step-id="key-the-steam-vaults"><td class="ck"><label class="rowcheck"><input type="checkbox" id="cb-key-the-steam-vaults" data-step="key-the-steam-vaults" data-goal="1" aria-label="Key or attune obtained: The Steam Vaults"><span class="cbx" aria-hidden="true"></span></label></td><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3715" target="_blank" rel="noopener">The Steam Vaults</a></td><td class="num">69</td><td>&ndash;</td><td><span class="keyitem hero">Reservoir Key</span></td></tr><tr class="grouprow"><td colspan="5">Auchindoun</td></tr><tr data-step-id="key-mana-tombs"><td class="ck"><label class="rowcheck"><input type="checkbox" id="cb-key-mana-tombs" data-step="key-mana-tombs" data-goal="1" aria-label="Key or attune obtained: Mana-Tombs"><span class="cbx" aria-hidden="true"></span></label></td><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3792" target="_blank" rel="noopener">Mana-Tombs</a></td><td class="num">64</td><td>&ndash;</td><td><span class="keyitem hero">Auchenai Key</span></td></tr><tr data-step-id="key-auchenai-crypts"><td class="ck"><label class="rowcheck"><input type="checkbox" id="cb-key-auchenai-crypts" data-step="key-auchenai-crypts" data-goal="1" aria-label="Key or attune obtained: Auchenai Crypts"><span class="cbx" aria-hidden="true"></span></label></td><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3790" target="_blank" rel="noopener">Auchenai Crypts</a></td><td class="num">65</td><td>&ndash;</td><td><span class="keyitem hero">Auchenai Key</span></td></tr><tr data-step-id="key-sethekk-halls"><td class="ck"><label class="rowcheck"><input type="checkbox" id="cb-key-sethekk-halls" data-step="key-sethekk-halls" data-goal="1" aria-label="Key or attune obtained: Sethekk Halls"><span class="cbx" aria-hidden="true"></span></label></td><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3791" target="_blank" rel="noopener">Sethekk Halls</a></td><td class="num">66</td><td>&ndash;</td><td><span class="keyitem hero">Auchenai Key</span></td></tr><tr data-step-id="key-shadow-labyrinth"><td class="ck"><label class="rowcheck"><input type="checkbox" id="cb-key-shadow-labyrinth" data-step="key-shadow-labyrinth" data-goal="1" aria-label="Key or attune obtained: Shadow Labyrinth"><span class="cbx" aria-hidden="true"></span></label></td><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3789" target="_blank" rel="noopener">Shadow Labyrinth</a></td><td class="num">68</td><td><span class="keyitem">Shadow Labyrinth Key</span></td><td><span class="keyitem hero">Auchenai Key</span></td></tr><tr class="grouprow"><td colspan="5">Caverns of Time</td></tr><tr data-step-id="key-old-hillsbrad-foothills"><td class="ck"><label class="rowcheck"><input type="checkbox" id="cb-key-old-hillsbrad-foothills" data-step="key-old-hillsbrad-foothills" data-goal="1" aria-label="Key or attune obtained: Old Hillsbrad Foothills"><span class="cbx" aria-hidden="true"></span></label></td><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=2367" target="_blank" rel="noopener">Old Hillsbrad Foothills</a></td><td class="num">66</td><td><span class="keyitem">The Caverns of Time</span></td><td><span class="keyitem hero">Key of Time</span></td></tr><tr data-step-id="key-the-black-morass"><td class="ck"><label class="rowcheck"><input type="checkbox" id="cb-key-the-black-morass" data-step="key-the-black-morass" data-goal="1" aria-label="Key or attune obtained: The Black Morass"><span class="cbx" aria-hidden="true"></span></label></td><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=2366" target="_blank" rel="noopener">The Black Morass</a></td><td class="num">69</td><td><span class="keyitem">Return to Andormu</span></td><td><span class="keyitem hero">Key of Time</span></td></tr><tr class="grouprow"><td colspan="5">Tempest Keep</td></tr><tr data-step-id="key-the-botanica"><td class="ck"><label class="rowcheck"><input type="checkbox" id="cb-key-the-botanica" data-step="key-the-botanica" data-goal="1" aria-label="Key or attune obtained: The Botanica"><span class="cbx" aria-hidden="true"></span></label></td><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3847" target="_blank" rel="noopener">The Botanica</a></td><td class="num">70</td><td><span class="keyitem">fly mount</span></td><td><span class="keyitem hero">Warpforged Key</span></td></tr><tr data-step-id="key-the-mechanar"><td class="ck"><label class="rowcheck"><input type="checkbox" id="cb-key-the-mechanar" data-step="key-the-mechanar" data-goal="1" aria-label="Key or attune obtained: The Mechanar"><span class="cbx" aria-hidden="true"></span></label></td><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3849" target="_blank" rel="noopener">The Mechanar</a></td><td class="num">70</td><td><span class="keyitem">fly mount</span></td><td><span class="keyitem hero">Warpforged Key</span></td></tr><tr data-step-id="key-the-arcatraz"><td class="ck"><label class="rowcheck"><input type="checkbox" id="cb-key-the-arcatraz" data-step="key-the-arcatraz" data-goal="1" aria-label="Key or attune obtained: The Arcatraz"><span class="cbx" aria-hidden="true"></span></label></td><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3848" target="_blank" rel="noopener">The Arcatraz</a></td><td class="num">70</td><td><span class="keyitem">Key to the Arcatraz</span></td><td><span class="keyitem hero">Warpforged Key</span></td></tr><tr class="grouprow"><td colspan="5"><a class="wh" href="https://www.wowhead.com/tbc/zone=4131" target="_blank" rel="noopener">Magisters&rsquo; Terrace</a></td></tr><tr data-step-id="key-magisters-terrace"><td class="ck"><label class="rowcheck"><input type="checkbox" id="cb-key-magisters-terrace" data-step="key-magisters-terrace" data-goal="1" aria-label="Key or attune obtained: Magisters&#x27; Terrace"><span class="cbx" aria-hidden="true"></span></label></td><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=4131" target="_blank" rel="noopener">Magisters&rsquo; Terrace</a></td><td class="num">70</td><td>&ndash;</td><td><span class="keyitem hero">Hard to Kill</span></td></tr></tbody></table></div>
+      <div><p class="tblcap">Raids</p><table class="keys"><thead><tr><th>Raid</th><th>Attunement / requirement</th></tr></thead><tbody><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Magtheridon%27s%20Lair" target="_blank" rel="noopener">Magtheridon&rsquo;s Lair</a></td><td>&ndash;</td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Gruul%27s%20Lair" target="_blank" rel="noopener">Gruul&rsquo;s Lair</a></td><td>&ndash;</td></tr><tr><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/zone=3457" target="_blank" rel="noopener">Karazhan</a></td><td><span class="keyitem"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=The%20Master%27s%20Key" target="_blank" rel="noopener">The Master&rsquo;s Key</a></span></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Serpentshrine%20Cavern" target="_blank" rel="noopener">Serpentshrine Cavern</a> <span class="ph">p2</span></td><td><span class="keyitem"><a class="wh" href="https://www.wowhead.com/tbc/quest=10901" target="_blank" rel="noopener">The Cudgel of Kar&rsquo;desh</a></span></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Tempest%20Keep" target="_blank" rel="noopener">Tempest Keep</a> <span class="ph">p2</span></td><td><span class="keyitem"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Trial%20of%20the%20Naaru%3A%20Magtheridon" target="_blank" rel="noopener">Trial of the Naaru: Magtheridon</a></span></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Black%20Temple" target="_blank" rel="noopener">Black Temple</a> <span class="ph">p3</span></td><td><span class="keyitem"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Medallion%20of%20Karabor" target="_blank" rel="noopener">Medallion of Karabor</a></span></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=The%20Battle%20for%20Mount%20Hyjal" target="_blank" rel="noopener">The Battle for Mount Hyjal</a> <span class="ph">p3</span></td><td><span class="keyitem"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=The%20Vials%20of%20Eternity" target="_blank" rel="noopener">The Vials of Eternity</a></span></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Zul%27Aman" target="_blank" rel="noopener">Zul&rsquo;Aman</a> <span class="ph">p4</span></td><td>&ndash;</td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Sunwell%20Plateau" target="_blank" rel="noopener">Sunwell Plateau</a> <span class="ph">p5</span></td><td>&ndash;</td></tr></tbody></table></div>
+    </div>
+  </section>
+
+  <section id="gear">
+    <h2 class="sec">Phase&nbsp;1 Quartermaster Gear</h2>
+    <p class="lead">Reputation rewards by role. Both factions of a pair (e.g. Aldor/Scryers, Honor Hold/Thrallmar) offer similar rewards under different names.</p>
+    <div class="qmblock"><div class="qmtier qm-honored">honored</div><table class="qm"><thead><tr><th>Agi DPS</th><th>Str DPS</th><th>Caster</th><th>Healer</th><th>Tank</th></tr></thead><tbody><tr><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Grunt%27s%20Waraxe" target="_blank" rel="noopener">Grunt&rsquo;s Waraxe</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Explorer%27s%20Walking%20Stick" target="_blank" rel="noopener">Explorer&rsquo;s Walking Stick</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Farseer%27s%20Band" target="_blank" rel="noopener">Farseer&rsquo;s Band</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Preserver%27s%20Cudgel" target="_blank" rel="noopener">Preserver&rsquo;s Cudgel</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Petrified%20Lichen%20Guard" target="_blank" rel="noopener">Petrified Lichen Guard</a></td></tr><tr><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Footman%27s%20Longsword" target="_blank" rel="noopener">Footman&rsquo;s Longsword</a></td><td class="empty">&middot;</td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Sage%27s%20Band" target="_blank" rel="noopener">Sage&rsquo;s Band</a></td><td class="empty">&middot;</td><td class="empty">&middot;</td></tr><tr><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Explorer%27s%20Walking%20Stick" target="_blank" rel="noopener">Explorer&rsquo;s Walking Stick</a></td><td class="empty">&middot;</td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Nethershard" target="_blank" rel="noopener">Nethershard</a></td><td class="empty">&middot;</td><td class="empty">&middot;</td></tr><tr><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Gift%20of%20the%20Ethereal" target="_blank" rel="noopener">Gift of the Ethereal</a></td><td class="empty">&middot;</td><td class="empty">&middot;</td><td class="empty">&middot;</td><td class="empty">&middot;</td></tr></tbody></table></div><div class="qmblock"><div class="qmtier qm-revered">revered</div><table class="qm"><thead><tr><th>Agi DPS</th><th>Str DPS</th><th>Caster</th><th>Healer</th><th>Tank</th></tr></thead><tbody><tr><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Glyph%20of%20Ferocity" target="_blank" rel="noopener">Glyph of Ferocity</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Glyph%20of%20Ferocity" target="_blank" rel="noopener">Glyph of Ferocity</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Glyph%20of%20Power" target="_blank" rel="noopener">Glyph of Power</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Glyph%20of%20Renewal" target="_blank" rel="noopener">Glyph of Renewal</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Glyph%20of%20the%20Defender" target="_blank" rel="noopener">Glyph of the Defender</a></td></tr><tr><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Blackened%20Spear" target="_blank" rel="noopener">Blackened Spear</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Glyph%20of%20the%20Outcast" target="_blank" rel="noopener">Glyph of the Outcast</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Xi%27ri%27s%20Gift" target="_blank" rel="noopener">Xi&rsquo;ri&rsquo;s Gift</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Ancestral%20Band" target="_blank" rel="noopener">Ancestral Band</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Timewarden%27s%20Leggings" target="_blank" rel="noopener">Timewarden&rsquo;s Leggings</a></td></tr><tr><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Hellforged%20Halberd" target="_blank" rel="noopener">Hellforged Halberd</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Consortium%20Blaster" target="_blank" rel="noopener">Consortium Blaster</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Stormspire%20Vest" target="_blank" rel="noopener">Stormspire Vest</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Ring%20of%20Convalescence" target="_blank" rel="noopener">Ring of Convalescence</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Vindicator%27s%20Hauberk" target="_blank" rel="noopener">Vindicator&rsquo;s Hauberk</a></td></tr><tr><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Consortium%20Blaster" target="_blank" rel="noopener">Consortium Blaster</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Salvager%27s%20Hauberk" target="_blank" rel="noopener">Salvager&rsquo;s Hauberk</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Leggings%20of%20the%20Skettis%20Exile" target="_blank" rel="noopener">Leggings of the Skettis Exile</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Lower%20City%20Prayerbook" target="_blank" rel="noopener">Lower City Prayerbook</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Gauntlets%20of%20the%20Chosen" target="_blank" rel="noopener">Gauntlets of the Chosen</a></td></tr><tr><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Nomad%27s%20Leggings" target="_blank" rel="noopener">Nomad&rsquo;s Leggings</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Retainer%27s%20Leggings" target="_blank" rel="noopener">Retainer&rsquo;s Leggings</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Continuum%20Blade" target="_blank" rel="noopener">Continuum Blade</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Seer%27s%20Cane" target="_blank" rel="noopener">Seer&rsquo;s Cane</a></td><td class="empty">&middot;</td></tr><tr><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Salvager%27s%20Hauberk" target="_blank" rel="noopener">Salvager&rsquo;s Hauberk</a></td><td class="empty">&middot;</td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Sporeling%27s%20Firestick" target="_blank" rel="noopener">Sporeling&rsquo;s Firestick</a></td><td class="empty">&middot;</td><td class="empty">&middot;</td></tr><tr><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Blessed%20Scale%20Girdle" target="_blank" rel="noopener">Blessed Scale Girdle</a></td><td class="empty">&middot;</td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Anchorite%27s%20Robes" target="_blank" rel="noopener">Anchorite&rsquo;s Robes</a></td><td class="empty">&middot;</td><td class="empty">&middot;</td></tr><tr><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Hardened%20Stone%20Shard" target="_blank" rel="noopener">Hardened Stone Shard</a></td><td class="empty">&middot;</td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Auchenai%20Staff" target="_blank" rel="noopener">Auchenai Staff</a></td><td class="empty">&middot;</td><td class="empty">&middot;</td></tr><tr><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Lightwarden%27s%20Band" target="_blank" rel="noopener">Lightwarden&rsquo;s Band</a></td><td class="empty">&middot;</td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Scryer%27s%20Bloodgem" target="_blank" rel="noopener">Scryer&rsquo;s Bloodgem</a></td><td class="empty">&middot;</td><td class="empty">&middot;</td></tr><tr><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Retainer%27s%20Leggings" target="_blank" rel="noopener">Retainer&rsquo;s Leggings</a></td><td class="empty">&middot;</td><td class="empty">&middot;</td><td class="empty">&middot;</td><td class="empty">&middot;</td></tr></tbody></table></div><div class="qmblock"><div class="qmtier qm-exalted">exalted</div><table class="qm"><thead><tr><th>Agi DPS</th><th>Str DPS</th><th>Caster</th><th>Healer</th><th>Tank</th></tr></thead><tbody><tr><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Marksman%27s%20Bow" target="_blank" rel="noopener">Marksman&rsquo;s Bow</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Earthwarden" target="_blank" rel="noopener">Earthwarden</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Stormcaller" target="_blank" rel="noopener">Stormcaller</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Windcaller%27s%20Orb" target="_blank" rel="noopener">Windcaller&rsquo;s Orb</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Warbringer" target="_blank" rel="noopener">Warbringer</a></td></tr><tr><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Veteran%27s%20Musket" target="_blank" rel="noopener">Veteran&rsquo;s Musket</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Haramad%27s%20Bargain" target="_blank" rel="noopener">Haramad&rsquo;s Bargain</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Blade%20of%20the%20Archmage" target="_blank" rel="noopener">Blade of the Archmage</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Nether%20Runner%27s%20Cowl" target="_blank" rel="noopener">Nether Runner&rsquo;s Cowl</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Honor%27s%20Call" target="_blank" rel="noopener">Honor&rsquo;s Call</a></td></tr><tr><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Guile%20of%20Khoraazi" target="_blank" rel="noopener">Guile of Khoraazi</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Shapeshifter%27s%20Signet" target="_blank" rel="noopener">Shapeshifter&rsquo;s Signet</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Ashyen%27s%20Gift" target="_blank" rel="noopener">Ashyen&rsquo;s Gift</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Bindings%20of%20the%20Timewalker" target="_blank" rel="noopener">Bindings of the Timewalker</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Earthwarden" target="_blank" rel="noopener">Earthwarden</a></td></tr><tr><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Haramad%27s%20Bargain" target="_blank" rel="noopener">Haramad&rsquo;s Bargain</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Trident%20of%20the%20Outcast%20Tribe" target="_blank" rel="noopener">Trident of the Outcast Tribe</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Nether%20Runner%27s%20Cowl" target="_blank" rel="noopener">Nether Runner&rsquo;s Cowl</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Gavel%20of%20Pure%20Light" target="_blank" rel="noopener">Gavel of Pure Light</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Timelapse%20Shard" target="_blank" rel="noopener">Timelapse Shard</a></td></tr><tr><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Shapeshifter%27s%20Signet" target="_blank" rel="noopener">Shapeshifter&rsquo;s Signet</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=A%27dal%27s%20Command" target="_blank" rel="noopener">A&rsquo;dal&rsquo;s Command</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Gavel%20of%20Unearthed%20Secrets" target="_blank" rel="noopener">Gavel of Unearthed Secrets</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Medallion%20of%20the%20Lightbearer" target="_blank" rel="noopener">Medallion of the Lightbearer</a></td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Crest%20of%20the%20Sha%27tar" target="_blank" rel="noopener">Crest of the Sha&rsquo;tar</a></td></tr><tr><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Riftmaker" target="_blank" rel="noopener">Riftmaker</a></td><td class="empty">&middot;</td><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Seer%27s%20Signet" target="_blank" rel="noopener">Seer&rsquo;s Signet</a></td><td class="empty">&middot;</td><td class="empty">&middot;</td></tr><tr><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=A%27dal%27s%20Command" target="_blank" rel="noopener">A&rsquo;dal&rsquo;s Command</a></td><td class="empty">&middot;</td><td class="empty">&middot;</td><td class="empty">&middot;</td><td class="empty">&middot;</td></tr><tr><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Vindicator%27s%20Brand" target="_blank" rel="noopener">Vindicator&rsquo;s Brand</a></td><td class="empty">&middot;</td><td class="empty">&middot;</td><td class="empty">&middot;</td><td class="empty">&middot;</td></tr><tr><td><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Retainer%27s%20Blade" target="_blank" rel="noopener">Retainer&rsquo;s Blade</a></td><td class="empty">&middot;</td><td class="empty">&middot;</td><td class="empty">&middot;</td><td class="empty">&middot;</td></tr></tbody></table></div>
+  </section>
+
+  <section id="rep">
+    <h2 class="sec">Where the Rep Comes From</h2>
+    <p class="lead">Approximate reputation available per source for each faction &mdash; handy when you&rsquo;re short of a breakpoint.</p>
+    <div class="repgrid">
+      <div class="repcard">
+        <div class="rephead"><a class="wh" href="https://www.wowhead.com/tbc/faction=946" target="_blank" rel="noopener">Honor Hold</a></div>
+        <ul class="replist"><li><span class="src">dungeons</span><span class="amt">2800</span></li><li><span class="src"><a class="wh" href="https://www.wowhead.com/tbc/zone=3483" target="_blank" rel="noopener">Hellfire Peninsula</a></span><span class="amt">11620</span></li></ul>
+      </div>
+      <div class="repcard">
+        <div class="rephead"><a class="wh" href="https://www.wowhead.com/tbc/faction=947" target="_blank" rel="noopener">Thrallmar</a></div>
+        <ul class="replist"><li><span class="src">dungeons</span><span class="amt">2300</span></li><li><span class="src"><a class="wh" href="https://www.wowhead.com/tbc/zone=3483" target="_blank" rel="noopener">Hellfire Peninsula</a></span><span class="amt">12940</span></li></ul>
+      </div>
+      <div class="repcard">
+        <div class="rephead"><a class="wh" href="https://www.wowhead.com/tbc/faction=942" target="_blank" rel="noopener">Cenarion Expedition</a></div>
+        <ul class="replist"><li><span class="src">dungeons</span><span class="amt">2335</span></li><li><span class="src"><a class="wh" href="https://www.wowhead.com/tbc/zone=3483" target="_blank" rel="noopener">Hellfire Peninsula</a></span><span class="amt">1805</span></li><li><span class="src"><a class="wh" href="https://www.wowhead.com/tbc/zone=3521" target="_blank" rel="noopener">Zangarmarsh</a></span><span class="amt">6525</span></li><li><span class="src"><a class="wh" href="https://www.wowhead.com/tbc/zone=3519" target="_blank" rel="noopener">Terokkar Forest</a></span><span class="amt">2425</span></li><li><span class="src"><a class="wh" href="https://www.wowhead.com/tbc/zone=3522" target="_blank" rel="noopener">Blade&rsquo;s Edge Mountains</a></span><span class="amt">4820</span></li><li><span class="src"><a class="wh" href="https://www.wowhead.com/tbc/zone=3523" target="_blank" rel="noopener">Netherstorm</a></span><span class="amt">850</span></li></ul>
+      </div>
+      <div class="repcard">
+        <div class="rephead"><a class="wh" href="https://www.wowhead.com/tbc/faction=970" target="_blank" rel="noopener">Sporeggar</a></div>
+        <ul class="replist"><li><span class="src">dungeons</span><span class="amt">1450</span></li><li><span class="src"><a class="wh" href="https://www.wowhead.com/tbc/zone=3521" target="_blank" rel="noopener">Zangarmarsh</a></span><span class="amt">2000 + repeatables</span></li></ul>
+      </div>
+      <div class="repcard">
+        <div class="rephead"><a class="wh" href="https://www.wowhead.com/tbc/faction=1011" target="_blank" rel="noopener">Lower City</a></div>
+        <ul class="replist"><li><span class="src">dungeons</span><span class="amt">1950</span></li><li><span class="src"><a class="wh" href="https://www.wowhead.com/tbc/zone=3519" target="_blank" rel="noopener">Terokkar Forest</a></span><span class="amt">6700</span></li></ul>
+      </div>
+      <div class="repcard">
+        <div class="rephead"><a class="wh" href="https://www.wowhead.com/tbc/faction=933" target="_blank" rel="noopener">Consortium</a></div>
+        <ul class="replist"><li><span class="src">dungeons</span><span class="amt">1850</span></li><li><span class="src"><a class="wh" href="https://www.wowhead.com/tbc/zone=3518" target="_blank" rel="noopener">Nagrand</a></span><span class="amt">1510 + repeatables</span></li><li><span class="src"><a class="wh" href="https://www.wowhead.com/tbc/zone=3522" target="_blank" rel="noopener">Blade&rsquo;s Edge Mountains</a></span><span class="amt">1500</span></li><li><span class="src"><a class="wh" href="https://www.wowhead.com/tbc/zone=3523" target="_blank" rel="noopener">Netherstorm</a></span><span class="amt">11915 + repeatables</span></li><li><span class="src">daily dungeons &amp; HC</span><span class="amt"></span></li></ul>
+      </div>
+      <div class="repcard">
+        <div class="rephead"><a class="wh" href="https://www.wowhead.com/tbc/faction=989" target="_blank" rel="noopener">Keepers of Time</a></div>
+        <ul class="replist"><li><span class="src">dungeons</span><span class="amt">14270</span></li></ul>
+      </div>
+      <div class="repcard">
+        <div class="rephead"><a class="wh" href="https://www.wowhead.com/tbc/faction=935" target="_blank" rel="noopener">Sha&rsquo;tar</a></div>
+        <ul class="replist"><li><span class="src">dungeons</span><span class="amt">3645</span></li><li><span class="src"><a class="wh" href="https://www.wowhead.com/tbc/zone=3519" target="_blank" rel="noopener">Terokkar Forest</a></span><span class="amt">1610</span></li><li><span class="src"><a class="wh" href="https://www.wowhead.com/tbc/zone=3518" target="_blank" rel="noopener">Nagrand</a></span><span class="amt">1175</span></li><li><span class="src"><a class="wh" href="https://www.wowhead.com/tbc/zone=3520" target="_blank" rel="noopener">Shadowmoon Valley</a></span><span class="amt">1900</span></li></ul>
+      </div>
+      <div class="repcard">
+        <div class="rephead"><a class="wh" href="https://www.wowhead.com/tbc/faction=932" target="_blank" rel="noopener">Aldor</a> / <a class="wh" href="https://www.wowhead.com/tbc/faction=934" target="_blank" rel="noopener">Scryers</a></div>
+        <ul class="replist"><li><span class="src"><a class="wh" href="https://www.wowhead.com/tbc/zone=3519" target="_blank" rel="noopener">Terokkar Forest</a></span><span class="amt">75</span></li><li><span class="src"><a class="wh" href="https://www.wowhead.com/tbc/zone=3518" target="_blank" rel="noopener">Nagrand</a></span><span class="amt">75</span></li><li><span class="src"><a class="wh" href="https://www.wowhead.com/tbc/zone=3703" target="_blank" rel="noopener">Shattrath City</a></span><span class="amt">6860</span></li><li><span class="src"><a class="wh" href="https://www.wowhead.com/tbc/zone=3523" target="_blank" rel="noopener">Netherstorm</a></span><span class="amt">4425</span></li><li><span class="src"><a class="wh" href="https://www.wowhead.com/tbc/zone=3520" target="_blank" rel="noopener">Shadowmoon Valley</a></span><span class="amt">2900</span></li></ul>
+      </div>
+      <div class="repcard">
+        <div class="rephead"><a class="wh" href="https://www.wowhead.com/tbc/faction=1031" target="_blank" rel="noopener">Sha&rsquo;tari Skyguard</a> <span class='ph'>p2</span></div>
+        <ul class="replist"><li><span class="src"><a class="wh" href="https://www.wowhead.com/tbc/zone=3703" target="_blank" rel="noopener">Shattrath City</a></span><span class="amt">325</span></li><li><span class="src"><a class="wh" href="https://www.wowhead.com/tbc/zone=3522" target="_blank" rel="noopener">Blade&rsquo;s Edge Mountains</a></span><span class="amt">3820</span></li><li><span class="src">Skettis</span><span class="amt">3485</span></li><li><span class="src">and dailies</span><span class="amt"></span></li></ul>
+      </div>
+      <div class="repcard">
+        <div class="rephead"><a class="wh" href="https://www.wowhead.com/tbc/faction=1038" target="_blank" rel="noopener">Ogri&rsquo;la</a> <span class='ph'>p2</span></div>
+        <ul class="replist"><li><span class="src"><a class="wh" href="https://www.wowhead.com/tbc/zone=3522" target="_blank" rel="noopener">Blade&rsquo;s Edge Mountains</a></span><span class="amt">3755</span></li><li><span class="src">and dailies</span><span class="amt"></span></li></ul>
+      </div>
+      <div class="repcard">
+        <div class="rephead"><a class="wh" href="https://www.wowhead.com/tbc/faction=978" target="_blank" rel="noopener">Kurenai</a></div>
+        <ul class="replist"><li><span class="src"><a class="wh" href="https://www.wowhead.com/tbc/zone=3521" target="_blank" rel="noopener">Zangarmarsh</a></span><span class="amt">2250</span></li><li><span class="src"><a class="wh" href="https://www.wowhead.com/tbc/zone=3518" target="_blank" rel="noopener">Nagrand</a></span><span class="amt">6035 + repeatables</span></li></ul>
+      </div>
+      <div class="repcard">
+        <div class="rephead"><a class="wh" href="https://www.wowhead.com/tbc/faction=941" target="_blank" rel="noopener">Mag&rsquo;har</a></div>
+        <ul class="replist"><li><span class="src"><a class="wh" href="https://www.wowhead.com/tbc/zone=3483" target="_blank" rel="noopener">Hellfire Peninsula</a></span><span class="amt">1100</span></li><li><span class="src"><a class="wh" href="https://www.wowhead.com/tbc/zone=3519" target="_blank" rel="noopener">Terokkar Forest</a></span><span class="amt">760</span></li><li><span class="src"><a class="wh" href="https://www.wowhead.com/tbc/zone=3518" target="_blank" rel="noopener">Nagrand</a></span><span class="amt">9015 + repeatables</span></li></ul>
+      </div>
+      <div class="repcard">
+        <div class="rephead"><a class="wh" href="https://www.wowhead.com/tbc/faction=1015" target="_blank" rel="noopener">Netherwing</a> <span class='ph'>p3</span></div>
+        <ul class="replist"><li><span class="src">intro</span><span class="amt">42000</span></li><li><span class="src"><a class="wh" href="https://www.wowhead.com/tbc/zone=3520" target="_blank" rel="noopener">Shadowmoon Valley</a></span><span class="amt">9575</span></li><li><span class="src">and dailies</span><span class="amt"></span></li></ul>
+      </div>
+      <div class="repcard">
+        <div class="rephead"><a class="wh" href="https://www.wowhead.com/tbc/faction=967" target="_blank" rel="noopener">Violet Eye</a></div>
+        <ul class="replist"><li><span class="src">kara attune</span><span class="amt">2100</span></li><li><span class="src">Nightbane attune</span><span class="amt">4345</span></li><li><span class="src">ring chain</span><span class="amt">1300</span></li></ul>
+      </div>
+      <div class="repcard">
+        <div class="rephead"><a class="wh" href="https://www.wowhead.com/tbc/faction=1012" target="_blank" rel="noopener">Ashtongue Deathsworn</a> <span class='ph'>p3</span></div>
+        <ul class="replist"><li><span class="src"><a class="wh" href="https://www.wowhead.com/tbc/zone=3520" target="_blank" rel="noopener">Shadowmoon Valley</a></span><span class="amt">3250</span></li><li><span class="src">raids</span><span class="amt">2600</span></li></ul>
+      </div>
+      <div class="repcard">
+        <div class="rephead"><a class="wh" href="https://www.wowhead.com/tbc/faction=990" target="_blank" rel="noopener">Scale of the Sands</a> <span class='ph'>p3</span></div>
+        <ul class="replist"><li><span class="src">raid</span><span class="amt">3000</span></li><li><span class="src">ring chain</span><span class="amt">1300</span></li></ul>
+      </div>
+      <div class="repcard">
+        <div class="rephead"><a class="wh" href="https://www.wowhead.com/tbc/faction=1077" target="_blank" rel="noopener">Shattered Sun Offensive</a> <span class='ph'>p5</span></div>
+        <ul class="replist"><li><span class="src">Isle of Quel&rsquo;Danas</span><span class="amt">620</span></li><li><span class="src">dungeons</span><span class="amt">750</span></li><li><span class="src">and a myriad of dailies</span><span class="amt"></span></li></ul>
+      </div></div>
+  </section>
+
+  <section id="quests">
+    <h2 class="sec">Notable Open-World Quests (pre-70)</h2>
+    <p class="lead">Group quests and chains that reward blues. Most require a group but the gear is worth it.</p>
+    <table class="quests"><thead><tr><th>Quest</th><th>Requires</th><th>Reward</th><th>Zone</th><th>Faction</th></tr></thead><tbody><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Overlord" target="_blank" rel="noopener">Overlord</a></td><td>chain</td><td class="rew">trinket</td><td><span class="zone z-hfp"><a class="wh" href="https://www.wowhead.com/tbc/zone=3483" target="_blank" rel="noopener">Hellfire Peninsula</a></span></td><td><a class="wh" href="https://www.wowhead.com/tbc/faction=946" target="_blank" rel="noopener">Honor Hold</a></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Cruel%27s%20Intentions" target="_blank" rel="noopener">Cruel&rsquo;s Intentions</a></td><td>chain</td><td class="rew">trinket</td><td><span class="zone z-hfp"><a class="wh" href="https://www.wowhead.com/tbc/zone=3483" target="_blank" rel="noopener">Hellfire Peninsula</a></span></td><td><a class="wh" href="https://www.wowhead.com/tbc/faction=947" target="_blank" rel="noopener">Thrallmar</a></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=The%20Foot%20of%20the%20Citadel" target="_blank" rel="noopener">The Foot of the Citadel</a></td><td>chain</td><td class="rew">chest</td><td><span class="zone z-hfp"><a class="wh" href="https://www.wowhead.com/tbc/zone=3483" target="_blank" rel="noopener">Hellfire Peninsula</a></span></td><td><a class="wh" href="https://www.wowhead.com/tbc/faction=947" target="_blank" rel="noopener">Thrallmar</a></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Drill%20the%20Drillmaster" target="_blank" rel="noopener">Drill the Drillmaster</a></td><td>chain</td><td class="rew">chest</td><td><span class="zone z-hfp"><a class="wh" href="https://www.wowhead.com/tbc/zone=3483" target="_blank" rel="noopener">Hellfire Peninsula</a></span></td><td><a class="wh" href="https://www.wowhead.com/tbc/faction=946" target="_blank" rel="noopener">Honor Hold</a></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Grillok%20%E2%80%9CDarkeye%E2%80%9D" target="_blank" rel="noopener">Grillok &ldquo;Darkeye&rdquo;</a></td><td>chain</td><td class="rew">chest</td><td><span class="zone z-hfp"><a class="wh" href="https://www.wowhead.com/tbc/zone=3483" target="_blank" rel="noopener">Hellfire Peninsula</a></span></td><td><a class="wh" href="https://www.wowhead.com/tbc/faction=947" target="_blank" rel="noopener">Thrallmar</a></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Zeth%27Gor%20Must%20Burn%21" target="_blank" rel="noopener">Zeth&rsquo;Gor Must Burn!</a></td><td>chain</td><td class="rew">chest</td><td><span class="zone z-hfp"><a class="wh" href="https://www.wowhead.com/tbc/zone=3483" target="_blank" rel="noopener">Hellfire Peninsula</a></span></td><td><a class="wh" href="https://www.wowhead.com/tbc/faction=946" target="_blank" rel="noopener">Honor Hold</a></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Natural%20Remedies" target="_blank" rel="noopener">Natural Remedies</a></td><td>chain</td><td class="rew">varies</td><td><span class="zone z-hfp"><a class="wh" href="https://www.wowhead.com/tbc/zone=3483" target="_blank" rel="noopener">Hellfire Peninsula</a></span></td><td><a class="wh" href="https://www.wowhead.com/tbc/faction=942" target="_blank" rel="noopener">Cenarion Expedition</a></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=The%20Skettis%20Offensive" target="_blank" rel="noopener">The Skettis Offensive</a></td><td>prequest</td><td class="rew">neck</td><td><span class="zone z-shat"><a class="wh" href="https://www.wowhead.com/tbc/zone=3703" target="_blank" rel="noopener">Shattrath City</a></span></td><td><a class="wh" href="https://www.wowhead.com/tbc/faction=1011" target="_blank" rel="noopener">Lower City</a></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Fhwoor%20Smash%21" target="_blank" rel="noopener">Fhwoor Smash!</a></td><td>exalted rep</td><td class="rew">weapons</td><td><span class="zone z-zang"><a class="wh" href="https://www.wowhead.com/tbc/zone=3521" target="_blank" rel="noopener">Zangarmarsh</a></span></td><td><a class="wh" href="https://www.wowhead.com/tbc/faction=970" target="_blank" rel="noopener">Sporeggar</a></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=The%20Big%20Bone%20Worm" target="_blank" rel="noopener">The Big Bone Worm</a></td><td>chain</td><td class="rew">weapons</td><td><span class="zone z-tero"><a class="wh" href="https://www.wowhead.com/tbc/zone=3519" target="_blank" rel="noopener">Terokkar Forest</a></span></td><td><a class="wh" href="https://www.wowhead.com/tbc/faction=1011" target="_blank" rel="noopener">Lower City</a></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=The%20Ultimate%20Bloodsport" target="_blank" rel="noopener">The Ultimate Bloodsport</a></td><td>chain</td><td class="rew">ranged weapons</td><td><span class="zone z-nag"><a class="wh" href="https://www.wowhead.com/tbc/zone=3518" target="_blank" rel="noopener">Nagrand</a></span></td><td><span class="empty">&middot;</span></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Levixus%20the%20Soul%20Caller" target="_blank" rel="noopener">Levixus the Soul Caller</a></td><td>dungeon chain</td><td class="rew">varies</td><td><span class="zone z-tero"><a class="wh" href="https://www.wowhead.com/tbc/zone=3519" target="_blank" rel="noopener">Terokkar Forest</a></span></td><td><a class="wh" href="https://www.wowhead.com/tbc/faction=935" target="_blank" rel="noopener">Sha&rsquo;tar</a></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Gurok%20the%20Usurper" target="_blank" rel="noopener">Gurok the Usurper</a></td><td>chain</td><td class="rew">neck</td><td><span class="zone z-nag"><a class="wh" href="https://www.wowhead.com/tbc/zone=3518" target="_blank" rel="noopener">Nagrand</a></span></td><td><span class="empty">&middot;</span></td></tr><tr><td class="name"><a class="wh" href="https://www.wowhead.com/tbc/quest=10111" target="_blank" rel="noopener">Bring Me The Egg!</a></td><td>prequest</td><td class="rew">cloak</td><td><span class="zone z-nag"><a class="wh" href="https://www.wowhead.com/tbc/zone=3518" target="_blank" rel="noopener">Nagrand</a></span></td><td><span class="empty">&middot;</span></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Message%20to%20Telaar" target="_blank" rel="noopener">Message to Telaar</a></td><td>chain</td><td class="rew">varies</td><td><span class="zone z-nag"><a class="wh" href="https://www.wowhead.com/tbc/zone=3518" target="_blank" rel="noopener">Nagrand</a></span></td><td><a class="wh" href="https://www.wowhead.com/tbc/faction=978" target="_blank" rel="noopener">Kurenai</a></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Message%20to%20Garadar" target="_blank" rel="noopener">Message to Garadar</a></td><td>chain</td><td class="rew">varies</td><td><span class="zone z-nag"><a class="wh" href="https://www.wowhead.com/tbc/zone=3518" target="_blank" rel="noopener">Nagrand</a></span></td><td><a class="wh" href="https://www.wowhead.com/tbc/faction=941" target="_blank" rel="noopener">Mag&rsquo;har</a></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=The%20Ring%20of%20Blood%3A%20The%20Final%20Challenge" target="_blank" rel="noopener">The Ring of Blood: The Final Challenge</a></td><td>small chain</td><td class="rew">weapons</td><td><span class="zone z-nag"><a class="wh" href="https://www.wowhead.com/tbc/zone=3518" target="_blank" rel="noopener">Nagrand</a></span></td><td><span class="empty">&middot;</span></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=The%20Hound-Master" target="_blank" rel="noopener">The Hound-Master</a></td><td>chain</td><td class="rew">neck</td><td><span class="zone z-bem"><a class="wh" href="https://www.wowhead.com/tbc/zone=3522" target="_blank" rel="noopener">Blade&rsquo;s Edge Mountains</a></span></td><td><a class="wh" href="https://www.wowhead.com/tbc/faction=942" target="_blank" rel="noopener">Cenarion Expedition</a></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Showdown" target="_blank" rel="noopener">Showdown</a></td><td>chain</td><td class="rew">varies</td><td><span class="zone z-bem"><a class="wh" href="https://www.wowhead.com/tbc/zone=3522" target="_blank" rel="noopener">Blade&rsquo;s Edge Mountains</a></span></td><td><span class="empty">&middot;</span></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Cho%27war%20the%20Pillager" target="_blank" rel="noopener">Cho&rsquo;war the Pillager</a></td><td>chain</td><td class="rew">varies</td><td><span class="zone z-nag"><a class="wh" href="https://www.wowhead.com/tbc/zone=3518" target="_blank" rel="noopener">Nagrand</a></span></td><td><a class="wh" href="https://www.wowhead.com/tbc/faction=978" target="_blank" rel="noopener">Kurenai</a> / <a class="wh" href="https://www.wowhead.com/tbc/faction=941" target="_blank" rel="noopener">Mag&rsquo;har</a></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Hero%20of%20the%20Mag%27har" target="_blank" rel="noopener">Hero of the Mag&rsquo;har</a></td><td>long chain</td><td class="rew">varies</td><td><span class="zone z-nag"><a class="wh" href="https://www.wowhead.com/tbc/zone=3518" target="_blank" rel="noopener">Nagrand</a></span></td><td><a class="wh" href="https://www.wowhead.com/tbc/faction=941" target="_blank" rel="noopener">Mag&rsquo;har</a></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Forge%20Camp%3A%20Annihilated" target="_blank" rel="noopener">Forge Camp: Annihilated</a></td><td>chain</td><td class="rew">varies</td><td><span class="zone z-nag"><a class="wh" href="https://www.wowhead.com/tbc/zone=3518" target="_blank" rel="noopener">Nagrand</a></span></td><td><span class="empty">&middot;</span></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Wanted%3A%20Durn%20the%20Hungerer" target="_blank" rel="noopener">Wanted: Durn the Hungerer</a></td><td>chain</td><td class="rew">weapons</td><td><span class="zone z-nag"><a class="wh" href="https://www.wowhead.com/tbc/zone=3518" target="_blank" rel="noopener">Nagrand</a></span></td><td><a class="wh" href="https://www.wowhead.com/tbc/faction=978" target="_blank" rel="noopener">Kurenai</a> / <a class="wh" href="https://www.wowhead.com/tbc/faction=941" target="_blank" rel="noopener">Mag&rsquo;har</a></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Special%20Delivery%20to%20Shattrath%20City" target="_blank" rel="noopener">Special Delivery to Shattrath City</a></td><td>part of Arcatraz chain</td><td class="rew">varies</td><td><span class="zone z-neth"><a class="wh" href="https://www.wowhead.com/tbc/zone=3523" target="_blank" rel="noopener">Netherstorm</a></span></td><td><a class="wh" href="https://www.wowhead.com/tbc/faction=935" target="_blank" rel="noopener">Sha&rsquo;tar</a></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Teron%20Gorefiend%2C%20I%20am..." target="_blank" rel="noopener">Teron Gorefiend, I am...</a></td><td>chain</td><td class="rew">head</td><td><span class="zone z-smv"><a class="wh" href="https://www.wowhead.com/tbc/zone=3520" target="_blank" rel="noopener">Shadowmoon Valley</a></span></td><td><span class="empty">&middot;</span></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Deathblow%20to%20the%20Legion" target="_blank" rel="noopener">Deathblow to the Legion</a></td><td>chain</td><td class="rew">varies</td><td><span class="zone z-neth"><a class="wh" href="https://www.wowhead.com/tbc/zone=3523" target="_blank" rel="noopener">Netherstorm</a></span></td><td><a class="wh" href="https://www.wowhead.com/tbc/faction=932" target="_blank" rel="noopener">Aldor</a></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Turning%20Point" target="_blank" rel="noopener">Turning Point</a></td><td>chain</td><td class="rew">varies</td><td><span class="zone z-neth"><a class="wh" href="https://www.wowhead.com/tbc/zone=3523" target="_blank" rel="noopener">Netherstorm</a></span></td><td><a class="wh" href="https://www.wowhead.com/tbc/faction=934" target="_blank" rel="noopener">Scryers</a></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Shutting%20Down%20Manaforge%20Ara" target="_blank" rel="noopener">Shutting Down Manaforge Ara</a></td><td>chain</td><td class="rew">varies</td><td><span class="zone z-neth"><a class="wh" href="https://www.wowhead.com/tbc/zone=3523" target="_blank" rel="noopener">Netherstorm</a></span></td><td><a class="wh" href="https://www.wowhead.com/tbc/faction=932" target="_blank" rel="noopener">Aldor</a> / <a class="wh" href="https://www.wowhead.com/tbc/faction=934" target="_blank" rel="noopener">Scryers</a></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Hitting%20the%20Motherlode" target="_blank" rel="noopener">Hitting the Motherlode</a></td><td>chain</td><td class="rew">varies</td><td><span class="zone z-neth"><a class="wh" href="https://www.wowhead.com/tbc/zone=3523" target="_blank" rel="noopener">Netherstorm</a></span></td><td><a class="wh" href="https://www.wowhead.com/tbc/faction=933" target="_blank" rel="noopener">Consortium</a></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Quenching%20the%20Blade" target="_blank" rel="noopener">Quenching the Blade</a></td><td>dungeon chain</td><td class="rew">weapons</td><td><span class="zone z-tero"><a class="wh" href="https://www.wowhead.com/tbc/zone=3519" target="_blank" rel="noopener">Terokkar Forest</a></span></td><td><span class="empty">&middot;</span></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=News%20of%20Victory" target="_blank" rel="noopener">News of Victory</a></td><td>chain</td><td class="rew">varies</td><td><span class="zone z-smv"><a class="wh" href="https://www.wowhead.com/tbc/zone=3520" target="_blank" rel="noopener">Shadowmoon Valley</a></span></td><td><span class="empty">&middot;</span></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Destroy%20Naberius%21" target="_blank" rel="noopener">Destroy Naberius!</a></td><td>chain</td><td class="rew">varies</td><td><span class="zone z-neth"><a class="wh" href="https://www.wowhead.com/tbc/zone=3523" target="_blank" rel="noopener">Netherstorm</a></span></td><td><span class="empty">&middot;</span></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Back%20to%20the%20Chief%21" target="_blank" rel="noopener">Back to the Chief!</a></td><td>chain</td><td class="rew">varies</td><td><span class="zone z-neth"><a class="wh" href="https://www.wowhead.com/tbc/zone=3523" target="_blank" rel="noopener">Netherstorm</a></span></td><td><span class="empty">&middot;</span></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=The%20Cipher%20of%20Damnation%20-%20The%20Third%20Fragment%20Recovered" target="_blank" rel="noopener">The Cipher of Damnation &ndash; The Third Fragment Recovered</a></td><td>chain</td><td class="rew">varies</td><td><span class="zone z-smv"><a class="wh" href="https://www.wowhead.com/tbc/zone=3520" target="_blank" rel="noopener">Shadowmoon Valley</a></span></td><td><span class="empty">&middot;</span></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Dimensius%20the%20All-Devouring" target="_blank" rel="noopener">Dimensius the All-Devouring</a></td><td>chain</td><td class="rew">varies (BiS tank trinket)</td><td><span class="zone z-neth"><a class="wh" href="https://www.wowhead.com/tbc/zone=3523" target="_blank" rel="noopener">Netherstorm</a></span></td><td><a class="wh" href="https://www.wowhead.com/tbc/faction=933" target="_blank" rel="noopener">Consortium</a></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Nexus-King%20Salhadaar" target="_blank" rel="noopener">Nexus-King Salhadaar</a></td><td>chain</td><td class="rew">weapons</td><td><span class="zone z-neth"><a class="wh" href="https://www.wowhead.com/tbc/zone=3523" target="_blank" rel="noopener">Netherstorm</a></span></td><td><a class="wh" href="https://www.wowhead.com/tbc/faction=933" target="_blank" rel="noopener">Consortium</a></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Dissension%20Amongst%20the%20Ranks..." target="_blank" rel="noopener">Dissension Amongst the Ranks...</a></td><td>chain</td><td class="rew">ring</td><td><span class="zone z-neth"><a class="wh" href="https://www.wowhead.com/tbc/zone=3523" target="_blank" rel="noopener">Netherstorm</a></span></td><td><span class="empty">&middot;</span></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Battle%20of%20the%20Crimson%20Watch" target="_blank" rel="noopener">Battle of the Crimson Watch</a></td><td>prequest</td><td class="rew">ring</td><td><span class="zone z-smv"><a class="wh" href="https://www.wowhead.com/tbc/zone=3520" target="_blank" rel="noopener">Shadowmoon Valley</a></span></td><td><a class="wh" href="https://www.wowhead.com/tbc/faction=935" target="_blank" rel="noopener">Sha&rsquo;tar</a></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Varedis%20Must%20Be%20Stopped" target="_blank" rel="noopener">Varedis Must Be Stopped</a></td><td>dungeon chain</td><td class="rew">varies</td><td><span class="zone z-smv"><a class="wh" href="https://www.wowhead.com/tbc/zone=3520" target="_blank" rel="noopener">Shadowmoon Valley</a></span></td><td><a class="wh" href="https://www.wowhead.com/tbc/faction=932" target="_blank" rel="noopener">Aldor</a> / <a class="wh" href="https://www.wowhead.com/tbc/faction=934" target="_blank" rel="noopener">Scryers</a></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=The%20Cipher%20of%20Damnation" target="_blank" rel="noopener">The Cipher of Damnation</a></td><td>chain</td><td class="rew">weapons</td><td><span class="zone z-smv"><a class="wh" href="https://www.wowhead.com/tbc/zone=3520" target="_blank" rel="noopener">Shadowmoon Valley</a></span></td><td><span class="empty">&middot;</span></td></tr><tr><td class="name"><a class="wh wh-q" href="https://www.wowhead.com/tbc/search?q=Akama%27s%20Promise" target="_blank" rel="noopener">Akama&rsquo;s Promise</a></td><td>chain</td><td class="rew">varies</td><td><span class="zone z-smv"><a class="wh" href="https://www.wowhead.com/tbc/zone=3520" target="_blank" rel="noopener">Shadowmoon Valley</a></span></td><td><a class="wh" href="https://www.wowhead.com/tbc/faction=935" target="_blank" rel="noopener">Sha&rsquo;tar</a> / <a class="wh" href="https://www.wowhead.com/tbc/faction=1012" target="_blank" rel="noopener">Ashtongue Deathsworn</a></td></tr></tbody></table>
+  </section>
+
+  <footer>
+    <div class="foot-links">
+      <a href="/">&larr; Get a Job</a> &middot;
+      <a href="https://swagcounty.com">Swag County</a> &middot;
+      <a href="/privacy.html">Privacy</a>
+    </div>
+    <div class="foot-note">A guild fan project &middot; not affiliated with Blizzard. Reworked from the original
+    &ldquo;TBC dungeon rep leveling&rdquo; spreadsheet &middot; data links to Wowhead (TBC Classic).</div>
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var KEY = "tbcGuide.progress.v1";
+  var STEPS = [{"id": "route-hellfire-ramparts", "lvl": "58 / 60"}, {"id": "route-the-blood-furnace", "lvl": "~61"}, {"id": "route-the-slave-pens", "lvl": "62"}, {"id": "route-the-underbog", "lvl": "63"}, {"id": "route-mana-tombs", "lvl": "64"}, {"id": "route-nagrand-arena-ring-of-blood", "lvl": "65"}, {"id": "route-auchenai-crypts", "lvl": "65"}, {"id": "route-old-hillsbrad-foothills", "lvl": "66"}, {"id": "route-sethekk-halls", "lvl": "66"}, {"id": "route-start-karazhan-attunement", "lvl": "68"}, {"id": "route-shadow-labyrinth", "lvl": "68"}, {"id": "route-shattered-halls-key", "lvl": "69"}, {"id": "route-arcatraz-key-start", "lvl": "69"}, {"id": "route-the-steam-vaults", "lvl": "69"}, {"id": "route-hit-max-level", "lvl": "70"}, {"id": "route-heroic-attune-farm", "lvl": "70"}, {"id": "route-raid-attunements", "lvl": "Raids"}];            // [{id, lvl}, ...] in route order
+  var total = STEPS.length;
+
+  function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
+  function save(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
+  var state = load();
+
+  var boxes = Array.prototype.slice.call(document.querySelectorAll("input[data-step]"));
+  var elLabel = document.getElementById("plabel");
+  var elCount = document.getElementById("pcount");
+  var elFill  = document.getElementById("pfill");
+  var elProg  = document.getElementById("progress");
+
+  function applyState(cb) {
+    var on = cb.checked;
+    var node = cb.closest(".node");
+    if (node) { node.classList.toggle("done", on); return; }
+    var card = cb.closest(".faccard");
+    if (card) { card.classList.toggle("done", on); return; }
+    var row = cb.closest("tr");
+    if (row) { row.classList.toggle("done", on); }
+  }
+
+  function recompute() {
+    var doneCount = 0, currentIdx = -1;
+    for (var i = 0; i < total; i++) {
+      if (state[STEPS[i].id]) { doneCount++; }
+      else if (currentIdx === -1) { currentIdx = i; }
+    }
+    Array.prototype.forEach.call(document.querySelectorAll(".node.current"),
+      function (n) { n.classList.remove("current"); });
+    if (elFill) { elFill.style.width = (total ? (doneCount / total * 100) : 0) + "%"; }
+    if (doneCount >= total) {
+      if (elProg) { elProg.classList.add("complete"); }
+      if (elLabel) { elLabel.innerHTML = "Complete &mdash; all " + total + " steps done"; }
+      if (elCount) { elCount.textContent = total + " / " + total + " \u00b7 level 70"; }
+    } else {
+      if (elProg) { elProg.classList.remove("complete"); }
+      var step = STEPS[currentIdx];
+      if (elLabel) { elLabel.innerHTML = "Step <b>" + (currentIdx + 1) + "</b> / " + total + " \u2014 Level " + step.lvl; }
+      if (elCount) { elCount.textContent = doneCount + " / " + total + " done"; }
+      var cur = document.getElementById("node-" + step.id);
+      if (cur) { cur.classList.add("current"); }
+    }
+  }
+
+  function scrollToCurrent() {
+    var node = document.querySelector(".node.current");
+    if (!node) { return; }
+    var y = node.getBoundingClientRect().top + window.pageYOffset - 96;
+    window.scrollTo({ top: y, behavior: "smooth" });
+  }
+
+  // restore saved state on load
+  boxes.forEach(function (cb) {
+    cb.checked = !!state[cb.getAttribute("data-step")];
+    applyState(cb);
+  });
+  recompute();
+
+  boxes.forEach(function (cb) {
+    cb.addEventListener("change", function () {
+      var id = cb.getAttribute("data-step");
+      var node = cb.closest(".node");
+      var wasCurrent = node && node.classList.contains("current");
+      if (cb.checked) { state[id] = 1; } else { delete state[id]; }
+      save(state);
+      applyState(cb);
+      if (cb.hasAttribute("data-route")) {
+        recompute();
+        if (cb.checked && wasCurrent) { scrollToCurrent(); }  // advance to the next step
+      }
+    });
+  });
+
+  var reset = document.getElementById("resetbtn");
+  if (reset) {
+    reset.addEventListener("click", function () {
+      if (!confirm("Reset your progress on this device? This unchecks every step, key, and rep goal.")) { return; }
+      state = {}; save(state);
+      boxes.forEach(function (cb) { cb.checked = false; applyState(cb); });
+      recompute();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

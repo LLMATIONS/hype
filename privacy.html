@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Privacy — Get a Job</title>
+<meta name="description" content="What Get a Job stores, what stays in your browser, and what leaves it.">
+<link rel="icon" href="/assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<meta name="theme-color" content="#0c0a14">
+<meta name="robots" content="index,follow">
+<style>
+:root{color-scheme:dark;--bg:#0c0a14;--bg2:#170f2b;--fg:#f1ecfb;--dim:#a79fc0;
+  --card-border:rgba(180,150,255,.18);--sky:#8fd0ff;--lav:#c0a0ff;--yellow:#ffe46b;
+  --rainbow:linear-gradient(100deg,#ff8fcf,#ffbf8f,#ffe46b,#8ff3c2,#8fd0ff,#c0a0ff);}
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,sans-serif;
+  color:var(--fg);line-height:1.65;min-height:100dvh;display:flex;flex-direction:column;
+  background-color:var(--bg);background-image:linear-gradient(160deg,var(--bg) 0%,var(--bg2) 100%);background-attachment:fixed}
+main{max-width:700px;margin:0 auto;padding:2.4rem 1.5rem 3rem;flex:1;width:100%}
+.home-link{display:inline-block;font-size:.85rem;color:var(--dim);text-decoration:none;margin-bottom:1.5rem;letter-spacing:.02em}
+.home-link:hover{color:var(--sky)}
+h1{font-size:2rem;font-weight:800;margin:0 0 .35rem}
+.lede{font-size:1.15rem;font-weight:800;background:var(--rainbow);-webkit-background-clip:text;background-clip:text;color:transparent;margin:.25rem 0 .5rem}
+.effective{font-size:.85rem;color:var(--dim);margin:0 0 2rem}
+h2{font-size:1.15rem;font-weight:700;margin:2rem 0 .5rem;color:var(--fg)}
+p{margin:.5rem 0;color:var(--fg)}ul{margin:.5rem 0;padding-left:1.3rem}li{margin:.3rem 0}
+a{color:var(--sky);text-decoration:underline;text-underline-offset:3px}a:hover{color:var(--lav)}
+strong{font-weight:700;color:var(--yellow)}
+code{background:rgba(255,255,255,.06);padding:.05rem .35rem;border-radius:5px;font-size:.9em}
+footer{border-top:1px solid var(--card-border);padding:1.4rem;text-align:center;font-size:.85rem;color:var(--dim)}
+footer a{display:inline-block;padding:.4rem .3rem;color:var(--dim);text-decoration:underline;text-decoration-color:var(--card-border);text-underline-offset:3px}
+footer a:hover{color:var(--sky)}
+</style>
+</head>
+<body>
+<main>
+<a class="home-link" href="/">&larr; Back to Get a Job</a>
+
+<h1>Privacy</h1>
+<p class="lede">Get a Job is a guild fan site. Your guide progress stays in your own browser; the only data that leaves your device goes to Wowhead so tooltips work.</p>
+<p class="effective">Effective 2026-06-03</p>
+
+<h2>What we store about you</h2>
+<p>Nothing on our server, for the pages that exist today. The hub and the leveling guide are static pages — no account, no signup, no analytics, no advertising, no tracking pixels.</p>
+
+<h2>The leveling guide and your browser</h2>
+<p>The TBC leveling guide remembers which steps, keys, and rep goals you have checked off using <strong>localStorage</strong> in your browser, under the key <code>tbcGuide.progress.v1</code>. That data:</p>
+<ul>
+  <li>never leaves your device and is never sent to us or anyone else;</li>
+  <li>is specific to that one browser on that one device — it does not sync;</li>
+  <li>can be wiped any time with the <strong>Reset progress</strong> button on the guide, or by clearing site data for this domain.</li>
+</ul>
+
+<h2>Wowhead tooltips (third party)</h2>
+<p>The leveling guide links every in-game item, quest, NPC, zone, and faction to <a href="https://www.wowhead.com">Wowhead</a> and shows a tooltip when you hover. To do that, the page loads Wowhead's tooltip widget and fetches each entity's data from Wowhead's servers (<code>wow.zamimg.com</code>, <code>nether.wowhead.com</code>, <code>wowhead.com</code>). As a result, <strong>Wowhead receives your IP address and which entities you hover or click</strong>, the same as if you visited Wowhead directly. Their handling of that is covered by <a href="https://www.wowhead.com/privacy-policy">Wowhead's privacy policy</a>, not ours. Clicking a link opens Wowhead in a new tab.</p>
+
+<h2>Fonts (third party)</h2>
+<p>The guide's heading font (Cinzel) loads from Google Fonts (<code>fonts.googleapis.com</code>, <code>fonts.gstatic.com</code>), so Google receives your IP address for that request. No cookies are set by it.</p>
+
+<h2>Cookies</h2>
+<p>Get a Job sets no cookies of its own and registers no service worker.</p>
+
+<h2>Server logs</h2>
+<p>Our web server keeps standard access logs (IP address, user agent, request path, status code) for a limited time, for debugging and abuse prevention. They are not used to profile you or shared with anyone.</p>
+
+<h2>The guild-name vote (not live yet)</h2>
+<p>A guild-name voting tool is in the works. Unlike the guide, voting is shared, so it will store the names people submit and the votes cast on our own server. When it launches, this page will gain a section spelling out exactly what it keeps, how long, and how it stops one person from stuffing the ballot — written from the real data flow, like the rest of this policy. Until then, there is nothing to disclose because it does not exist.</p>
+
+<h2>Your rights</h2>
+<p>The current pages hold no personal data about you on our side, so there is nothing for us to export, correct, or delete. If you are in the EU, UK, or California and want to exercise a data right anyway, email the address below and we will confirm in writing what we hold (which, today, is nothing beyond transient server logs).</p>
+
+<h2>Contact</h2>
+<p>Privacy questions, data requests, or anything else: <a href="mailto:nerds@swagcounty.com">nerds@swagcounty.com</a>.</p>
+
+<h2>Changes to this policy</h2>
+<p>If we change how Get a Job handles data — especially when the voting tool ships — this page updates and the effective date moves forward. The full history is visible in the project's public Git repository.</p>
+</main>
+
+<footer>
+  <a href="https://swagcounty.com">&larr; Swag County</a>
+  &nbsp;&middot;&nbsp;
+  <a href="mailto:nerds@swagcounty.com">nerds@swagcounty.com</a>
+  &nbsp;&middot;&nbsp;
+  <a href="/privacy.html">Privacy</a>
+</footer>
+</body>
+</html>
