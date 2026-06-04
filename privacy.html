@@ -54,11 +54,11 @@ footer a:focus-visible{color:var(--sky);outline:2px solid var(--sky);outline-off
 <a class="home-link" href="/">&larr; Back to Get a Job</a>
 
 <h1>Privacy</h1>
-<p class="lede">Get a Job is a guild fan site. The leveling guide keeps your progress in your own browser; the name vote sends what you pitch and how you vote to our server; tooltips go to Wowhead. Here is the whole map.</p>
+<p class="lede">Get a Job is a guild fan site. The leveling guide keeps your progress in your own browser; the name vote sends what you pitch and how you vote to our server; the apply form sends your raid application to the guild's officers; tooltips go to Wowhead. Here is the whole map.</p>
 <p class="effective">Effective 2026-06-03</p>
 
 <h2>What we store about you</h2>
-<p>The hub and the leveling guide are static pages: no account, no signup, no analytics, no advertising, no tracking pixels, and nothing about you kept on our server. The guild-name vote is the one exception: it has to remember the names and votes people submit. That gets its own section below.</p>
+<p>The hub and the leveling guide are static pages: no account, no signup, no analytics, no advertising, no tracking pixels, and nothing about you kept on our server. Two tools are the exceptions: the guild-name vote keeps the names and votes people submit, and the raid application keeps what you send so the officers can read it. Each gets its own section below.</p>
 
 <h2>The leveling guide and your browser</h2>
 <p>The TBC leveling guide remembers which steps, keys, and rep goals you have checked off using <strong>localStorage</strong> in your browser, under the key <code>tbcGuide.progress.v1</code>. That data:</p>
@@ -102,8 +102,33 @@ footer a:focus-visible{color:var(--sky);outline:2px solid var(--sky);outline-off
 <p>The names and votes are never sold, shared, or used to profile anyone. They exist to pick a guild name, and that is the end of it.</p>
 <p>The site owner can remove any submitted name (and the votes attached to it) — for example to take down something abusive. There is no public delete; it is owner-only.</p>
 
+<h2>The raid application</h2>
+<p>If you fill out the <a href="/apply/">apply form</a>, you are choosing to send us real details about yourself so we can consider you for the raid team. Unlike the rest of the site, this is identifying information you hand over on purpose, so here is exactly where it goes.</p>
+
+<h3>What you send us</h3>
+<ul>
+  <li>your <strong>character name</strong>, <strong>Discord username</strong>, and <strong>class</strong>;</li>
+  <li>your <strong>raiding experience</strong> and <strong>why you want to join</strong>, in your own words;</li>
+  <li>an optional <strong>logs link</strong>, if you add one.</li>
+</ul>
+
+<h3>Where it goes</h3>
+<p>The moment you submit, your application is:</p>
+<ul>
+  <li><strong>posted to a private channel in our Discord server</strong>, where the guild's officers read it;</li>
+  <li><strong>emailed to the officers</strong> who handle recruiting;</li>
+  <li><strong>saved in our database</strong> so we can review it and get back to you.</li>
+</ul>
+<p>Two outside services see your application so they can deliver it: <a href="https://discord.com/privacy">Discord</a> carries the channel post, and our email provider <a href="https://resend.com/legal/privacy-policy">Resend</a> sends the email. Each handles it under its own privacy policy. We do not post your application anywhere public, sell it, or use it for anything but recruiting.</p>
+
+<h3>Bot check and your IP address</h3>
+<p>Same as the vote: submitting runs a <strong>Cloudflare Turnstile</strong> check (your browser gets a one-time token from Cloudflare, our server confirms it), and our server reads your <strong>IP address</strong> to rate-limit submissions. That use is transient — the IP is not stored next to your application, though the general access logs record it like any page request.</p>
+
+<h3>How long we keep it, and removing it</h3>
+<p>Applications stay until we have dealt with them; there is no automatic expiry. The site owner can delete any application. If you want yours gone, before or after we review it, email the address below with your character name and we will take it out.</p>
+
 <h2>Your rights</h2>
-<p>The guide holds no personal data about you on our side. The vote keeps an anonymous browser id and the votes tied to it; because that id is random and not linked to your identity, we generally cannot connect it to a specific person on our own. If you are in the EU, UK, or California and want a name you pitched or the votes from your browser removed, email the address below and bring your browser id (it is in localStorage under <code>guildVote.voterId.v1</code>), and we will delete the records tied to it.</p>
+<p>The guide holds no personal data about you on our side. The vote keeps an anonymous browser id and the votes tied to it; because that id is random and not linked to your identity, we generally cannot connect it to a specific person on our own. If you are in the EU, UK, or California and want a name you pitched or the votes from your browser removed, email the address below and bring your browser id (it is in localStorage under <code>guildVote.voterId.v1</code>), and we will delete the records tied to it. If you sent in a raid application, email us your character name and we will remove it.</p>
 
 <h2>Contact</h2>
 <p>Privacy questions, data requests, or anything else: <a href="mailto:nerds@swagcounty.com">nerds@swagcounty.com</a>.</p>

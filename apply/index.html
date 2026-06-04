@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Apply to Raid — Get a Job</title>
+<meta name="description" content="Apply to raid with the guild. Tell us your character, your experience, and why you want in.">
+<link rel="icon" href="/assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#0c0a14">
+<meta property="og:title" content="Apply to Raid — Get a Job">
+<meta property="og:description" content="Apply to raid with the guild. Tell us your character, your experience, and why you want in.">
+<meta property="og:url" content="https://getajob.swagcounty.com/apply/">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://getajob.swagcounty.com/assets/og-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Apply to Raid — Get a Job">
+<meta name="twitter:image" content="https://getajob.swagcounty.com/assets/og-card.png">
+<style>
+:root{
+  color-scheme: dark;
+  --bg:#0c0a14; --bg2:#170f2b; --fg:#f1ecfb; --dim:#a79fc0;
+  --card-bg:rgba(255,255,255,.03); --card-border:rgba(180,150,255,.18);
+  /* logo palette — pastel rainbow */
+  --pink:#ff8fcf; --peach:#ffbf8f; --yellow:#ffe46b; --mint:#8ff3c2; --sky:#8fd0ff; --lav:#c0a0ff;
+  --rainbow:linear-gradient(100deg,var(--pink),var(--peach),var(--yellow),var(--mint),var(--sky),var(--lav));
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+button,a{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,sans-serif;
+  color:var(--fg); line-height:1.6; min-height:100dvh; display:flex; flex-direction:column;
+  background-color:var(--bg);
+  background-image:
+    radial-gradient(900px 460px at 50% -8%, rgba(192,160,255,.22), transparent 60%),
+    linear-gradient(160deg,var(--bg) 0%,var(--bg2) 100%);
+  background-attachment:fixed;
+}
+.visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+main{max-width:680px;margin:0 auto;padding:1.8rem 1.5rem 2rem;flex:1;width:100%}
+.home-link{display:inline-block;font-size:.85rem;color:var(--dim);text-decoration:none;margin-bottom:1.4rem;letter-spacing:.02em;padding:.2rem 0}
+.home-link:hover,.home-link:focus-visible{color:var(--sky)}
+header{text-align:center;margin-bottom:1.8rem}
+h1{font-size:1.9rem;font-weight:800;margin:0 0 .35rem}
+.tagline{font-size:1.18rem;font-weight:800;margin:.1rem 0 .5rem;text-wrap:balance;
+  background:var(--rainbow);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 16px rgba(192,160,255,.22))}
+.sub{color:var(--dim);margin:0 auto;max-width:34rem;font-size:.97rem;text-wrap:pretty}
+
+/* --- application form --- */
+.apply{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;
+  padding:1.2rem 1.2rem 1.3rem;margin-bottom:1.6rem}
+.field{margin-bottom:1rem}
+.field label{display:block;font-size:.85rem;font-weight:600;color:var(--fg);margin-bottom:.3rem}
+.field .opt{color:var(--dim);font-weight:400}
+.field input,.field textarea{width:100%;background:rgba(0,0,0,.25);border:1px solid var(--card-border);
+  border-radius:9px;color:var(--fg);font:inherit;font-size:1rem;padding:.6rem .75rem;
+  transition:border-color .14s ease,box-shadow .14s ease}
+.field textarea{min-height:6.5rem;resize:vertical;line-height:1.5}
+.field input::placeholder,.field textarea::placeholder{color:var(--dim);opacity:.7}
+.field input:focus-visible,.field textarea:focus-visible{outline:none;border-color:var(--lav);box-shadow:0 0 0 3px rgba(192,160,255,.25)}
+.counter{display:block;text-align:right;font-size:.72rem;color:var(--dim);margin-top:.25rem;font-variant-numeric:tabular-nums}
+
+/* --- confirmations --- */
+.check{display:flex;gap:.65rem;align-items:flex-start;background:rgba(0,0,0,.18);
+  border:1px solid var(--card-border);border-radius:10px;padding:.7rem .8rem;margin-bottom:.8rem}
+.check input{flex:0 0 auto;width:1.15rem;height:1.15rem;margin:.15rem 0 0;accent-color:var(--lav);cursor:pointer}
+.check label{font-size:.9rem;font-weight:500;color:var(--fg);margin:0;cursor:pointer}
+.check label strong{color:var(--yellow);font-weight:700}
+
+.cf-widget{margin:.4rem 0 .9rem}
+.cf-widget[hidden]{display:none}
+.consent{font-size:.78rem;color:var(--dim);margin:.2rem 0 .9rem;text-wrap:pretty}
+.consent a{color:var(--sky)}
+
+.apply-btn{width:100%;border:none;cursor:pointer;font:inherit;font-weight:800;font-size:1rem;color:#1a1030;
+  padding:.75rem 1rem;border-radius:10px;background:var(--rainbow);
+  transition:transform .14s ease,box-shadow .14s ease,filter .14s ease}
+.apply-btn:hover,.apply-btn:focus-visible{transform:translateY(-1px);outline:none;
+  box-shadow:0 10px 26px -12px rgba(192,160,255,.7);filter:saturate(1.1)}
+.apply-btn:disabled{cursor:default;opacity:.55;transform:none;box-shadow:none;filter:none}
+.status{min-height:1.2rem;margin:.7rem 0 0;font-size:.88rem;color:var(--dim);text-align:center}
+.status.err{color:var(--peach)}
+.status.ok{color:var(--mint)}
+
+/* --- success panel (after submit) --- */
+.done{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;
+  padding:1.6rem 1.4rem;text-align:center}
+.done[hidden]{display:none}
+.done h2{font-size:1.25rem;font-weight:800;margin:0 0 .5rem;
+  background:var(--rainbow);-webkit-background-clip:text;background-clip:text;color:transparent}
+.done p{color:var(--dim);margin:.4rem auto;max-width:32rem}
+.done strong{color:var(--yellow)}
+.done .again{margin-top:1rem;background:transparent;border:1px solid var(--card-border);color:var(--dim);
+  font:inherit;font-size:.85rem;padding:.45rem .9rem;border-radius:9px;cursor:pointer;
+  transition:color .14s ease,border-color .14s ease}
+.done .again:hover,.done .again:focus-visible{outline:none;color:var(--fg);border-color:var(--lav)}
+
+/* --- admin review (owner-only) --- */
+.admin-bar{display:flex;align-items:center;justify-content:space-between;gap:.6rem;
+  background:rgba(255,143,207,.1);border:1px solid rgba(255,143,207,.4);border-radius:10px;
+  padding:.5rem .5rem .5rem .85rem;margin:0 0 1.3rem;font-size:.85rem;color:var(--fg)}
+.admin-lock{background:transparent;border:1px solid var(--card-border);color:var(--dim);
+  font:inherit;font-size:.8rem;padding:.3rem .65rem;border-radius:7px;cursor:pointer;
+  transition:color .14s ease,border-color .14s ease}
+.admin-lock:hover,.admin-lock:focus-visible{outline:none;color:var(--fg);border-color:var(--lav)}
+#admin-apps[hidden]{display:none}
+.admin-apps-head{display:flex;align-items:baseline;justify-content:space-between;margin:2rem 0 .7rem;gap:.5rem}
+.admin-apps-head h2{font-size:1.05rem;font-weight:700;margin:0}
+.admin-apps-head .count{font-size:.82rem;color:var(--dim)}
+ul.apps{list-style:none;margin:0;padding:0;display:grid;gap:.8rem}
+.app{position:relative;background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:12px;padding:.9rem 1rem .95rem}
+.app-top{display:flex;flex-wrap:wrap;align-items:baseline;gap:.5rem;margin:0 2rem .35rem 0}
+.app-char{font-size:1.05rem;font-weight:700}
+.app-meta{font-size:.85rem;color:var(--dim)}
+.app dl{margin:.4rem 0 0;display:grid;gap:.35rem}
+.app dt{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin-top:.3rem}
+.app dd{margin:0;white-space:pre-wrap;word-break:break-word;font-size:.92rem}
+.app dd a{color:var(--sky)}
+.app-badges{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.6rem}
+.badge{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700;
+  padding:.18rem .5rem;border-radius:999px;border:1px solid var(--card-border);color:var(--dim)}
+.badge.sent{color:#1a1030;background:var(--mint);border-color:transparent}
+.badge.failed{color:#1a1030;background:var(--peach);border-color:transparent}
+.badge.off{color:var(--dim)}
+.app-del{position:absolute;top:.65rem;right:.7rem;background:transparent;border:none;cursor:pointer;
+  color:var(--dim);font-size:1rem;line-height:1;padding:.3rem .45rem;border-radius:8px;
+  transition:color .14s ease,background .14s ease}
+.app-del:hover,.app-del:focus-visible{outline:none;color:var(--pink);background:rgba(255,143,207,.14)}
+.app-del:focus-visible{box-shadow:0 0 0 2px rgba(192,160,255,.55)}
+.apps-empty{text-align:center;color:var(--dim);padding:1.4rem .5rem;font-size:.95rem}
+
+@media (prefers-reduced-motion:reduce){
+  *{transition:none !important}
+  .apply-btn:hover{transform:none}
+}
+@media (max-width:420px){ main{padding:1.4rem 1rem 1.6rem} }
+
+footer{border-top:1px solid var(--card-border);padding:1.4rem;text-align:center;font-size:.85rem;color:var(--dim)}
+footer a{display:inline-block;padding:.4rem .3rem;color:var(--dim);text-decoration:underline;
+  text-decoration-color:var(--card-border);text-underline-offset:3px;transition:color .14s ease}
+footer a:hover,footer a:focus-visible{color:var(--sky)}
+</style>
+</head>
+<body>
+<main>
+  <a class="home-link" href="/">&larr; Get a Job</a>
+
+  <header>
+    <h1 class="visually-hidden">Apply to Raid</h1>
+    <p class="tagline">Apply to raid with the guild.</p>
+    <p class="sub">Semi-hardcore PvE, experience across a lot of servers. Tell us who you play, what you've cleared, and why you want in.</p>
+  </header>
+
+  <form class="apply" id="apply" novalidate>
+    <div class="field">
+      <label for="character">Character name</label>
+      <input id="character" name="character" type="text" maxlength="40" required autocomplete="off"
+             autocapitalize="words" spellcheck="false" placeholder="In-game name" aria-describedby="character-count">
+      <span class="counter" id="character-count" aria-hidden="true">0 / 40</span>
+    </div>
+
+    <div class="field">
+      <label for="discord">Discord username</label>
+      <input id="discord" name="discord" type="text" maxlength="64" required autocomplete="off"
+             autocapitalize="none" spellcheck="false" placeholder="e.g. yourname">
+    </div>
+
+    <div class="field">
+      <label for="wow_class">Class</label>
+      <input id="wow_class" name="wow_class" type="text" maxlength="32" required autocomplete="off"
+             autocapitalize="words" spellcheck="false" placeholder="e.g. Resto Druid">
+    </div>
+
+    <div class="field">
+      <label for="experience">What raiding experience do you have?</label>
+      <textarea id="experience" name="experience" maxlength="1500" required
+                placeholder="Where you've raided, what you've cleared, roles you've played."
+                aria-describedby="experience-count"></textarea>
+      <span class="counter" id="experience-count" aria-hidden="true">0 / 1500</span>
+    </div>
+
+    <div class="field">
+      <label for="why">Why do you want to join, or why are you looking for a new guild?</label>
+      <textarea id="why" name="why" maxlength="1500" required
+                placeholder="Tell us what you're after."
+                aria-describedby="why-count"></textarea>
+      <span class="counter" id="why-count" aria-hidden="true">0 / 1500</span>
+    </div>
+
+    <div class="field">
+      <label for="logs">Logs <span class="opt">(optional)</span></label>
+      <input id="logs" name="logs" type="url" inputmode="url" maxlength="300" autocomplete="off"
+             autocapitalize="none" spellcheck="false" placeholder="https://warcraftlogs.com/…">
+    </div>
+
+    <div class="check">
+      <input id="ack_consumables" name="ack_consumables" type="checkbox" required>
+      <label for="ack_consumables">Our raiders bring <strong>full consumables</strong> and show up with gear <strong>fully gemmed and enchanted</strong>. I understand.</label>
+    </div>
+
+    <div class="check">
+      <input id="ack_friend" name="ack_friend" type="checkbox" required>
+      <label for="ack_friend">After I submit, I'll send a friend request or DM <strong>@ivorycrayon</strong> on Discord.</label>
+    </div>
+
+    <div id="cf-widget" class="cf-widget" hidden></div>
+    <p class="consent">Submitting sends your application to the guild's officers over Discord and email, and stores a copy so we can get back to you. <a href="/privacy.html">How we handle it.</a></p>
+
+    <button type="submit" class="apply-btn" id="apply-btn">Send application</button>
+    <p class="status" id="form-status" role="status" aria-live="polite"></p>
+  </form>
+
+  <section class="done" id="done" hidden aria-live="polite">
+    <h2>Application sent.</h2>
+    <p>Thanks for applying. We'll go over it and get back to you on Discord.</p>
+    <p>One more thing: send a friend request or DM <strong>@ivorycrayon</strong> on Discord so we can reach you.</p>
+    <button type="button" class="again" id="apply-again">Submit another</button>
+  </section>
+
+  <section id="admin-apps" hidden aria-labelledby="apps-heading">
+    <div class="admin-apps-head">
+      <h2 id="apps-heading">Applications</h2>
+      <span class="count" id="apps-count" aria-live="polite"></span>
+    </div>
+    <ul class="apps" id="apps"></ul>
+  </section>
+</main>
+
+<footer>
+  <a href="https://swagcounty.com">&larr; Swag County</a>
+  &nbsp;&middot;&nbsp;
+  <a href="mailto:nerds@swagcounty.com">nerds@swagcounty.com</a>
+  &nbsp;&middot;&nbsp;
+  <a href="/privacy.html">Privacy</a>
+</footer>
+
+<script src="/apply/app.js" defer></script>
+</body>
+</html>
