@@ -39,8 +39,9 @@ There's no login, so the defenses stack rather than rely on any one:
    The IP is used only for the limiter (and the Turnstile check) and is never
    written to the database.
 
-A Cloudflare WAF rate-limit rule on `POST /api/*` belongs on top of these, at
-the edge — configure it in the dashboard.
+An edge rate-limit (e.g. a Cloudflare WAF rule on `POST /api/*`) could sit on
+top of these, but it's optional — the in-app per-IP limit plus Turnstile are the
+baseline.
 
 ## Turnstile setup
 
@@ -56,6 +57,23 @@ bash server/configure-turnstile.sh   # prompts for sitekey (echoed) + secret (hi
 Create the widget in the Cloudflare dashboard (Turnstile → add a widget for the
 site's hostname). The script writes `TURNSTILE_SITEKEY` + `TURNSTILE_SECRET` to
 `~/getajob-vote/getajob-vote.env` (mode 600) and restarts the unit.
+
+## Admin moderation (owner-only delete)
+
+`DELETE /api/ideas/{id}` removes a name and its votes — for taking down abuse.
+It is gated by a bearer token (`X-Admin-Token`), compared in constant time and
+rate-limited; with no token set the endpoint always 403s, so admin is off until
+configured. The token lives only in the mode-600 env file.
+
+```sh
+bash server/configure-admin.sh   # generates a token, prints it once, restarts
+```
+
+Save the printed token (it is shown once). To moderate, open `/guild-names/?admin`
+and paste it — the page checks it against `GET /api/admin/ping`, stores it in
+`localStorage`, and shows a delete control on each entry. "Exit admin" clears it.
+Anyone holding the token can delete, so treat it like a password; rotate by
+re-running the script.
 
 ## Runtime layout
 

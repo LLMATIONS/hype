@@ -29,6 +29,7 @@ In production it is launched by the getajob-vote systemd unit via uvicorn.
 """
 from __future__ import annotations
 
+import hmac
 import json
 import os
 import re
@@ -62,6 +63,7 @@ MAX_BODY = 4096        # request body cap (bytes); names + a UUID + token are ti
 # per-IP sliding-window limits: (max events, window seconds)
 SUBMIT_LIMIT = (6, 600)    # 6 new ideas per 10 minutes
 VOTE_LIMIT = (90, 60)      # 90 vote actions per minute (covers fast toggling)
+ADMIN_LIMIT = (30, 60)     # admin actions per minute per IP (brute-force throttle)
 
 # Cloudflare Turnstile (bot gate on submissions). Both come from the service
 # env file, never the repo. With no secret set, verification is skipped so the
@@ -70,6 +72,12 @@ VOTE_LIMIT = (90, 60)      # 90 vote actions per minute (covers fast toggling)
 TURNSTILE_SECRET = os.environ.get("TURNSTILE_SECRET", "").strip()
 TURNSTILE_SITEKEY = os.environ.get("TURNSTILE_SITEKEY", "").strip()
 TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify"
+
+# Admin moderation: a bearer token (set via server/configure-admin.sh) gates
+# deleting entries. Unset -> admin is disabled and every admin call 403s.
+# Anyone holding the token can delete, so keep it secret; it lives only in the
+# mode-600 service env file, never the repo.
+ADMIN_TOKEN = os.environ.get("ADMIN_TOKEN", "").strip()
 
 _WS_RUN = re.compile(r"\s+")
 _VOTER_RE = re.compile(r"^[A-Za-z0-9._:-]{8,%d}$" % VOTER_ID_MAX)
@@ -237,6 +245,25 @@ def _turnstile_ok(token: Optional[str], ip: str) -> bool:
             return bool(json.load(resp).get("success"))
     except Exception:
         return False  # fail closed when enforcement is on
+
+
+def _admin_ok(request: Request) -> bool:
+    """Constant-time check of the admin bearer token."""
+    if not ADMIN_TOKEN:
+        return False
+    supplied = request.headers.get("x-admin-token", "")
+    return bool(supplied) and hmac.compare_digest(supplied, ADMIN_TOKEN)
+
+
+def _guard_admin(request: Request) -> Optional[JSONResponse]:
+    """Rate-limit (to throttle token guessing) then authorize. Error or None."""
+    ip = _client_ip(request)
+    with _lock:
+        if not _rate_ok("admin", ip, ADMIN_LIMIT):
+            return _err(429, "Too many attempts. Wait a moment.")
+    if not _admin_ok(request):
+        return _err(403, "Not authorized.")
+    return None
 
 
 def _err(status: int, message: str, **extra) -> JSONResponse:
@@ -408,6 +435,28 @@ def vote(idea_id: str, body: VoteBody, request: Request):
         _db.commit()
         idea = _one_idea(idea_id, body.voter_id)
     return {"idea": idea}
+
+
+@app.get("/api/admin/ping")
+def admin_ping(request: Request):
+    """Validate the admin token so the UI can unlock its delete controls."""
+    err = _guard_admin(request)
+    return err or {"ok": True}
+
+
+@app.delete("/api/ideas/{idea_id}")
+def delete_idea(idea_id: str, request: Request):
+    """Admin-only: remove an idea and its votes (e.g. to take down abuse)."""
+    err = _guard_admin(request)
+    if err:
+        return err
+    with _lock:
+        cur = _db.execute("DELETE FROM ideas WHERE id = ?", (idea_id,))
+        _db.commit()
+        deleted = cur.rowcount
+    if not deleted:
+        return _err(404, "That idea's already gone.")
+    return {"ok": True, "deleted": idea_id}
 
 
 if __name__ == "__main__":
