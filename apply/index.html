@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Apply to Raid — Get a Job</title>
 <meta name="description" content="Apply to raid with the guild. Tell us your character, your experience, and why you want in.">
+<link rel="canonical" href="https://getajob.swagcounty.com/apply/">
 <link rel="icon" href="/assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
@@ -155,8 +156,7 @@ footer a:hover,footer a:focus-visible{color:var(--sky)}
   <a class="home-link" href="/">&larr; Get a Job</a>
 
   <header>
-    <h1 class="visually-hidden">Apply to Raid</h1>
-    <p class="tagline">Apply to raid with the guild.</p>
+    <h1 class="tagline">Apply to raid with the guild.</h1>
     <p class="sub">Semi-hardcore PvE, experience across a lot of servers. Tell us who you play, what you've cleared, and why you want in.</p>
   </header>
 
@@ -165,7 +165,7 @@ footer a:hover,footer a:focus-visible{color:var(--sky)}
       <label for="character">Character name</label>
       <input id="character" name="character" type="text" maxlength="40" required autocomplete="off"
              autocapitalize="words" spellcheck="false" placeholder="In-game name" aria-describedby="character-count">
-      <span class="counter" id="character-count" aria-hidden="true">0 / 40</span>
+      <span class="counter" id="character-count">0 / 40</span>
     </div>
 
     <div class="field">
@@ -185,7 +185,7 @@ footer a:hover,footer a:focus-visible{color:var(--sky)}
       <textarea id="experience" name="experience" maxlength="1500" required
                 placeholder="Where you've raided, what you've cleared, roles you've played."
                 aria-describedby="experience-count"></textarea>
-      <span class="counter" id="experience-count" aria-hidden="true">0 / 1500</span>
+      <span class="counter" id="experience-count">0 / 1500</span>
     </div>
 
     <div class="field">
@@ -193,7 +193,7 @@ footer a:hover,footer a:focus-visible{color:var(--sky)}
       <textarea id="why" name="why" maxlength="1500" required
                 placeholder="Tell us what you're after."
                 aria-describedby="why-count"></textarea>
-      <span class="counter" id="why-count" aria-hidden="true">0 / 1500</span>
+      <span class="counter" id="why-count">0 / 1500</span>
     </div>
 
     <div class="field">
@@ -213,7 +213,7 @@ footer a:hover,footer a:focus-visible{color:var(--sky)}
     </div>
 
     <div id="cf-widget" class="cf-widget" hidden></div>
-    <p class="consent">Submitting sends your application to the guild's officers over Discord and email, and stores a copy so we can get back to you. <a href="/privacy.html">How we handle it.</a></p>
+    <p class="consent">Submitting saves your application so we can get back to you, and notifies the guild's officers on Discord and by email. <a href="/privacy.html">How we handle it.</a></p>
 
     <button type="submit" class="apply-btn" id="apply-btn">Send application</button>
     <p class="status" id="form-status" role="status" aria-live="polite"></p>

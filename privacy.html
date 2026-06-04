@@ -80,6 +80,9 @@ footer a:focus-visible{color:var(--sky);outline:2px solid var(--sky);outline-off
 <h2>Server logs</h2>
 <p>Our web server keeps standard access logs (IP address, user agent, request path, status code) for a limited time, for debugging and abuse prevention. They are not used to profile you or shared with anyone.</p>
 
+<h2>Cloudflare (network delivery)</h2>
+<p>Get a Job is served through <strong>Cloudflare</strong>, so every request to the site passes through Cloudflare's network before it reaches our server. Cloudflare therefore sees the same connection details our access logs do — your IP address, user agent, and the path you requested — and handles them under <a href="https://www.cloudflare.com/privacypolicy/">its own privacy policy</a>. This is delivery infrastructure: it keeps the site up and absorbs attacks, and we do not get a per-visitor report out of it. The bot check on the vote and apply forms (below) is a separate Cloudflare feature that only runs when you submit.</p>
+
 <h2>The guild-name vote</h2>
 <p>Voting is shared, so unlike the guide it has to keep some data on our own server (a small SQLite database). Here is everything it stores:</p>
 <ul>
@@ -109,15 +112,16 @@ footer a:focus-visible{color:var(--sky);outline:2px solid var(--sky);outline-off
 <ul>
   <li>your <strong>character name</strong>, <strong>Discord username</strong>, and <strong>class</strong>;</li>
   <li>your <strong>raiding experience</strong> and <strong>why you want to join</strong>, in your own words;</li>
-  <li>an optional <strong>logs link</strong>, if you add one.</li>
+  <li>an optional <strong>logs link</strong>, if you add one;</li>
+  <li>the two <strong>acknowledgements</strong> you check off — that you bring full consumables and gemmed/enchanted gear, and that you'll reach out on Discord — recorded as yes/no.</li>
 </ul>
 
 <h3>Where it goes</h3>
 <p>The moment you submit, your application is:</p>
 <ul>
+  <li><strong>saved in our database</strong> so we can review it and get back to you;</li>
   <li><strong>posted to a private channel in our Discord server</strong>, where the guild's officers read it;</li>
-  <li><strong>emailed to the officers</strong> who handle recruiting;</li>
-  <li><strong>saved in our database</strong> so we can review it and get back to you.</li>
+  <li><strong>emailed to the officers</strong> who handle recruiting.</li>
 </ul>
 <p>Two outside services see your application so they can deliver it: <a href="https://discord.com/privacy">Discord</a> carries the channel post, and our email provider <a href="https://resend.com/legal/privacy-policy">Resend</a> sends the email. Each handles it under its own privacy policy. We do not post your application anywhere public, sell it, or use it for anything but recruiting.</p>
 
