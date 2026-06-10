@@ -89,9 +89,10 @@ ul.ideas{list-style:none;margin:0;padding:0;display:grid;gap:.7rem}
   border:1px solid var(--card-border);border-radius:12px;padding:.85rem 1rem;
   transition:border-color .14s ease,box-shadow .14s ease,background .3s ease}
 .idea.flash{border-color:var(--yellow);box-shadow:0 0 0 1px rgba(255,228,107,.5),0 0 26px -6px rgba(255,228,107,.5)}
-.votes{display:flex;flex-direction:column;align-items:center;gap:.1rem;flex:0 0 auto;min-width:2.4rem}
+.votes{display:flex;flex-direction:column;align-items:center;gap:.1rem;flex:0 0 auto;min-width:2.75rem}
 .vote{background:transparent;border:none;cursor:pointer;font-size:1.05rem;line-height:1;
   color:var(--dim);padding:.32rem .45rem;border-radius:8px;
+  min-width:2.75rem;min-height:2.75rem; /* ≥44px touch target (WCAG 2.5.5) */
   transition:color .14s ease,background .14s ease,transform .14s ease}
 .vote:hover,.vote:focus-visible{outline:none;background:rgba(255,255,255,.06);transform:translateY(-1px)}
 .vote.up:hover,.vote.up:focus-visible{color:var(--mint)}
