@@ -14,7 +14,7 @@ def esc(s):
 # maintainable. Anything not in this verified table falls back to a Wowhead
 # search URL (always resolves; just no hover tooltip) — so a public page can
 # never carry a broken link. IDs below were each resolved + verified against
-# live Wowhead /tbc/ pages (2026-06-03).
+# live Wowhead /tbc/ pages (2026-06-03; additions 2026-06-10).
 WH_BASE = "https://www.wowhead.com/tbc"
 
 WOWHEAD = {
@@ -31,6 +31,7 @@ WOWHEAD = {
     "The Hand of Gul'dan": ("quest", 10680),
     "The Vials of Eternity": ("quest", 10445),
     "An Artifact From the Past": ("quest", 10947),
+    "Ruse of the Ashtongue": ("quest", 10946),
     # --- items ---
     "Mark of Conquest": ("item", 27921),
     "Mark of Defiance": ("item", 27922),
@@ -47,6 +48,8 @@ WOWHEAD = {
     "Mote of Fire": ("item", 22574),
     "Arcane Dust": ("item", 22445),
     "Coilfang Armaments": ("item", 24368),
+    "Zaxxis Insignia": ("item", 29209),
+    "Obsidian Warbeads": ("item", 25433),
     "Medivh's Journal": ("item", 23933),
     "Medallion of Karabor": ("item", 32649),
     "Key of Time": ("item", 30635),
@@ -70,6 +73,8 @@ WOWHEAD = {
     "Lady Vashj": ("npc", 21212),
     "Kael'thas Sunstrider": ("npc", 19622),
     "Rage Winterchill": ("npc", 17767),
+    "Al'ar": ("npc", 19514),
+    "Talon King Ikiss": ("npc", 18473),
     # --- zones / dungeons ---
     "Hellfire Ramparts": ("zone", 3562),
     "The Blood Furnace": ("zone", 3713),
@@ -212,7 +217,9 @@ def slug(s):
     return s
 
 # ---------------------------------------------------------------------------
-# DATA  (faithfully transcribed from "TBC dungeon rep leveling (Stamaka).xlsx")
+# DATA  (transcribed from "TBC dungeon rep leveling (Stamaka).xlsx", then
+# cross-checked against Wowhead TBC Classic / warcraft.wiki.gg / Icy Veins and
+# the 2026 anniversary-realm phase schedule — corrections landed 2026-06-10)
 # ---------------------------------------------------------------------------
 
 # --- The leveling route (the flowchart) ---
@@ -228,7 +235,8 @@ ROUTE = [
               "Consider grabbing <b>[Mark of Conquest]</b>, <b>[Mark of Defiance]</b> or <b>[Mark of Vindication]</b> for easier farming.",
               "Learn your new skills."]},
     {"lvl": "62", "title": "The Slave Pens",
-     "do": ["Kill all slaves before the slavehandlers.", "Turn in 10 <b>[Unidentified Plant Parts]</b> once — sell the rest.",
+     "do": ["Kill each pack&rsquo;s enslaved Wastewalkers <i>before</i> their Coilfang masters — freed slaves turn friendly and stop giving rep.",
+            "Turn in 10 <b>[Unidentified Plant Parts]</b> once — sell the rest.",
             "Go to <b>Fahssn</b> and run repeatable quests until <b>friendly with Sporeggar</b>.",
             "Grab <b>[Oh, It&rsquo;s On!]</b> and <b>[Stalk the Stalker]</b> (good farming trinkets)."],
      "leave": "Honored with Cenarion Expedition",
@@ -236,7 +244,7 @@ ROUTE = [
     {"lvl": "63", "title": "The Underbog",
      "do": ["Run it once for the quests.", "Do quests out in Zangarmarsh."],
      "leave": "Honored with Cenarion Expedition &nbsp;·&nbsp; if not yet 64, stay till 64",
-     "tips": ["The Slave Pens and Underbog cap at Honored. Revered and Exalted come from <b>[Unidentified Plant Parts]</b> / Uncatalogued Species turn-ins, <b>The Steam Vaults</b>, and heroics.",
+     "tips": ["The Slave Pens and Underbog cap at Honored. Revered and Exalted come from Uncatalogued Species turn-ins (the rare find in <b>[Unidentified Plant Parts]</b> packages), <b>[Coilfang Armaments]</b>, <b>The Steam Vaults</b>, and heroics.",
               "Learn your new skills."]},
     {"lvl": "64", "title": "Mana-Tombs",
      "do": ["If not yet 65: farm Mark of Kil&rsquo;jaeden / Firewing Signet (up to 220), or quest in Terokkar / Nagrand till 65.",
@@ -246,7 +254,7 @@ ROUTE = [
      "tips": []},
     {"lvl": "65", "title": "Nagrand Arena — Ring of Blood",
      "do": ["See <b>Gurgthock</b> for the Ring of Blood chain.", "Grab <b>[I Must Have Them!]</b> and <b>[Bring Me The Egg!]</b>.",
-            "Visit <b>Wazat</b> for a blue cape in 2 quests."],
+            "Visit <b>Wazat</b> for a cape in 2 quests."],
      "leave": "",
      "tips": []},
     {"lvl": "65", "title": "Auchenai Crypts",
@@ -258,7 +266,8 @@ ROUTE = [
      "leave": "",
      "tips": []},
     {"lvl": "66", "title": "Sethekk Halls",
-     "do": ["The <b>Shadow Labyrinth key</b> drops inside.", "Sell all your <b>[Arakkoa Feather]</b>.", "Learn your new skills."],
+     "do": ["The <b>Shadow Labyrinth key</b> is in the chest beside <b>Talon King Ikiss</b> — everyone in the group can loot it.",
+            "Sell all your <b>[Arakkoa Feather]</b>.", "Learn your new skills."],
      "leave": "Ding 68",
      "tips": []},
     {"lvl": "68", "title": "Start Karazhan Attunement",
@@ -297,21 +306,21 @@ ROUTE = [
     {"lvl": "70", "title": "Heroic & Attune Farm",
      "do": ["The Botanica, The Mechanar (take <b>[Harbinger of Doom]</b>), The Arcatraz, The Black Morass.",
             "Farm <b>The Botanica</b> till revered with Sha&rsquo;tar.",
-            "Farm <b>The Black Morass</b> till revered with <b>Keepers of Time</b> for the heroic <b>[Key of Time]</b>. That Revered is the heroic key only; the Kara attune just needs one normal clear."],
+            "Farm <b>The Black Morass</b> till revered with <b>Keepers of Time</b> for the heroic <b>[Key of Time]</b>. That Revered pays twice — the heroic key now, and the Hyjal attune (<b>[The Vials of Eternity]</b>) in P3. The Kara attune itself just needs one normal clear."],
      "leave": "Fully attuned to T4 raids &amp; every heroic dungeon",
      "tips": []},
     {"lvl": "Raids", "title": "Raid Attunements",
      "do": ["<b>Nightbane:</b> at honored with Violet Eye, return to Archmage Alturus; take <b>[Medivh&rsquo;s Journal]</b> and finish the chain.",
-            "<b>SSC:</b> find <b>[Skar&rsquo;this the Heretic]</b> in heroic Slave Pens &rarr; <b>[The Cudgel of Kar&rsquo;desh]</b>.",
-            "<b>TK:</b> Shadowmoon Valley &rarr; <b>[Earthmender Sophurus]</b> / <b>[Earthmender Splinthoof]</b>; take <b>[The Hand of Gul&rsquo;dan]</b>, finish the long chain, then visit A&rsquo;dal for 4 trials.",
+            "<b>SSC:</b> find <b>[Skar&rsquo;this the Heretic]</b> in heroic Slave Pens &rarr; <b>[The Cudgel of Kar&rsquo;desh]</b> — it wants the signets off <b>Gruul</b> and <b>Nightbane</b>.",
+            "<b>TK:</b> Shadowmoon Valley &rarr; <b>[Earthmender Sophurus]</b> / <b>[Earthmender Splinthoof]</b>; take <b>[The Hand of Gul&rsquo;dan]</b>, finish the long chain, then visit A&rsquo;dal for the 4 trials — heroic Shattered Halls, Steamvault &amp; Shadow Labyrinth, Arcatraz, and finally <b>Magtheridon</b>.",
             "<b>Hyjal:</b> at revered with <b>Keepers of Time</b>, grab <b>[The Vials of Eternity]</b> from <b>Soridormi</b> at the Caverns of Time. It only wants the vials off <b>Lady Vashj</b> (SSC) and <b>Kael&rsquo;thas Sunstrider</b> (TK), so it&rsquo;s done in P2 the moment both are down.",
-            "<b>BT:</b> the <b>[Medallion of Karabor]</b> chain runs through SSC and TK too (Vashj + Kael), so grind it alongside Hyjal in P2. Only its final step, <b>[An Artifact From the Past]</b>, needs Mount Hyjal&rsquo;s first boss <b>Rage Winterchill</b>, so that part waits for P3."],
+            "<b>BT:</b> the <b>[Medallion of Karabor]</b> chain starts at your Aldor/Scryers base, finds <b>Seer Udalo</b> inside the Arcatraz, then needs <b>[Al&rsquo;ar]</b> dead in TK (<b>[Ruse of the Ashtongue]</b>) — run it alongside the P2 raids. Only its final step, <b>[An Artifact From the Past]</b>, needs Mount Hyjal&rsquo;s first boss <b>Rage Winterchill</b>, so that part waits for P3."],
      "leave": "",
      "tips": []},
 ]
 
 GOLDEN_RULES = [
-    "Don&rsquo;t turn in <b>any</b> quests with a faction until you&rsquo;re <b>honored</b> (5999/6000 friendly).",
+    "Don&rsquo;t turn in <b>any</b> quests with a faction until you&rsquo;re <b>honored</b> (5999/6000 friendly) — most normal-dungeon rep dries up at Honored, quest rep never does.",
     "When you reach honored, visit that faction&rsquo;s quartermaster — there are good low-level options.",
 ]
 
@@ -319,10 +328,10 @@ GOLDEN_RULES = [
 FACTIONS = [
     ("Honor Hold / Thrallmar", "Hellfire Peninsula", [("Hellfire Ramparts","honored"),("The Blood Furnace","honored"),("The Shattered Halls","exalted")]),
     ("Cenarion Expedition", "Zangarmarsh", [("The Slave Pens","honored"),("The Underbog","honored"),("Unidentified Plant Parts","honored"),("The Steam Vaults","exalted"),("Uncatalogued Species","exalted"),("Coilfang Armaments","exalted")]),
-    ("Consortium", "Netherstorm / Nagrand", [("Mana-Tombs","honored")]),
-    ("Lower City", "Shattrath City", [("Auchenai Crypts","honored"),("Sethekk Halls","honored"),("Arakkoa Feather","honored"),("Shadow Labyrinth","exalted")]),
+    ("Consortium", "Netherstorm / Nagrand", [("Mana-Tombs","honored"),("Zaxxis Insignia / Obsidian Warbeads","exalted"),("Ethereum Prison Keys","exalted")]),
+    ("Lower City", "Shattrath City", [("Auchenai Crypts","honored"),("Sethekk Halls","honored"),("Arakkoa Feather","honored"),("Shadow Labyrinth","revered")]),
     ("Keepers of Time", "Caverns of Time (Tanaris)", [("Old Hillsbrad Foothills","exalted"),("The Black Morass","exalted")]),
-    ("Sha&rsquo;tar", "Shattrath City", [("Shared rep with Aldor / Scryers","honored"),("The Botanica","exalted"),("The Mechanar","exalted"),("The Arcatraz","exalted")]),
+    ("Sha&rsquo;tar", "Shattrath City", [("Shared rep with Aldor / Scryers","friendly"),("The Botanica","exalted"),("The Mechanar","exalted"),("The Arcatraz","exalted")]),
     ("Aldor / Scryers", "Shattrath City", [("Mark of Kil&rsquo;jaeden / Firewing Signet","honored"),("Mark of Sargeras / Sunfury Signet","exalted"),("Fel Armament / Arcane Tome","exalted")]),
     ("Sha&rsquo;tari Skyguard <span class='ph'>p2</span>", "Terokkar Forest", [("Mobs, dailies, quests, turn-ins","")]),
     ("Kurenai / Mag&rsquo;har", "Nagrand", [("Mobs, quests, turn-ins","")]),
@@ -332,7 +341,7 @@ FACTIONS = [
     ("Violet Eye", "Deadwind Pass", [("Karazhan","")]),
     ("Ashtongue Deathsworn <span class='ph'>p3</span>", "Shadowmoon Valley", [("Black Temple","")]),
     ("Scale of the Sands <span class='ph'>p3</span>", "Caverns of Time", [("The Battle for Mount Hyjal","")]),
-    ("Shattered Sun Offensive <span class='ph'>p5</span>", "Isle of Quel&rsquo;Danas", [("Magisters&rsquo; Terrace","")]),
+    ("Shattered Sun Offensive <span class='ph'>p4</span>", "Isle of Quel&rsquo;Danas", [("Magisters&rsquo; Terrace","")]),
 ]
 
 # --- Dungeon & zone viability (level ranges) ---
@@ -361,8 +370,8 @@ NORMAL_DIFF = [
 HEROIC_DIFF = [
     ("easy", ["Hellfire Ramparts","The Slave Pens","The Steam Vaults","Auchenai Crypts","The Botanica"]),
     ("medium", ["The Underbog","Sethekk Halls","Shadow Labyrinth","The Mechanar"]),
-    ("hard", ["The Shattered Halls","Mana-Tombs","Old Hillsbrad Foothills","The Black Morass"]),
-    ("very hard", ["The Blood Furnace","The Arcatraz"]),
+    ("hard", ["Mana-Tombs","Old Hillsbrad Foothills","The Black Morass"]),
+    ("very hard", ["The Shattered Halls","The Blood Furnace","The Arcatraz"]),
 ]
 
 # --- Dungeon keys ---
@@ -392,7 +401,7 @@ KEY_GROUPS = [
         ("The Mechanar","70","fly mount","Warpforged Key"),
         ("The Arcatraz","70","Key to the Arcatraz","Warpforged Key"),
     ]),
-    ("Magisters&rsquo; Terrace", [
+    ("Magisters&rsquo; Terrace <span class='ph'>p4</span>", [
         ("Magisters&rsquo; Terrace","70","–","Hard to Kill"),
     ]),
 ]
@@ -406,8 +415,8 @@ RAIDS = [
     ("Tempest Keep","p2","Trial of the Naaru: Magtheridon"),
     ("Black Temple","p3","Medallion of Karabor"),
     ("The Battle for Mount Hyjal","p3","The Vials of Eternity"),
-    ("Zul&rsquo;Aman","p4","–"),
-    ("Sunwell Plateau","p5","–"),
+    ("Zul&rsquo;Aman","p3.5","–"),
+    ("Sunwell Plateau","p4","–"),
 ]
 
 # --- Phase 1 quartermaster rewards (both factions share rewards under different names) ---
@@ -599,7 +608,7 @@ def lvl_table(rows, head):
 # same localStorage pattern as the route (separate from the route count).
 key_rows = ""
 for grp, rows in KEY_GROUPS:
-    key_rows += f'<tr class="grouprow"><td colspan="5">{maybe_link_entity(grp)}</td></tr>'
+    key_rows += f'<tr class="grouprow"><td colspan="5">{link_faction(grp)}</td></tr>'
     for d, lvl, norm, hero in rows:
         kid = "key-" + slug(d)
         nv = "&ndash;" if norm == "–" else f'<span class="keyitem">{norm}</span>'
@@ -759,7 +768,9 @@ ul.tips li::before{content:"\\1F4A1";position:absolute;left:-22px}
 .rep{font-size:10.5px;text-transform:uppercase;letter-spacing:.6px;font-weight:700;
   padding:2px 9px;border-radius:11px;margin-left:auto;white-space:nowrap}
 .rep-honored{background:rgba(94,194,74,.18);color:var(--honored);border:1px solid #2f6a25}
+.rep-revered{background:rgba(59,155,214,.16);color:var(--revered);border:1px solid #265d80}
 .rep-exalted{background:rgba(199,123,255,.16);color:var(--exalted);border:1px solid #5a3a7a}
+.rep-friendly{background:rgba(154,168,144,.14);color:#b7c4ad;border:1px solid #45523c}
 
 /* faction grid */
 .facgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
@@ -770,6 +781,8 @@ ul.tips li::before{content:"\\1F4A1";position:absolute;left:-22px}
 .facname{display:block;font-weight:700;color:var(--gold);font-size:15.5px}
 .facname .ph,.ph{font-size:10px;background:var(--epic);color:#1a0a26;padding:1px 6px;border-radius:9px;
   vertical-align:middle;font-weight:700;letter-spacing:.4px}
+.phnote{color:var(--muted);font-size:12.5px;margin:-10px 0 18px;max-width:860px}
+.phnote .ph{margin:0 2px}
 .hq{display:block;color:var(--muted);font-size:12px;margin-top:2px}
 .faclist{list-style:none;margin:0;padding:8px 15px 12px}
 .faclist li{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px dotted #232c1b}
@@ -1181,7 +1194,8 @@ HTML = f"""<!doctype html>
 
   <section id="factions">
     <h2 class="sec">Factions &amp; Their Dungeons</h2>
-    <p class="lead">Which dungeons and activities feed each reputation, where their home base is, and how far you typically grind it.</p>
+    <p class="lead">Which dungeons and activities feed each reputation, where their home base is, and how far each source pays out (on normal mode, for dungeons). Heroic runs of any wing pay rep all the way to Exalted.</p>
+    <p class="phnote">Phase badges follow the 2026 anniversary schedule — <span class="ph">p2</span> live since May 14, 2026 (SSC &amp; TK, Skyguard, Ogri&rsquo;la) &middot; <span class="ph">p3</span> Hyjal &amp; BT, Netherwing &middot; <span class="ph">p3.5</span> Zul&rsquo;Aman &middot; <span class="ph">p4</span> Sunwell, Magisters&rsquo; Terrace, Shattered Sun. Later-phase dates not yet announced.</p>
     {fac_html}
   </section>
 
@@ -1206,6 +1220,11 @@ HTML = f"""<!doctype html>
   <section id="keys">
     <h2 class="sec">Keys &amp; Attunements</h2>
     <p class="lead">Normal-mode keys (where required) and the heroic key for each wing, plus raid entry requirements.</p>
+    <div class="rules"><ul>
+      <li>Heroic keys need <b>Revered</b> on your main (still true as of <span class="ph">p2</span> — the drop to Honored is expected in a later phase, as in 2021&rsquo;s P4).</li>
+      <li>Attunements on the 2026 anniversary realms are <b>account-wide</b>: finish a chain once and your alts inherit it. A Revered main can also mail alts a <b>Communal Heroic Key</b>, usable at just Friendly.</li>
+      <li>Raid attunements historically loosen as phases advance (2021: SSC/TK became optional in P3, Hyjal/BT in P4) — expect the same cadence here.</li>
+    </ul></div>
     <div class="twocol">
       <div><p class="tblcap">Dungeon keys</p>{keys_html}</div>
       <div><p class="tblcap">Raids</p>{raids_html}</div>
@@ -1238,7 +1257,8 @@ HTML = f"""<!doctype html>
       <a href="https://github.com/LLMATIONS/Get-a-Job" target="_blank" rel="noopener">Source</a>
     </div>
     <div class="foot-note">A guild fan project &middot; not affiliated with Blizzard. Reworked from
-    <a href="https://docs.google.com/spreadsheets/d/1RHHzSHiiNO9rMCYkYavtA2Rqx5huSLAS/edit?gid=797198729#gid=797198729" rel="noopener" target="_blank">Stamaka&rsquo;s &ldquo;TBC dungeon rep leveling&rdquo; spreadsheet</a>
+    <a href="https://docs.google.com/spreadsheets/d/1RHHzSHiiNO9rMCYkYavtA2Rqx5huSLAS/edit?gid=797198729#gid=797198729" rel="noopener" target="_blank">Stamaka&rsquo;s &ldquo;TBC dungeon rep leveling&rdquo; spreadsheet</a>,
+    cross-checked against Wowhead (TBC Classic), warcraft.wiki.gg &amp; Icy Veins, June 2026
     &middot; data links to Wowhead (TBC Classic).</div>
   </footer>
 </main>
