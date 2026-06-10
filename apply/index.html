@@ -61,12 +61,17 @@ h1{font-size:1.9rem;font-weight:800;margin:0 0 .35rem}
 .field{margin-bottom:1rem}
 .field label{display:block;font-size:.85rem;font-weight:600;color:var(--fg);margin-bottom:.3rem}
 .field .opt{color:var(--dim);font-weight:400}
-.field input,.field textarea{width:100%;background:rgba(0,0,0,.25);border:1px solid var(--card-border);
+.field input,.field textarea,.field select{width:100%;background:rgba(0,0,0,.25);border:1px solid var(--card-border);
   border-radius:9px;color:var(--fg);font:inherit;font-size:1rem;padding:.6rem .75rem;
   transition:border-color .14s ease,box-shadow .14s ease}
+.field select{cursor:pointer}
+.field select:invalid{color:var(--dim)}
+.field select option{background:#16121f;color:var(--fg)}
 .field textarea{min-height:6.5rem;resize:vertical;line-height:1.5}
 .field input::placeholder,.field textarea::placeholder{color:var(--dim);opacity:.7}
-.field input:focus-visible,.field textarea:focus-visible{outline:none;border-color:var(--lav);box-shadow:0 0 0 3px rgba(192,160,255,.25)}
+.field input:focus-visible,.field textarea:focus-visible,.field select:focus-visible{outline:none;border-color:var(--lav);box-shadow:0 0 0 3px rgba(192,160,255,.25)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:0 .9rem}
+@media(max-width:520px){.field-row{grid-template-columns:1fr}}
 .counter{display:block;text-align:right;font-size:.72rem;color:var(--dim);margin-top:.25rem;font-variant-numeric:tabular-nums}
 
 /* --- confirmations --- */
@@ -140,11 +145,28 @@ footer a:hover,footer a:focus-visible{color:var(--sky)}
       <span class="counter" id="discord-count">0 / 64</span>
     </div>
 
-    <div class="field">
-      <label for="wow_class">Class</label>
-      <input id="wow_class" name="wow_class" type="text" maxlength="32" required autocomplete="off"
-             autocapitalize="words" spellcheck="false" placeholder="e.g. Resto Druid" aria-describedby="wow_class-count">
-      <span class="counter" id="wow_class-count">0 / 32</span>
+    <div class="field-row">
+      <div class="field">
+        <label for="wow_class">Class</label>
+        <select id="wow_class" name="wow_class" required>
+          <option value="" disabled selected>Pick your class</option>
+          <option>Druid</option>
+          <option>Hunter</option>
+          <option>Mage</option>
+          <option>Paladin</option>
+          <option>Priest</option>
+          <option>Rogue</option>
+          <option>Shaman</option>
+          <option>Warlock</option>
+          <option>Warrior</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="wow_spec">Spec <span class="opt">(optional)</span></label>
+        <input id="wow_spec" name="wow_spec" type="text" maxlength="20" autocomplete="off"
+               autocapitalize="words" spellcheck="false" placeholder="e.g. Resto" aria-describedby="wow_spec-count">
+        <span class="counter" id="wow_spec-count">0 / 20</span>
+      </div>
     </div>
 
     <div class="field">
