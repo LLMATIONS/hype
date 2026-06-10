@@ -903,6 +903,12 @@ a.wh-q:hover{color:var(--fel-bright);border-bottom-color:currentColor}
   border-radius:8px;padding:5px 11px;cursor:pointer;transition:all .15s}
 .resetbtn:hover{color:#ff8a66;border-color:#5c2f20;background:rgba(196,84,52,.1)}
 .resetbtn:focus-visible{outline:2px solid var(--fel-bright);outline-offset:2px}
+.jumpbtn{font:inherit;font-size:11px;text-transform:uppercase;letter-spacing:.7px;font-weight:700;
+  color:var(--muted);background:rgba(255,255,255,.03);border:1px solid var(--line);
+  border-radius:8px;padding:5px 11px;cursor:pointer;transition:all .15s}
+.jumpbtn:hover{color:var(--fel-bright);border-color:#2f5c20;background:rgba(105,196,52,.1)}
+.jumpbtn:focus-visible{outline:2px solid var(--fel-bright);outline-offset:2px}
+.progress.complete .jumpbtn{display:none}
 
 /* card header that holds the checkbox */
 .cardtop{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
@@ -1082,6 +1088,11 @@ PROGRESS_JS = """
     });
   });
 
+  // The guide is ~1000 lines tall; once a dozen steps are done the current
+  // node sits below a wall of completed cards. One click takes you there.
+  var jump = document.getElementById("jumpbtn");
+  if (jump) { jump.addEventListener("click", scrollToCurrent); }
+
   var reset = document.getElementById("resetbtn");
   if (reset) {
     reset.addEventListener("click", function () {
@@ -1158,6 +1169,7 @@ HTML = f"""<!doctype html>
         <span class="plabel" id="plabel" aria-live="polite" aria-atomic="true">Step 1 / {len(ROUTE)}</span>
         <div class="pright">
           <span class="pcount" id="pcount">0 / {len(ROUTE)} done</span>
+          <button type="button" class="jumpbtn" id="jumpbtn">Jump to current step</button>
           <button type="button" class="resetbtn" id="resetbtn">Reset progress</button>
         </div>
       </div>
@@ -1234,12 +1246,23 @@ HTML = f"""<!doctype html>
 </body>
 </html>"""
 
-import io, os
+import io, os, sys
 # Anchor the output to this script's directory so cwd doesn't matter — running
 # `python3 tbc/build_tbc_guide.py` from the repo root must still land at
 # tbc/index.html, never clobber the hub's root index.html. (Mirrors hub/build_hub.py.)
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "index.html")
-with io.open(OUT, "w", encoding="utf-8") as f:
-    f.write(HTML)
-print("Wrote %s  (%d chars)" % (OUT, len(HTML)))
+if "--check" in sys.argv[1:]:
+    # CI guard (tbc-build.yml): fail if the committed index.html was hand-edited
+    # or someone edited this generator and forgot to rebuild.
+    current = io.open(OUT, encoding="utf-8").read() if os.path.exists(OUT) else ""
+    if current != HTML:
+        sys.exit(
+            "error: tbc/index.html is out of sync with build_tbc_guide.py.\n"
+            "       run: python3 tbc/build_tbc_guide.py"
+        )
+    print("tbc/index.html is in sync with build_tbc_guide.py")
+else:
+    with io.open(OUT, "w", encoding="utf-8") as f:
+        f.write(HTML)
+    print("Wrote %s  (%d chars)" % (OUT, len(HTML)))
