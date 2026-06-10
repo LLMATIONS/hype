@@ -8,7 +8,7 @@
 (function () {
   "use strict";
 
-  var CAPS = { character: 40, discord: 64, wow_class: 32, experience: 1500, why: 1500, logs: 300 };
+  var CAPS = { character: 40, discord: 64, wow_class: 32, wow_spec: 20, experience: 1500, why: 1500, logs: 300 };
 
   // --- tiny dom + fetch helpers --------------------------------------------
   var $ = function (sel, root) { return (root || document).querySelector(sel); };
@@ -78,14 +78,14 @@
 
   var fields = {
     character: $("#character"), discord: $("#discord"), wow_class: $("#wow_class"),
-    experience: $("#experience"), why: $("#why"), logs: $("#logs")
+    wow_spec: $("#wow_spec"), experience: $("#experience"), why: $("#why"), logs: $("#logs")
   };
   var ackConsumables = $("#ack_consumables");
   var ackFriend = $("#ack_friend");
 
   wireCounter(fields.character, "character-count", CAPS.character);
   wireCounter(fields.discord, "discord-count", CAPS.discord);
-  wireCounter(fields.wow_class, "wow_class-count", CAPS.wow_class);
+  wireCounter(fields.wow_spec, "wow_spec-count", CAPS.wow_spec);
   wireCounter(fields.experience, "experience-count", CAPS.experience);
   wireCounter(fields.why, "why-count", CAPS.why);
   wireCounter(fields.logs, "logs-count", CAPS.logs);
@@ -97,11 +97,19 @@
 
   function val(name) { return (fields[name].value || "").trim(); }
 
+  // The server stores one class string; "Resto" + "Druid" -> "Resto Druid".
+  // Spec is capped at 20 and the longest class is 7 chars, so this always
+  // fits the server's 32-char class limit.
+  function composedClass() {
+    var spec = val("wow_spec");
+    return spec ? spec + " " + val("wow_class") : val("wow_class");
+  }
+
   // Mirror the server's required checks so we fail fast and point at the field.
   function firstProblem() {
     if (!val("character")) return [fields.character, "Your character name's required."];
     if (!val("discord")) return [fields.discord, "Your Discord username's required."];
-    if (!val("wow_class")) return [fields.wow_class, "Your class is required."];
+    if (!val("wow_class")) return [fields.wow_class, "Pick your class."];
     if (!val("experience")) return [fields.experience, "Tell us a bit about your raiding experience."];
     if (!val("why")) return [fields.why, "Tell us why you want to join."];
     var logs = val("logs");
@@ -124,7 +132,7 @@
         body: {
           character: val("character"),
           discord: val("discord"),
-          wow_class: val("wow_class"),
+          wow_class: composedClass(),
           experience: val("experience"),
           why: val("why"),
           logs: val("logs") || null,

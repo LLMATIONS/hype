@@ -725,6 +725,12 @@ def delete_idea(idea_id: str, request: Request):
 
 
 # --- guild applications -----------------------------------------------------
+TBC_CLASSES = (
+    "druid", "hunter", "mage", "paladin", "priest",
+    "rogue", "shaman", "warlock", "warrior",
+)
+
+
 @app.post("/api/apply")
 def submit_application(body: ApplyBody, request: Request):
     """Public: accept a guild application, store it, fan it out to Discord + email."""
@@ -745,6 +751,11 @@ def submit_application(body: ApplyBody, request: Request):
         return _err(422, "Your class is required.")
     if len(wow_class) > CLASS_MAX:
         return _err(422, f"Keep the class under {CLASS_MAX} characters.")
+    # The form sends "<spec> <Class>" from a fixed select, so a real class
+    # name is always present. This only rejects direct-API garbage, which
+    # otherwise lands in the officers' review queue unfilterable by class.
+    if not any(c in wow_class.casefold() for c in TBC_CLASSES):
+        return _err(422, "Pick one of the nine TBC classes.")
 
     experience = _clean_multiline(body.experience or "")
     if not _has_content(experience):
