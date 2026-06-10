@@ -139,8 +139,9 @@
       : "";
   }
 
-  // Update a single card in place after a vote (no reorder — the cards don't
-  // jump under your cursor; the list re-sorts on the next load or submit).
+  // Update a single card in place after a vote. The full list re-sorts a
+  // beat later (see scheduleResort) so cards don't yank around under a
+  // rapid up/down spree but the new ranking still shows without a refresh.
   function patchCard(idea) {
     var li = listEl.querySelector('.idea[data-id="' + cssId(idea.id) + '"]');
     if (!li) return;
@@ -162,6 +163,14 @@
   // --- actions -------------------------------------------------------------
   var voting = {}; // de-dupe rapid clicks per idea
 
+  // Debounced re-sort after voting settles: one reload 1.4s after the last
+  // vote click, so the ballot reflects the new ranking in place.
+  var resortTimer = null;
+  function scheduleResort() {
+    if (resortTimer) clearTimeout(resortTimer);
+    resortTimer = setTimeout(function () { resortTimer = null; load(); }, 1400);
+  }
+
   async function castVote(id, dir) {
     if (voting[id]) return;
     var li = listEl.querySelector('.idea[data-id="' + cssId(id) + '"]');
@@ -173,6 +182,7 @@
         method: "POST", body: { voter_id: VID, value: value }
       });
       patchCard(data.idea);
+      scheduleResort();
       setStatus("");
     } catch (e) {
       setStatus(e.message, "err");

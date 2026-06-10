@@ -30,6 +30,7 @@ In production it is launched by the getajob-vote systemd unit via uvicorn.
 from __future__ import annotations
 
 import json
+import math
 import os
 import re
 import sqlite3
@@ -398,8 +399,31 @@ _IDEAS_SQL = """
 """
 
 
+def _wilson_lower_bound(ups: int, downs: int, z: float = 1.281551565545) -> float:
+    """Lower bound of the Wilson score interval (90% confidence) on the
+    up-vote proportion — the standard ballot-ranking estimator (E. Miller,
+    "How Not To Sort By Average Rating"). Ranks "probably good" above
+    "barely voted": 5 ups / 1 down outranks 1 up / 0 downs, and 10 ups /
+    9 downs no longer ties a clean +1. Raw net score keeps displaying;
+    only the ordering uses this."""
+    n = ups + downs
+    if n == 0:
+        return 0.0
+    p = ups / n
+    z2 = z * z
+    centre = p + z2 / (2 * n)
+    spread = z * math.sqrt((p * (1 - p) + z2 / (4 * n)) / n)
+    return (centre - spread) / (1 + z2 / n)
+
+
 def _list_ideas(voter_id: Optional[str]) -> list[dict]:
     rows = _db.execute(_IDEAS_SQL).fetchall()
+    # Wilson-rank the ballot (confidence-adjusted), oldest-first on ties so
+    # early pitches don't shuffle. The SQL ORDER BY stays as a stable base.
+    rows = sorted(
+        rows,
+        key=lambda r: (-_wilson_lower_bound(r["ups"], r["downs"]), r["created_at"], r["id"]),
+    )
     mine: dict[str, int] = {}
     if voter_id:
         for r in _db.execute(
