@@ -6,7 +6,7 @@
 # a blank entry is skipped. Each delivery channel works the moment its secret lands:
 #   DISCORD_WEBHOOK_URL  the channel webhook (Server Settings > Integrations > Webhooks)
 #   RESEND_API_KEY       a Resend API key (re_...)
-#   APPLY_MAIL_FROM      verified sender, e.g.  Get a Job <apply@send.swagcounty.com>
+#   APPLY_MAIL_FROM      verified sender, e.g.  hype <apply@send.swagcounty.com>
 #   APPLY_MAIL_TO        comma-separated recipient address(es)
 #
 # The webhook URL and the API key carry secrets, so they are read WITHOUT echo and
@@ -23,7 +23,7 @@ UNIT="getajob-vote.service"
 mkdir -p "$RUNTIME"
 if [ ! -f "$ENV_FILE" ]; then
   umask 177
-  printf '# Get a Job backend secrets — mode 600, never commit.\n' > "$ENV_FILE"
+  printf '# hype backend secrets — mode 600, never commit.\n' > "$ENV_FILE"
   chmod 600 "$ENV_FILE"
 fi
 
@@ -39,7 +39,7 @@ set_kv() {
 
 read -r -s -p "Discord webhook URL (hidden, blank = skip): " WEBHOOK; echo
 read -r -s -p "Resend API key (hidden, blank = skip):      " RKEY; echo
-read -r    -p "Mail FROM (e.g. Get a Job <apply@send.swagcounty.com>, blank = skip): " MFROM
+read -r    -p "Mail FROM (e.g. hype <apply@send.swagcounty.com>, blank = skip): " MFROM
 read -r    -p "Mail TO   (comma-separated, blank = skip):   " MTO
 
 changed=()

@@ -1,4 +1,4 @@
-"""Guild-name voting backend for Get a Job.
+"""Guild-name voting backend for hype.
 
 A tiny FastAPI + SQLite service that backs the /guild-names/ page. It runs on
 loopback only (127.0.0.1) behind a reverse proxy that forwards same-origin
@@ -130,7 +130,7 @@ async def lifespan(_app: FastAPI):
 
 
 app = FastAPI(
-    title="Get a Job — backend (guild-name vote + applications)",
+    title="hype — backend (guild-name vote + applications)",
     docs_url=None,
     redoc_url=None,
     lifespan=lifespan,
@@ -514,7 +514,7 @@ def _post_discord(a: dict) -> str:
         "fields": fields,
     }
     payload = {
-        "username": "Get a Job — applications",
+        "username": "hype — applications",
         "embeds": [embed],
         "allowed_mentions": {"parse": []},  # applicant text can never ping
     }
@@ -525,7 +525,7 @@ def _post_discord(a: dict) -> str:
 def _email_text(a: dict) -> str:
     """Plaintext application body — no HTML, so nothing in it can be injected."""
     lines = [
-        "New guild application — Get a Job",
+        "New guild application — hype",
         "",
         "Character:  " + a["character"],
         "Class:      " + a["wow_class"],
@@ -548,7 +548,7 @@ def _email_text(a: dict) -> str:
         "[x] Will send a friend request / DM " + APPLY_CONTACT + " on Discord",
         "",
         "--",
-        "Sent by the Get a Job apply form. Manage entries on the admin review page.",
+        "Sent by the hype apply form. Manage entries on the admin review page.",
     ]
     return "\n".join(lines)
 
