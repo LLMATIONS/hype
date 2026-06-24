@@ -1254,7 +1254,7 @@ HTML = f"""<!doctype html>
       <a href="/">&larr; hype</a> &middot;
       <a href="https://swagcounty.com">Swag County</a> &middot;
       <a href="/privacy.html">Privacy</a> &middot;
-      <a href="https://github.com/LLMATIONS/Get-a-Job" target="_blank" rel="noopener">Source</a>
+      <a href="https://github.com/LLMATIONS/hype" target="_blank" rel="noopener">Source</a>
     </div>
     <div class="foot-note">A guild fan project &middot; not affiliated with Blizzard. Reworked from
     <a href="https://docs.google.com/spreadsheets/d/1RHHzSHiiNO9rMCYkYavtA2Rqx5huSLAS/edit?gid=797198729#gid=797198729" rel="noopener" target="_blank">Stamaka&rsquo;s &ldquo;TBC dungeon rep leveling&rdquo; spreadsheet</a>,
