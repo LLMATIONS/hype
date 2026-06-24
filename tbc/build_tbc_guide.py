@@ -1136,14 +1136,14 @@ HTML = f"""<!doctype html>
 <meta property="og:description" content="The dungeon-rep leveling route, 58 to 70 and into raids. Checkable, Wowhead-linked, saved in your browser.">
 <meta property="og:url" content="https://hype.swagcounty.com/tbc/">
 <meta property="og:type" content="website">
-<meta property="og:image" content="https://hype.swagcounty.com/assets/og-card.png?v=2026-06-24">
+<meta property="og:image" content="https://hype.swagcounty.com/assets/og-card.png?v=2026-06-24b">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="TBC Dungeon Rep Leveling Guide — hype">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="TBC Dungeon Rep Leveling Guide">
 <meta name="twitter:description" content="The dungeon-rep leveling route, 58 to 70 and into raids. Checkable, Wowhead-linked, saved in your browser.">
-<meta name="twitter:image" content="https://hype.swagcounty.com/assets/og-card.png?v=2026-06-24">
+<meta name="twitter:image" content="https://hype.swagcounty.com/assets/og-card.png?v=2026-06-24b">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&display=swap" media="print" onload="this.media='all'">

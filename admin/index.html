@@ -9,14 +9,14 @@
 <link rel="icon" href="/assets/favicon.ico?v=2026-06-24" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=2026-06-24">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png?v=2026-06-24">
-<meta name="theme-color" content="#0c0a14">
+<meta name="theme-color" content="#070a12">
 <style>
 :root{
   color-scheme: dark;
-  --bg:#0c0a14; --bg2:#170f2b; --fg:#f1ecfb; --dim:#a79fc0;
-  --card-bg:rgba(255,255,255,.03); --card-border:rgba(180,150,255,.18);
-  --pink:#ff8fcf; --peach:#ffbf8f; --yellow:#ffe46b; --mint:#8ff3c2; --sky:#8fd0ff; --lav:#c0a0ff;
-  --rainbow:linear-gradient(100deg,var(--pink),var(--peach),var(--yellow),var(--mint),var(--sky),var(--lav));
+  --bg:#070a12; --bg2:#0d1426; --fg:#eef2fb; --dim:#9fb0cc;
+  --card-bg:rgba(255,255,255,.03); --card-border:rgba(120,170,255,.18);
+  --pink:#7fd0ff; --peach:#5ee9cf; --yellow:#5ee9cf; --mint:#8ff3c2; --sky:#8fd0ff; --lav:#aab6ff;
+  --cool:linear-gradient(100deg,#7fd0ff,#5ee9cf,#aab6ff);
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
@@ -26,7 +26,7 @@ body{
   color:var(--fg); line-height:1.6; min-height:100dvh; display:flex; flex-direction:column;
   background-color:var(--bg);
   background-image:
-    radial-gradient(900px 460px at 50% -8%, rgba(192,160,255,.22), transparent 60%),
+    radial-gradient(900px 460px at 50% -8%, rgba(86,170,255,.22), transparent 60%),
     linear-gradient(160deg,var(--bg) 0%,var(--bg2) 100%);
   background-attachment:fixed;
 }
@@ -35,7 +35,7 @@ main{max-width:760px;margin:0 auto;padding:1.8rem 1.5rem 2rem;flex:1;width:100%}
 
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:.6rem;margin-bottom:1.4rem;flex-wrap:wrap}
 .home-link{display:inline-flex;align-items:center;gap:.4rem;font-size:.8rem;letter-spacing:.02em;color:var(--dim);text-decoration:none;border:1px solid var(--card-border);border-radius:999px;padding:.4rem .9rem;transition:color .14s ease,border-color .14s ease,background .14s ease}
-.home-link:hover,.home-link:focus-visible{color:var(--fg);border-color:var(--lav);background:rgba(192,160,255,.08);outline:none}
+.home-link:hover,.home-link:focus-visible{color:var(--fg);border-color:var(--lav);background:rgba(86,170,255,.08);outline:none}
 .home-link:focus-visible{outline:2px solid var(--sky);outline-offset:2px}
 .whoami{font-size:.8rem;color:var(--dim);font-variant-numeric:tabular-nums}
 .whoami b{color:var(--mint);font-weight:700}
@@ -87,7 +87,7 @@ ul.apps{list-style:none;margin:0;padding:0;display:grid;gap:.8rem}
   color:var(--dim);font-size:1rem;line-height:1;padding:.3rem .45rem;border-radius:8px;
   transition:color .14s ease,background .14s ease}
 .del:hover,.del:focus-visible{outline:none;color:var(--pink);background:rgba(255,143,207,.14)}
-.del:focus-visible{box-shadow:0 0 0 2px rgba(192,160,255,.55)}
+.del:focus-visible{box-shadow:0 0 0 2px rgba(86,170,255,.55)}
 
 @media (prefers-reduced-motion:reduce){ *{transition:none !important} }
 @media (max-width:420px){ main{padding:1.4rem 1rem 1.6rem} }
