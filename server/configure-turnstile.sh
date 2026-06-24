@@ -20,7 +20,7 @@ UNIT="getajob-vote.service"
 mkdir -p "$RUNTIME"
 if [ ! -f "$ENV_FILE" ]; then
   umask 177
-  printf '# Get a Job backend secrets — mode 600, never commit.\n' > "$ENV_FILE"
+  printf '# hype backend secrets — mode 600, never commit.\n' > "$ENV_FILE"
   chmod 600 "$ENV_FILE"
 fi
 

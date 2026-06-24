@@ -26,7 +26,7 @@ fi
 # --- systemd unit: loopback-only, hardened, auto-restart --------------------
 cat > "$UNIT_PATH" <<UNIT_EOF
 [Unit]
-Description=Get a Job — guild-name voting backend
+Description=hype — guild-name voting backend
 After=network-online.target
 Wants=network-online.target
 
@@ -61,7 +61,7 @@ install -d -o "$SVC_USER" -g "$SVC_USER" "$RUNTIME"
 ENV_FILE="$RUNTIME/getajob-vote.env"
 if [ ! -f "$ENV_FILE" ]; then
   printf '%s\n' \
-    '# Get a Job backend secrets — mode 600, never commit.' \
+    '# hype backend secrets — mode 600, never commit.' \
     '# Turnstile (configure-turnstile.sh): TURNSTILE_SITEKEY, TURNSTILE_SECRET' \
     '# Apply     (configure-apply.sh):     DISCORD_WEBHOOK_URL, RESEND_API_KEY, APPLY_MAIL_FROM, APPLY_MAIL_TO' \
     '# Admin: no secret here — moderation is Authentik SSO on getajob-admin.swagcounty.com' \

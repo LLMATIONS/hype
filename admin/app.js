@@ -1,4 +1,4 @@
-/* Get a Job — admin app.
+/* hype — admin app.
  *
  * Served only on getajob-admin.swagcounty.com, behind Authentik forward-auth on
  * an internal origin that isn't exposed to the public internet. There is NO

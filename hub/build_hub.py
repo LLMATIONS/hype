@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the Get a Job hub (index.html) from hub/shell.html + hub/tiles/*.html.
+"""Generate the hype hub (index.html) from hub/shell.html + hub/tiles/*.html.
 
 Why this exists
 ---------------
