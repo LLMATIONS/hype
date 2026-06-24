@@ -1,4 +1,4 @@
-# Hub — the getajob.swagcounty.com landing page
+# Hub — the hype.swagcounty.com landing page
 
 `index.html` at the repo root is **generated**. Do not hand-edit it.
 
