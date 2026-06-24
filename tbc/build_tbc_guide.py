@@ -864,7 +864,7 @@ table.qm thead th{width:20%}
 footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--line);
   color:var(--muted);font-size:12.5px;text-align:center}
 
-/* portal chrome (part of the Get a Job site) */
+/* portal chrome (part of the hype site) */
 .portal-back{display:inline-block;margin:14px 0 -8px 18px;font-size:12px;letter-spacing:.4px;
   color:var(--muted);text-decoration:none;border:1px solid var(--line);border-radius:20px;
   padding:5px 13px;transition:color .14s,border-color .14s,background .14s}
@@ -1125,7 +1125,7 @@ HTML = f"""<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>TBC Dungeon Rep Leveling Guide &middot; Get a Job</title>
+<title>TBC Dungeon Rep Leveling Guide &middot; hype</title>
 <meta name="description" content="The Burning Crusade dungeon-reputation leveling route, 58 to 70 and into raids. Checkable steps, Wowhead tooltips, progress saved in your browser.">
 <link rel="icon" href="/assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
@@ -1139,7 +1139,7 @@ HTML = f"""<!doctype html>
 <meta property="og:image" content="https://getajob.swagcounty.com/assets/og-card.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="TBC Dungeon Rep Leveling Guide — Get a Job">
+<meta property="og:image:alt" content="TBC Dungeon Rep Leveling Guide — hype">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="TBC Dungeon Rep Leveling Guide">
 <meta name="twitter:description" content="The dungeon-rep leveling route, 58 to 70 and into raids. Checkable, Wowhead-linked, saved in your browser.">
@@ -1153,7 +1153,7 @@ HTML = f"""<!doctype html>
 </head>
 <body>
 
-<a class="portal-back" href="/">&larr; Get a Job</a>
+<a class="portal-back" href="/">&larr; hype</a>
 
 <header class="hero">
   <h1>The Burning Crusade</h1>
@@ -1251,7 +1251,7 @@ HTML = f"""<!doctype html>
 
   <footer>
     <div class="foot-links">
-      <a href="/">&larr; Get a Job</a> &middot;
+      <a href="/">&larr; hype</a> &middot;
       <a href="https://swagcounty.com">Swag County</a> &middot;
       <a href="/privacy.html">Privacy</a> &middot;
       <a href="https://github.com/LLMATIONS/Get-a-Job" target="_blank" rel="noopener">Source</a>

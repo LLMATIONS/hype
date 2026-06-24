@@ -1,4 +1,4 @@
-# Get a Job
+# hype
 
 A World of Warcraft guild portal under [LLMATIONS](https://github.com/LLMATIONS) → Swag County. Small tools for our Burning Crusade guild, built for the love of the grind.
 
