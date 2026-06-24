@@ -2,7 +2,7 @@
 
 A World of Warcraft guild portal under [LLMATIONS](https://github.com/LLMATIONS) → Swag County. Small tools for our Burning Crusade guild, built for the love of the grind.
 
-Lives at <https://getajob.swagcounty.com>.
+Lives at <https://hype.swagcounty.com>.
 
 ## What's in here
 
