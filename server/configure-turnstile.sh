@@ -10,12 +10,12 @@
 # configure-apply.sh.
 #
 # Get both from the Cloudflare dashboard: Turnstile > add a widget for
-# getajob.swagcounty.com (Managed mode). Then run:  bash server/configure-turnstile.sh
+# hype.swagcounty.com (Managed mode). Then run:  bash server/configure-turnstile.sh
 set -euo pipefail
 
-RUNTIME="$HOME/getajob-vote"
-ENV_FILE="$RUNTIME/getajob-vote.env"
-UNIT="getajob-vote.service"
+RUNTIME="$HOME/hype-vote"
+ENV_FILE="$RUNTIME/hype-vote.env"
+UNIT="hype-vote.service"
 
 mkdir -p "$RUNTIME"
 if [ ! -f "$ENV_FILE" ]; then

@@ -56,7 +56,7 @@ bash server/configure-turnstile.sh   # prompts for sitekey (echoed) + secret (hi
 
 Create the widget in the Cloudflare dashboard (Turnstile → add a widget for the
 site's hostname). The script writes `TURNSTILE_SITEKEY` + `TURNSTILE_SECRET` to
-`~/getajob-vote/getajob-vote.env` (mode 600) and restarts the unit.
+`~/hype-vote/hype-vote.env` (mode 600) and restarts the unit.
 
 ## Admin moderation (owner-only)
 
@@ -66,7 +66,7 @@ authorized by the `X-Authentik-Username` header. There is **no app-managed admin
 secret**.
 
 The gate lives one layer out: the admin UI is served on its own subdomain
-(`getajob-admin.swagcounty.com`) behind Authentik forward-auth. That subdomain
+(`hype-admin.swagcounty.com`) behind Authentik forward-auth. That subdomain
 is deliberately internal-only (not a public hostname), so the moderation
 surface never touches the public internet. The reverse proxy
 verifies the SSO session and injects `X-Authentik-Username` — overwriting any
@@ -76,16 +76,16 @@ carries a trustworthy identity. The public origin never proxies `/api/admin/*`
 and never sets that header, so the same endpoints are unreachable from it
 (belt-and-suspenders: the app also returns 403 without the header).
 
-To moderate, open `https://getajob-admin.swagcounty.com/` from the internal
+To moderate, open `https://hype-admin.swagcounty.com/` from the internal
 network and sign in with your usual SSO. No token to set, save, or rotate.
 
 ## Runtime layout
 
-Code lives in the repo; the service runs from `~/getajob-vote/` outside any git
+Code lives in the repo; the service runs from `~/hype-vote/` outside any git
 checkout, so its writable DB never lands inside a pull-only serving tree:
 
 ```
-~/getajob-vote/
+~/hype-vote/
   venv/                 # the virtualenv
   app.py                # deployed copy of server/app.py
   data/guildnames.db    # SQLite, created at runtime — gitignored, never committed

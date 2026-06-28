@@ -16,9 +16,9 @@
 # Run on the serving host:  bash server/configure-apply.sh
 set -euo pipefail
 
-RUNTIME="$HOME/getajob-vote"
-ENV_FILE="$RUNTIME/getajob-vote.env"
-UNIT="getajob-vote.service"
+RUNTIME="$HOME/hype-vote"
+ENV_FILE="$RUNTIME/hype-vote.env"
+UNIT="hype-vote.service"
 
 mkdir -p "$RUNTIME"
 if [ ! -f "$ENV_FILE" ]; then
