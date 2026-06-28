@@ -25,7 +25,7 @@ Run for local preview:
 
     GUILDNAMES_DB=./data/guildnames.db python app.py    # serves 127.0.0.1:8794
 
-In production it is launched by the getajob-vote systemd unit via uvicorn.
+In production it is launched by the hype-vote systemd unit via uvicorn.
 """
 from __future__ import annotations
 
@@ -88,7 +88,7 @@ TURNSTILE_SITEKEY = os.environ.get("TURNSTILE_SITEKEY", "").strip()
 TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify"
 
 # Admin moderation runs on a separate, internal-only subdomain
-# (getajob-admin.swagcounty.com, not exposed to the public internet) that
+# (hype-admin.swagcounty.com, not exposed to the public internet) that
 # Authentik forward-auth gates. Caddy
 # verifies the SSO session and injects the authenticated user's name in
 # X-Authentik-Username — overwriting any client-supplied copy — before proxying
@@ -111,7 +111,7 @@ APPLY_CONTACT = "@ivorycrayon"  # the Discord handle applicants are told to reac
 # Cloudflare, which 403s the default "Python-urllib/x.y" UA as bot traffic; a
 # named UA is also what Discord's API guidelines require. Resend is fine either
 # way, but gets the same header for consistency.
-APPLY_UA = "GetAJob-Apply/1.0 (+https://getajob.swagcounty.com)"
+APPLY_UA = "Hype-Apply/1.0 (+https://hype.swagcounty.com)"
 
 _WS_RUN = re.compile(r"\s+")
 _INLINE_WS = re.compile(r"[^\S\n]+")   # whitespace except newline (for paragraphs)

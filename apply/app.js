@@ -4,7 +4,7 @@
  * Content-Security-Policy with no 'unsafe-inline' for scripts. The public form
  * just collects fields and POSTs them; the server stores the application and
  * fans it out to Discord + email. Review/moderation lives on the separate,
- * Authentik-gated admin app (getajob-admin.swagcounty.com), not here. */
+ * Authentik-gated admin app (hype-admin.swagcounty.com), not here. */
 (function () {
   "use strict";
 

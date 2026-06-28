@@ -2,7 +2,7 @@
 # Deploy the guild-name voting backend into its host runtime dir and restart it.
 #
 # The service code lives in this repo (server/), but it RUNS from a runtime dir
-# outside any git checkout ($HOME/getajob-vote) so its writable SQLite DB never
+# outside any git checkout ($HOME/hype-vote) so its writable SQLite DB never
 # sits inside a pull-only serving checkout. This script copies the current code
 # in next to the venv + data dir and restarts the unit.
 #
@@ -14,8 +14,8 @@
 set -euo pipefail
 
 SRC="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-RUNTIME="$HOME/getajob-vote"
-UNIT="getajob-vote.service"
+RUNTIME="$HOME/hype-vote"
+UNIT="hype-vote.service"
 
 mkdir -p "$RUNTIME/data"
 [ -d "$RUNTIME/venv" ] || python3 -m venv "$RUNTIME/venv"

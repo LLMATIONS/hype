@@ -12,11 +12,11 @@ set -euo pipefail
 
 SVC_USER="${SUDO_USER:-$USER}"
 SVC_HOME="$(getent passwd "$SVC_USER" | cut -d: -f6)"
-RUNTIME="$SVC_HOME/getajob-vote"
+RUNTIME="$SVC_HOME/hype-vote"
 PORT="${GUILDNAMES_PORT:-8794}"
-UNIT="getajob-vote.service"
+UNIT="hype-vote.service"
 UNIT_PATH="/etc/systemd/system/$UNIT"
-SUDOERS_PATH="/etc/sudoers.d/getajob-vote-restart"
+SUDOERS_PATH="/etc/sudoers.d/hype-vote-restart"
 
 if [ "$(id -u)" -ne 0 ]; then
   echo "install: re-run with sudo (sudo -E bash server/install.sh)" >&2
@@ -35,7 +35,7 @@ Type=simple
 User=$SVC_USER
 WorkingDirectory=$RUNTIME
 Environment=GUILDNAMES_DB=$RUNTIME/data/guildnames.db
-EnvironmentFile=-$RUNTIME/getajob-vote.env
+EnvironmentFile=-$RUNTIME/hype-vote.env
 ExecStart=$RUNTIME/venv/bin/python -m uvicorn app:app --host 127.0.0.1 --port $PORT
 Restart=on-failure
 RestartSec=3
@@ -58,13 +58,13 @@ chmod 644 "$UNIT_PATH"
 # EnvironmentFile above is optional (the `-`), so the service runs without it.
 # Populate it with the configure-*.sh scripts; each key is independent.
 install -d -o "$SVC_USER" -g "$SVC_USER" "$RUNTIME"
-ENV_FILE="$RUNTIME/getajob-vote.env"
+ENV_FILE="$RUNTIME/hype-vote.env"
 if [ ! -f "$ENV_FILE" ]; then
   printf '%s\n' \
     '# hype backend secrets — mode 600, never commit.' \
     '# Turnstile (configure-turnstile.sh): TURNSTILE_SITEKEY, TURNSTILE_SECRET' \
     '# Apply     (configure-apply.sh):     DISCORD_WEBHOOK_URL, RESEND_API_KEY, APPLY_MAIL_FROM, APPLY_MAIL_TO' \
-    '# Admin: no secret here — moderation is Authentik SSO on getajob-admin.swagcounty.com' \
+    '# Admin: no secret here — moderation is Authentik SSO on hype-admin.swagcounty.com' \
     > "$ENV_FILE"
   chown "$SVC_USER:$SVC_USER" "$ENV_FILE"
   chmod 600 "$ENV_FILE"
