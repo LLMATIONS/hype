@@ -54,11 +54,11 @@ footer a:focus-visible{color:var(--sky);outline:2px solid var(--sky);outline-off
 <a class="home-link" href="/">&larr; hype</a>
 
 <h1>Privacy</h1>
-<p class="lede">hype is a guild fan site. The leveling guide keeps your progress in your own browser; the name vote sends what you pitch and how you vote to our server; the apply form sends your raid application to the guild's officers; tooltips go to Wowhead. Here is the whole map.</p>
+<p class="lede">hype is a guild fan site. The leveling guide keeps your progress in your own browser; the apply form sends your raid application to the guild's officers; tooltips go to Wowhead. Here is the whole map. (The guild-name vote is closed now that we picked a name — what it stored, and how to remove it, is still documented below.)</p>
 <p class="effective">Effective 2026-06-03</p>
 
 <h2>What we store about you</h2>
-<p>The hub and the leveling guide are static pages: no account, no signup, no analytics, no advertising, no tracking pixels, and nothing about you kept on our server. Two tools are the exceptions: the guild-name vote keeps the names and votes people submit, and the raid application keeps what you send so the officers can read it. Each gets its own section below.</p>
+<p>The hub and the leveling guide are static pages: no account, no signup, no analytics, no advertising, no tracking pixels, and nothing about you kept on our server. Two tools are the exceptions: the raid application keeps what you send so the officers can read it, and the now-closed guild-name vote still holds the names and votes people submitted before we picked a name. Each gets its own section below.</p>
 
 <h2>The leveling guide and your browser</h2>
 <p>The TBC leveling guide remembers which steps, keys, and rep goals you have checked off using <strong>localStorage</strong> in your browser, under the key <code>tbcGuide.progress.v1</code>. That data:</p>
@@ -81,10 +81,10 @@ footer a:focus-visible{color:var(--sky);outline:2px solid var(--sky);outline-off
 <p>Our web server keeps standard access logs (IP address, user agent, request path, status code) for a limited time, for debugging and abuse prevention. They are not used to profile you or shared with anyone.</p>
 
 <h2>Cloudflare (network delivery)</h2>
-<p>hype is served through <strong>Cloudflare</strong>, so every request to the site passes through Cloudflare's network before it reaches our server. Cloudflare therefore sees the same connection details our access logs do — your IP address, user agent, and the path you requested — and handles them under <a href="https://www.cloudflare.com/privacypolicy/">its own privacy policy</a>. This is delivery infrastructure: it keeps the site up and absorbs attacks, and we do not get a per-visitor report out of it. The bot check on the vote and apply forms (below) is a separate Cloudflare feature that only runs when you submit.</p>
+<p>hype is served through <strong>Cloudflare</strong>, so every request to the site passes through Cloudflare's network before it reaches our server. Cloudflare therefore sees the same connection details our access logs do — your IP address, user agent, and the path you requested — and handles them under <a href="https://www.cloudflare.com/privacypolicy/">its own privacy policy</a>. This is delivery infrastructure: it keeps the site up and absorbs attacks, and we do not get a per-visitor report out of it. The bot check on the apply form (below) is a separate Cloudflare feature that only runs when you submit.</p>
 
-<h2>The guild-name vote</h2>
-<p>Voting is shared, so unlike the guide it has to keep some data on our own server (a small SQLite database). Here is everything it stores:</p>
+<h2>The guild-name vote (closed)</h2>
+<p>The vote is over — we have picked a name, so you can no longer reach the ballot, submit a name, or change a vote. The names and votes already cast are kept on our server (a small SQLite database) rather than deleted, and you can still ask us to remove yours (see <a href="#rights">Your rights</a>). Here is everything that database holds:</p>
 <ul>
   <li>the <strong>guild names</strong> people pitch, and the optional one-line reason attached to each;</li>
   <li>each <strong>vote</strong>: which name it is on, whether it is up or down, and when it was cast or last changed;</li>
@@ -92,7 +92,7 @@ footer a:focus-visible{color:var(--sky);outline:2px solid var(--sky);outline-off
 </ul>
 
 <h3>The anonymous browser id</h3>
-<p>The first time you open the vote page, your browser makes up a random id and saves it in <strong>localStorage</strong> under <code>guildVote.voterId.v1</code>. It rides along with each name you submit and each vote you cast, and it is the only thing connecting your votes to each other. It is not an account, it is not linked to your name or email, and it says nothing about who you are. Clear your site data for this domain and it is gone — you get a fresh id, and your earlier votes are no longer tied to you.</p>
+<p>While the vote was open, the first time you opened the ballot your browser made up a random id and saved it in <strong>localStorage</strong> under <code>guildVote.voterId.v1</code>. It rode along with each name you submitted and each vote you cast, and it is the only thing connecting your votes to each other. If you voted, that id may still be sitting in your browser's storage. It is not an account, it is not linked to your name or email, and it says nothing about who you are. Clear your site data for this domain and it is gone — you get a fresh id, and your earlier votes are no longer tied to you.</p>
 
 <h3>Your IP address</h3>
 <p>When you submit a name or cast a vote, our server reads your IP address to <strong>rate-limit</strong> the request — that is what stops one source from flooding the ballot with submissions or spamming votes. This use is transient: the IP is <strong>not written into the voting database</strong> next to your votes. (Our general web-server access logs still record IPs the same way they do for any page, as described above.)</p>
@@ -101,7 +101,7 @@ footer a:focus-visible{color:var(--sky);outline:2px solid var(--sky);outline-off
 <p>To keep bots from stuffing the ballot, submitting a name runs a <strong>Cloudflare Turnstile</strong> check. Your browser loads a small widget from Cloudflare and gets a one-time token, and our server hands that token back to Cloudflare to confirm before it stores the name. Cloudflare therefore receives your IP address and the token for that check; what it does with them is covered by <a href="https://www.cloudflare.com/privacypolicy/">Cloudflare's privacy policy</a>, not ours. The token is single-use and we do not store it. Voting up or down does not trigger a check.</p>
 
 <h3>How long it is kept, and how ballot-stuffing is handled</h3>
-<p>Names and votes stay as long as the tool is running; it is a live tally, so there is no automatic expiry. One effective vote per name per browser is enforced through that anonymous id: switching your vote or clearing it just updates the same record, and duplicate names are merged so the same idea cannot appear twice. None of this is airtight — someone determined can wipe their browser storage or hop networks and vote again. It is a guild-name vote, not an election, and the defenses are sized to match.</p>
+<p>The names and votes that were cast stay on our server with no automatic expiry; the vote is closed, so the tally no longer changes. While it was open, one effective vote per name per browser was enforced through that anonymous id: switching your vote or clearing it just updates the same record, and duplicate names are merged so the same idea cannot appear twice. None of this is airtight — someone determined can wipe their browser storage or hop networks and vote again. It is a guild-name vote, not an election, and the defenses are sized to match.</p>
 <p>The names and votes are never sold, shared, or used to profile anyone. They exist to pick a guild name, and that is the end of it.</p>
 <p>The site owner can remove any submitted name (and the votes attached to it) — for example to take down something abusive. There is no public delete; it is owner-only.</p>
 
@@ -126,12 +126,12 @@ footer a:focus-visible{color:var(--sky);outline:2px solid var(--sky);outline-off
 <p>Two outside services see your application so they can deliver it: <a href="https://discord.com/privacy">Discord</a> carries the channel post, and our email provider <a href="https://resend.com/legal/privacy-policy">Resend</a> sends the email. Each handles it under its own privacy policy. We do not post your application anywhere public, sell it, or use it for anything but recruiting.</p>
 
 <h3>Bot check and your IP address</h3>
-<p>Same as the vote: submitting runs a <strong>Cloudflare Turnstile</strong> check (your browser gets a one-time token from Cloudflare, our server confirms it), and our server reads your <strong>IP address</strong> to rate-limit submissions. That use is transient — the IP is not stored next to your application, though the general access logs record it like any page request.</p>
+<p>Submitting runs a <strong>Cloudflare Turnstile</strong> check (your browser gets a one-time token from Cloudflare, our server confirms it), and our server reads your <strong>IP address</strong> to rate-limit submissions. That use is transient — the IP is not stored next to your application, though the general access logs record it like any page request.</p>
 
 <h3>How long we keep it, and removing it</h3>
 <p>Applications stay until we have dealt with them; there is no automatic expiry. The site owner can delete any application. If you want yours gone, before or after we review it, email the address below with your character name and we will take it out.</p>
 
-<h2>Your rights</h2>
+<h2 id="rights">Your rights</h2>
 <p>The guide holds no personal data about you on our side. The vote keeps an anonymous browser id and the votes tied to it; because that id is random and not linked to your identity, we generally cannot connect it to a specific person on our own. If you are in the EU, UK, or California and want a name you pitched or the votes from your browser removed, email the address below and bring your browser id (it is in localStorage under <code>guildVote.voterId.v1</code>), and we will delete the records tied to it. If you sent in a raid application, email us your character name and we will remove it.</p>
 
 <h2>Contact</h2>
