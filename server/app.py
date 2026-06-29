@@ -659,6 +659,13 @@ LOOT_LOCK_THRESHOLD = 2     # >= this many MS pieces this lockout => loot-locked
 LOOT_RECENT_LIMIT = 25      # awards in the recent-drops feed
 LOOT_HURTING_LIMIT = 8      # players surfaced in the "needs gear" panel
 
+# Honorary members: regulars who raid with us but aren't on the Blizzard guild
+# roster (so fetch_roster.py never sees them). We treat them as guildies in the
+# loot views anyway. Matched case-insensitively, same as the synced roster; only
+# applied once a real roster has synced (see the loot handler), so the empty-
+# roster "show everyone" fallback is preserved.
+LOOT_HONORARY_MEMBERS = frozenset({"goshi", "darkside", "ysl"})
+
 
 def _pacific_date(iso_utc: Optional[str]) -> Optional[str]:
     if not iso_utc:
@@ -718,6 +725,14 @@ def _loot_payload() -> dict:
         ).fetchall()
     }
     roster_active = bool(roster)
+
+    # Fold in honorary regulars once a real roster exists (rank None => no tag).
+    # setdefault so a real rank wins if one of them ever joins for real. Guarded
+    # by roster_active so an unsynced roster still falls back to showing everyone
+    # rather than collapsing to just the honorary three.
+    if roster_active:
+        for _name in LOOT_HONORARY_MEMBERS:
+            roster.setdefault(_name, None)
 
     def _is_guildie(name: str) -> bool:
         return (not roster_active) or (name.lower() in roster)
