@@ -42,7 +42,7 @@ import urllib.parse
 import urllib.request
 import uuid
 from contextlib import asynccontextmanager
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Optional
 from zoneinfo import ZoneInfo
@@ -203,6 +203,29 @@ def _connect() -> sqlite3.Connection:
             delivered_email   TEXT
         );
         CREATE INDEX IF NOT EXISTS idx_apps_created ON applications(created_at);
+
+        -- Loot log. Populated out-of-band by ingest_gargul.py (a systemd timer
+        -- parses Gargul's award history off the gaming rig); this service only
+        -- reads it for GET /api/loot. DDL is mirrored in ingest_gargul.py, both
+        -- IF NOT EXISTS, so whichever runs first wins.
+        CREATE TABLE IF NOT EXISTS loot_awards (
+            checksum     TEXT PRIMARY KEY,   -- Gargul's per-award id; dedup/merge key
+            winner       TEXT NOT NULL,
+            winner_realm TEXT,
+            winner_class TEXT,
+            item_id      INTEGER,
+            item_name    TEXT,
+            item_link    TEXT,
+            off_spec     INTEGER NOT NULL DEFAULT 0,   -- 1 = off-spec award
+            awarded_at   TEXT NOT NULL,                -- ISO UTC
+            awarded_by   TEXT,
+            received     INTEGER,
+            is_bonus     INTEGER,
+            source_file  TEXT,
+            ingested_at  TEXT NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS idx_loot_awarded_at ON loot_awards(awarded_at);
+        CREATE INDEX IF NOT EXISTS idx_loot_winner ON loot_awards(winner);
         """
     )
     conn.commit()
@@ -597,6 +620,145 @@ class ApplyBody(BaseModel):
     token: Optional[str] = None   # Cloudflare Turnstile token
 
 
+# --- loot log ---------------------------------------------------------------
+# The 2/3 rule (win 2-3 pieces in a run -> you're loot-locked) is per weekly
+# lockout, so "this lockout" = awards since the most recent raid reset. US TBC
+# realms reset Tuesday ~15:00 UTC; both are env-overridable.
+LOOT_RESET_WEEKDAY = int(os.environ.get("LOOT_RESET_WEEKDAY", "1"))  # Mon=0 .. Sun=6
+LOOT_RESET_HOUR_UTC = int(os.environ.get("LOOT_RESET_HOUR_UTC", "15"))
+LOOT_LOCK_THRESHOLD = 2     # >= this many MS pieces this lockout => loot-locked
+LOOT_RECENT_LIMIT = 25      # awards in the recent-drops feed
+LOOT_HURTING_LIMIT = 8      # players surfaced in the "needs gear" panel
+
+
+def _pacific_date(iso_utc: Optional[str]) -> Optional[str]:
+    if not iso_utc:
+        return None
+    try:
+        dt = datetime.fromisoformat(iso_utc)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return dt.astimezone(_PT).strftime("%b %-d, %Y")
+    except Exception:
+        return None
+
+
+def _lockout_start() -> datetime:
+    """Most recent weekly reset boundary, in UTC."""
+    now = datetime.now(timezone.utc)
+    anchor = now.replace(hour=LOOT_RESET_HOUR_UTC, minute=0, second=0, microsecond=0)
+    # step back to the configured weekday at/<= now
+    delta_days = (anchor.weekday() - LOOT_RESET_WEEKDAY) % 7
+    start = anchor - timedelta(days=delta_days)
+    if start > now:
+        start -= timedelta(days=7)
+    return start
+
+
+def _loot_payload() -> dict:
+    """Aggregate loot_awards into standings / hurting / recent. Read-only."""
+    now = datetime.now(timezone.utc)
+    lockout_start = _lockout_start()
+    lockout_iso = lockout_start.isoformat()
+
+    rows = _db.execute(
+        """
+        SELECT winner,
+               MAX(winner_class)                                       AS class,
+               SUM(CASE WHEN off_spec = 0 THEN 1 ELSE 0 END)           AS ms,
+               SUM(CASE WHEN off_spec = 1 THEN 1 ELSE 0 END)           AS os,
+               COUNT(*)                                                AS total,
+               MAX(CASE WHEN off_spec = 0 THEN awarded_at END)         AS last_ms,
+               MAX(awarded_at)                                         AS last_any,
+               SUM(CASE WHEN off_spec = 0 AND awarded_at >= ? THEN 1 ELSE 0 END) AS lockout_ms
+        FROM loot_awards
+        GROUP BY winner
+        """,
+        (lockout_iso,),
+    ).fetchall()
+
+    standings = []
+    for r in rows:
+        last_ms = r["last_ms"]
+        days_since_ms = None
+        if last_ms:
+            try:
+                d = datetime.fromisoformat(last_ms)
+                if d.tzinfo is None:
+                    d = d.replace(tzinfo=timezone.utc)
+                days_since_ms = (now - d).days
+            except Exception:
+                days_since_ms = None
+        standings.append({
+            "player": r["winner"],
+            "class": r["class"],
+            "ms": r["ms"],
+            "os": r["os"],
+            "total": r["total"],
+            "last_ms": _pacific_date(last_ms),
+            "days_since_ms": days_since_ms,
+            "lockout_ms": r["lockout_ms"],
+            "locked": r["lockout_ms"] >= LOOT_LOCK_THRESHOLD,
+        })
+
+    # leaderboard: most MS gear first (ties -> more total, then name)
+    standings.sort(key=lambda s: (-s["ms"], -s["total"], s["player"].lower()))
+
+    # hurting: fewest MS first; among equals, longest drought (never = worst).
+    # NULL days_since_ms (no MS ever) sorts as most hurting.
+    def _hurt_key(s):
+        never = s["days_since_ms"] is None
+        return (s["ms"], 0 if never else 1, -(s["days_since_ms"] or 0), s["player"].lower())
+    hurting = sorted(standings, key=_hurt_key)[:LOOT_HURTING_LIMIT]
+
+    recent_rows = _db.execute(
+        """
+        SELECT winner, winner_class, item_id, item_name, off_spec, awarded_at, awarded_by
+        FROM loot_awards
+        ORDER BY awarded_at DESC
+        LIMIT ?
+        """,
+        (LOOT_RECENT_LIMIT,),
+    ).fetchall()
+    recent = [{
+        "player": r["winner"],
+        "class": r["winner_class"],
+        "item_id": r["item_id"],
+        "item_name": r["item_name"],
+        "off_spec": bool(r["off_spec"]),
+        "at": _pacific_date(r["awarded_at"]),
+        "awarded_by": (r["awarded_by"] or "").split("-")[0] or None,
+    } for r in recent_rows]
+
+    agg = _db.execute(
+        """
+        SELECT COUNT(*) AS awards,
+               SUM(CASE WHEN off_spec = 0 THEN 1 ELSE 0 END) AS ms,
+               SUM(CASE WHEN off_spec = 1 THEN 1 ELSE 0 END) AS os,
+               MAX(ingested_at) AS updated,
+               MAX(awarded_at)  AS last_award
+        FROM loot_awards
+        """
+    ).fetchone()
+
+    return {
+        "generated_at": _pacific(now.isoformat()),
+        "data_updated": _pacific(agg["updated"]) if agg["updated"] else None,
+        "last_award": _pacific_date(agg["last_award"]),
+        "lockout_start": _pacific_date(lockout_iso),
+        "lockout_threshold": LOOT_LOCK_THRESHOLD,
+        "totals": {
+            "awards": agg["awards"] or 0,
+            "ms": agg["ms"] or 0,
+            "os": agg["os"] or 0,
+            "players": len(standings),
+        },
+        "standings": standings,
+        "hurting": hurting,
+        "recent": recent,
+    }
+
+
 # --- routes -----------------------------------------------------------------
 @app.get("/api/health")
 def health() -> dict:
@@ -607,6 +769,18 @@ def health() -> dict:
 def config() -> dict:
     """Public front-end config. The sitekey is public by design."""
     return {"turnstile_sitekey": TURNSTILE_SITEKEY or None}
+
+
+@app.get("/api/loot")
+def get_loot():
+    """Public, read-only loot standings for the /loot/ page.
+
+    Aggregates the Gargul-sourced loot_awards table into a per-player MS/OS
+    leaderboard, a "needs gear" view, and a recent-drops feed. No auth: loot is
+    public by design ("visible to the raid"). Character names only, no PII.
+    """
+    with _lock:
+        return _loot_payload()
 
 
 @app.get("/api/ideas")
