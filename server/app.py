@@ -103,6 +103,14 @@ ADMIN_IDENTITY_HEADER = "x-authentik-username"
 # while delivery is still being wired up. All three live only in the mode-600
 # service env file (set via server/configure-apply.sh), never the repo.
 DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL", "").strip()
+# A bot token unlocks what a webhook can't: a per-applicant thread titled
+# "<character> — <class>" and pre-seeded ✅/❌ officer-vote reactions. When set,
+# the bot path supersedes the webhook entirely (no double-posting). The target
+# channel is auto-discovered from the webhook URL, or pinned explicitly below.
+DISCORD_BOT_TOKEN = os.environ.get("DISCORD_BOT_TOKEN", "").strip()
+DISCORD_APPLICATIONS_CHANNEL_ID = os.environ.get(
+    "DISCORD_APPLICATIONS_CHANNEL_ID", "").strip()
+DISCORD_API = "https://discord.com/api/v10"
 RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "").strip()
 APPLY_MAIL_FROM = os.environ.get("APPLY_MAIL_FROM", "").strip()
 APPLY_MAIL_TO = os.environ.get("APPLY_MAIL_TO", "").strip()  # comma-separated
@@ -527,10 +535,8 @@ def _http_post_json(url: str, payload: dict, headers: Optional[dict] = None) -> 
         return 0
 
 
-def _post_discord(a: dict) -> str:
-    """Post the application to the configured Discord webhook as a rich embed."""
-    if not DISCORD_WEBHOOK_URL:
-        return "off"
+def _application_embed(a: dict) -> dict:
+    """The rich embed for one application — shared by the bot and webhook paths."""
 
     def field(name: str, value: Optional[str], inline: bool = False) -> dict:
         v = _escape_md(value) if value else "—"
@@ -558,14 +564,106 @@ def _post_discord(a: dict) -> str:
     ))
     fields.append(field("Submitted", _pacific(a["created_at"]), True))
 
-    embed = {
+    return {
         "title": "New guild application",
         "color": 0xC0A0FF,
         "fields": fields,
     }
+
+
+def _thread_title(a: dict) -> str:
+    """'<character> — <class>' for the per-applicant discussion thread. Both
+    fields are already NFC-normalized and length-capped on intake; thread names
+    render as plain text (no markdown), so no escaping is needed. Discord caps
+    thread names at 100 chars."""
+    return f'{a["character"]} — {a["wow_class"]}'[:100]
+
+
+def _discord_bot(method: str, url: str, payload: Optional[dict] = None):
+    """Bot-authed Discord REST call. Returns (status, parsed_json_or_None);
+    status 0 on transport error. 8s cap, same as the webhook path."""
+    data = json.dumps(payload).encode("utf-8") if payload is not None else None
+    hdrs = {
+        "User-Agent": APPLY_UA,
+        "Authorization": "Bot " + DISCORD_BOT_TOKEN,
+    }
+    if data is not None:
+        hdrs["Content-Type"] = "application/json"
+    req = urllib.request.Request(url, data=data, headers=hdrs, method=method)
+    try:
+        with urllib.request.urlopen(req, timeout=8) as resp:
+            raw = resp.read()
+            return resp.status, (json.loads(raw) if raw else None)
+    except urllib.error.HTTPError as e:
+        return e.code, None
+    except Exception:
+        return 0, None
+
+
+_app_channel_id: Optional[str] = None
+
+
+def _applications_channel_id() -> str:
+    """The channel the bot posts into. Explicit env wins; otherwise it's read
+    once off the webhook (GET on the webhook URL returns its channel_id — the
+    webhook token authorizes that, no bot needed) and cached."""
+    global _app_channel_id
+    if DISCORD_APPLICATIONS_CHANNEL_ID:
+        return DISCORD_APPLICATIONS_CHANNEL_ID
+    if _app_channel_id is not None:
+        return _app_channel_id
+    _app_channel_id = ""
+    if DISCORD_WEBHOOK_URL:
+        req = urllib.request.Request(
+            DISCORD_WEBHOOK_URL, headers={"User-Agent": APPLY_UA}, method="GET")
+        try:
+            with urllib.request.urlopen(req, timeout=8) as resp:
+                body = json.loads(resp.read() or b"{}")
+                _app_channel_id = str(body.get("channel_id") or "")
+        except Exception:
+            pass
+    return _app_channel_id
+
+
+def _post_discord_bot(a: dict) -> str:
+    """Post the embed, open a thread named '<character> — <class>' off it, and
+    pre-seed ✅/❌ for officers to vote. The embed is the gate: thread + reactions
+    are best-effort follow-ups so a hiccup there still counts as delivered."""
+    channel_id = _applications_channel_id()
+    if not channel_id:
+        return "failed"
+    status, body = _discord_bot(
+        "POST", f"{DISCORD_API}/channels/{channel_id}/messages",
+        {"embeds": [_application_embed(a)], "allowed_mentions": {"parse": []}},
+    )
+    if not (200 <= status < 300 and body and body.get("id")):
+        return "failed"
+    msg_id = body["id"]
+    _discord_bot(
+        "POST",
+        f"{DISCORD_API}/channels/{channel_id}/messages/{msg_id}/threads",
+        {"name": _thread_title(a), "auto_archive_duration": 4320},
+    )
+    for emoji in ("✅", "❌"):  # ✅ then ❌
+        _discord_bot(
+            "PUT",
+            f"{DISCORD_API}/channels/{channel_id}/messages/{msg_id}"
+            f"/reactions/{urllib.parse.quote(emoji)}/@me",
+        )
+    return "sent"
+
+
+def _post_discord(a: dict) -> str:
+    """Deliver the application to Discord. A bot token (preferred) gets the
+    per-applicant thread + officer-vote reactions; otherwise fall back to a
+    plain webhook embed. Either path is best-effort and never blocks the form."""
+    if DISCORD_BOT_TOKEN:
+        return _post_discord_bot(a)
+    if not DISCORD_WEBHOOK_URL:
+        return "off"
     payload = {
         "username": "hype — applications",
-        "embeds": [embed],
+        "embeds": [_application_embed(a)],
         "allowed_mentions": {"parse": []},  # applicant text can never ping
     }
     status = _http_post_json(DISCORD_WEBHOOK_URL, payload)
