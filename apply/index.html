@@ -170,6 +170,13 @@ footer a:hover,footer a:focus-visible{color:var(--sky)}
     </div>
 
     <div class="field">
+      <label for="gearscore">Gearscore?</label>
+      <input id="gearscore" name="gearscore" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="5" required
+             autocomplete="off" spellcheck="false" placeholder="e.g. 1400" aria-describedby="gearscore-hint">
+      <span class="counter" id="gearscore-hint">Numbers only</span>
+    </div>
+
+    <div class="field">
       <label for="experience">What raiding experience do you have?</label>
       <textarea id="experience" name="experience" maxlength="1500" required
                 placeholder="Where you've raided, what you've cleared, roles you've played."

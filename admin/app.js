@@ -157,6 +157,7 @@
 
     var dl = el("dl");
     defRow(dl, "Discord", a.discord);
+    if (a.gearscore) defRow(dl, "Gearscore", a.gearscore);
     defRow(dl, "Raiding experience", a.experience);
     defRow(dl, "Why join", a.why);
     if (a.logs) defRow(dl, "Logs", a.logs, true);
