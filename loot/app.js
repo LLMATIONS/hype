@@ -127,6 +127,11 @@
       var tag = el("span", "spec-tag " + (r.off_spec ? "spec-os" : "spec-ms"));
       tag.textContent = r.off_spec ? "OS" : "MS";
       var who = el("span", "who " + (r.class ? "cls-" + r.class : "")); who.textContent = r.player;
+      // r.guildie is false only when the roster has synced AND this winner isn't
+      // on it — i.e. a PUG. Tag them so the feed stays honest without hiding them.
+      if (r.guildie === false) {
+        var pug = el("span", "pug-tag"); pug.textContent = "PUG"; who.appendChild(document.createTextNode(" ")); who.appendChild(pug);
+      }
       var got = el("span", "dim"); got.textContent = " won ";
       var item;
       if (r.item_id) {
