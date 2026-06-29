@@ -274,13 +274,36 @@ def fetch_attendance() -> list[dict]:
     return out
 
 
+def _existing_count() -> int:
+    """Rows already in raid_attendance, or 0 if the table/db doesn't exist yet.
+
+    Read-only: never creates the db file or the table, so a cold-start no-op
+    can't leave an empty db behind that masks the "nothing here yet" state.
+    """
+    if not DB_PATH.exists():
+        return 0
+    conn = sqlite3.connect(DB_PATH)
+    try:
+        return conn.execute("SELECT COUNT(*) FROM raid_attendance").fetchone()[0]
+    except sqlite3.OperationalError:
+        return 0  # db exists but table not created yet
+    finally:
+        conn.close()
+
+
 def sync() -> dict:
     rows = fetch_attendance()
     if not rows:
-        # No reports at all is suspicious (we only get here on a successful
-        # fetch). Treat it like a failed fetch and touch nothing, same as the
-        # roster sync's empty-guard — never blank a trial's progress on a blip.
-        raise WclError("attendance came back empty — refusing to touch the table")
+        # Empty fetch. If we already hold attendance this is a transient blip —
+        # refuse to touch the table, never blank a trial's progress (same guard as
+        # the roster sync). But if the table is empty/absent there's nothing to
+        # protect: a guild with no public logs yet is a normal cold start, not a
+        # failure, so no-op cleanly rather than failing the unit every hour until
+        # the first log lands.
+        existing = _existing_count()
+        if existing:
+            raise WclError("attendance came back empty — refusing to touch the table")
+        return {"reports": 0, "rows": 0, "total_rows": 0, "empty": True}
 
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
@@ -304,7 +327,7 @@ def sync() -> dict:
             )
     total = conn.execute("SELECT COUNT(*) FROM raid_attendance").fetchone()[0]
     conn.close()
-    return {"reports": len(reports), "rows": len(rows), "total_rows": total}
+    return {"reports": len(reports), "rows": len(rows), "total_rows": total, "empty": False}
 
 
 if __name__ == "__main__":
@@ -313,7 +336,10 @@ if __name__ == "__main__":
     except WclError as exc:
         print(f"wcl: FAILED — {exc}", file=sys.stderr)
         sys.exit(1)
-    print(
-        f"wcl: synced {s['reports']} report(s), {s['rows']} attendance row(s) "
-        f"({s['total_rows']} total) -> {DB_PATH}"
-    )
+    if s.get("empty"):
+        print(f"wcl: no public attendance yet and table is empty — nothing to sync -> {DB_PATH}")
+    else:
+        print(
+            f"wcl: synced {s['reports']} report(s), {s['rows']} attendance row(s) "
+            f"({s['total_rows']} total) -> {DB_PATH}"
+        )
