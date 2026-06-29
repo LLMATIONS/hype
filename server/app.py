@@ -228,6 +228,22 @@ def _connect() -> sqlite3.Connection:
         );
         CREATE INDEX IF NOT EXISTS idx_loot_awarded_at ON loot_awards(awarded_at);
         CREATE INDEX IF NOT EXISTS idx_loot_winner ON loot_awards(winner);
+
+        -- Guild roster. Populated out-of-band by fetch_roster.py (a systemd timer
+        -- pulls the Blizzard guild-roster API); this service only reads it, to
+        -- separate guildies from PUGs in the loot views. DDL is mirrored in
+        -- fetch_roster.py, both IF NOT EXISTS. NOCASE PK => case-insensitive
+        -- name match against loot winners.
+        CREATE TABLE IF NOT EXISTS guild_roster (
+            name        TEXT PRIMARY KEY COLLATE NOCASE,
+            realm       TEXT,
+            rank        INTEGER,                       -- 0 = guild master
+            level       INTEGER,
+            class_id    INTEGER,
+            present     INTEGER NOT NULL DEFAULT 1,    -- 0 = left the guild
+            last_synced TEXT NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS idx_roster_present ON guild_roster(present);
         """
     )
     # Lightweight migration: CREATE TABLE IF NOT EXISTS never alters an existing
@@ -690,6 +706,22 @@ def _loot_payload() -> dict:
         (lockout_iso,),
     ).fetchall()
 
+    # Guild roster -> separate guildies from the PUGs we raided with. Keyed by
+    # lower-cased name (the table PK is NOCASE, but we also match here for the
+    # recent feed). When the roster has never synced (no creds, API down), the
+    # set is empty and we fall back to showing everyone, so the page degrades to
+    # its pre-filter behaviour instead of looking empty.
+    roster = {
+        row["name"].lower(): row["rank"]
+        for row in _db.execute(
+            "SELECT name, rank FROM guild_roster WHERE present = 1"
+        ).fetchall()
+    }
+    roster_active = bool(roster)
+
+    def _is_guildie(name: str) -> bool:
+        return (not roster_active) or (name.lower() in roster)
+
     standings = []
     for r in rows:
         last_ms = r["last_ms"]
@@ -712,7 +744,14 @@ def _loot_payload() -> dict:
             "days_since_ms": days_since_ms,
             "lockout_ms": r["lockout_ms"],
             "locked": r["lockout_ms"] >= LOOT_LOCK_THRESHOLD,
+            "rank": roster.get(r["winner"].lower()),
         })
+
+    # Guild-only views: standings + needs-gear show members only (a PUG who won a
+    # piece is not who the council weighs for need). The recent feed below keeps
+    # everyone but tags non-members. No-op when the roster hasn't synced yet.
+    if roster_active:
+        standings = [s for s in standings if s["player"].lower() in roster]
 
     # leaderboard: most MS gear first (ties -> more total, then name)
     standings.sort(key=lambda s: (-s["ms"], -s["total"], s["player"].lower()))
@@ -741,18 +780,22 @@ def _loot_payload() -> dict:
         "off_spec": bool(r["off_spec"]),
         "at": _pacific_date(r["awarded_at"]),
         "awarded_by": (r["awarded_by"] or "").split("-")[0] or None,
+        "guildie": _is_guildie(r["winner"]),
     } for r in recent_rows]
 
     agg = _db.execute(
         """
-        SELECT COUNT(*) AS awards,
-               SUM(CASE WHEN off_spec = 0 THEN 1 ELSE 0 END) AS ms,
-               SUM(CASE WHEN off_spec = 1 THEN 1 ELSE 0 END) AS os,
-               MAX(ingested_at) AS updated,
+        SELECT MAX(ingested_at) AS updated,
                MAX(awarded_at)  AS last_award
         FROM loot_awards
         """
     ).fetchone()
+
+    # Summary chips reflect the guild view so they match the (filtered) standings
+    # table — sum over standings, not over every logged award (which includes the
+    # PUG drops still shown, tagged, in the recent feed).
+    ms_total = sum(s["ms"] for s in standings)
+    os_total = sum(s["os"] for s in standings)
 
     return {
         "generated_at": _pacific(now.isoformat()),
@@ -760,10 +803,11 @@ def _loot_payload() -> dict:
         "last_award": _pacific_date(agg["last_award"]),
         "lockout_start": _pacific_date(lockout_iso),
         "lockout_threshold": LOOT_LOCK_THRESHOLD,
+        "roster_synced": roster_active,
         "totals": {
-            "awards": agg["awards"] or 0,
-            "ms": agg["ms"] or 0,
-            "os": agg["os"] or 0,
+            "awards": ms_total + os_total,
+            "ms": ms_total,
+            "os": os_total,
             "players": len(standings),
         },
         "standings": standings,

@@ -25,6 +25,13 @@ INGEST_TIMER="hype-gargul-ingest.timer"
 INGEST_UNIT_PATH="/etc/systemd/system/$INGEST_UNIT"
 INGEST_TIMER_PATH="/etc/systemd/system/$INGEST_TIMER"
 GARGUL_LUA_PATH="${GARGUL_LUA_PATH:-}"
+# Guild-roster sync (pulls the Blizzard guild-roster API, writes guild_roster).
+# Credentials + realm/guild slugs live in hype-vote.env (BLIZZARD_*), never the
+# repo. Hourly is plenty — a guild roster moves slowly.
+ROSTER_UNIT="hype-roster-sync.service"
+ROSTER_TIMER="hype-roster-sync.timer"
+ROSTER_UNIT_PATH="/etc/systemd/system/$ROSTER_UNIT"
+ROSTER_TIMER_PATH="/etc/systemd/system/$ROSTER_TIMER"
 
 if [ "$(id -u)" -ne 0 ]; then
   echo "install: re-run with sudo (sudo -E bash server/install.sh)" >&2
@@ -138,9 +145,56 @@ WantedBy=timers.target
 TIMER_EOF
 chmod 644 "$INGEST_TIMER_PATH"
 
+# --- guild-roster sync: oneshot service + hourly timer ----------------------
+# Pulls the Blizzard guild-roster API (BLIZZARD_* in hype-vote.env) and upserts
+# the guild_roster table the backend reads to separate guildies from PUGs. Needs
+# outbound HTTPS (unlike the loot ingest, which reads a file), so the unit is
+# otherwise hardened the same way: writable DB dir only, no new privileges.
+cat > "$ROSTER_UNIT_PATH" <<ROSTER_EOF
+[Unit]
+Description=hype — Blizzard guild-roster sync (API -> guild_roster)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=$SVC_USER
+WorkingDirectory=$RUNTIME
+Environment=GUILDNAMES_DB=$RUNTIME/data/guildnames.db
+EnvironmentFile=-$RUNTIME/hype-vote.env
+ExecStart=$RUNTIME/venv/bin/python $RUNTIME/fetch_roster.py
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=$RUNTIME/data
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+LockPersonality=true
+ROSTER_EOF
+chmod 644 "$ROSTER_UNIT_PATH"
+
+cat > "$ROSTER_TIMER_PATH" <<ROSTER_TIMER_EOF
+[Unit]
+Description=hype — sync the guild roster hourly
+
+[Timer]
+OnBootSec=3min
+OnCalendar=hourly
+Persistent=true
+AccuracySec=2min
+
+[Install]
+WantedBy=timers.target
+ROSTER_TIMER_EOF
+chmod 644 "$ROSTER_TIMER_PATH"
+
 systemctl daemon-reload
 systemctl enable "$UNIT"
 systemctl enable --now "$INGEST_TIMER"   # --now arms the timer this session, not just at boot
+systemctl enable --now "$ROSTER_TIMER"
 echo "install: $UNIT_PATH + $SUDOERS_PATH written."
 echo "install: $INGEST_UNIT_PATH + $INGEST_TIMER_PATH written (timer enabled)."
-echo "install: set GARGUL_LUA_PATH in $RUNTIME/hype-vote.env if not already. Now run: bash server/deploy.sh"
+echo "install: $ROSTER_UNIT_PATH + $ROSTER_TIMER_PATH written (timer enabled)."
+echo "install: set GARGUL_LUA_PATH + BLIZZARD_* in $RUNTIME/hype-vote.env if not already. Now run: bash server/deploy.sh"
