@@ -26,8 +26,24 @@ Design notes (mirrors fetch_roster.py — same OAuth2 client-credentials shape):
     (Tue ~15:00 UTC by default, env-overridable to match the loot log's
     LOOT_RESET_* constants) so "lockouts raided" counts distinct reset weeks.
 
+  * **Classic partition / subdomain.** WCL splits Classic data by subdomain —
+    retail on `www.`, Anniversary/Fresh on `fresh.`, etc. — each with its own
+    GraphQL host, OAuth token endpoint, and guild ids. A Fresh guild is invisible
+    to the retail host and to a name+realm lookup, so the host is configurable
+    (`WCL_API_URL` / `WCL_TOKEN_URL`, both default to `www.`) and the guild can be
+    addressed by its stable WCL id (`WCL_GUILD_ID`) instead of name+realm. For our
+    guild: `WCL_API_URL=https://fresh.warcraftlogs.com/api/v2/client`,
+    `WCL_TOKEN_URL=https://fresh.warcraftlogs.com/oauth/token`, `WCL_GUILD_ID=828086`.
+
 Run standalone:
 
+    # Fresh/Anniversary guild, addressed by WCL id:
+    WCL_CLIENT_ID=... WCL_CLIENT_SECRET=... WCL_GUILD_ID=828086 \
+        WCL_API_URL=https://fresh.warcraftlogs.com/api/v2/client \
+        WCL_TOKEN_URL=https://fresh.warcraftlogs.com/oauth/token \
+        GUILDNAMES_DB=./data/guildnames.db python fetch_wcl_attendance.py
+
+    # Retail guild, addressed by name + realm (the www. defaults):
     WCL_CLIENT_ID=... WCL_CLIENT_SECRET=... WCL_GUILD_NAME="Hype" \
         WCL_SERVER_SLUG=nightslayer WCL_SERVER_REGION=us \
         GUILDNAMES_DB=./data/guildnames.db python fetch_wcl_attendance.py
@@ -53,6 +69,10 @@ CLIENT_SECRET = os.environ.get("WCL_CLIENT_SECRET", "")
 GUILD_NAME = os.environ.get("WCL_GUILD_NAME", "")
 SERVER_SLUG = os.environ.get("WCL_SERVER_SLUG", "nightslayer")
 SERVER_REGION = os.environ.get("WCL_SERVER_REGION", "us")
+# WCL id of the guild (warcraftlogs.com/guild/id/<n>). When set it addresses the
+# guild directly — required for Classic/Fresh guilds, which a name+realm lookup on
+# the wrong subdomain can't see. Blank => fall back to WCL_GUILD_NAME + realm.
+GUILD_ID = os.environ.get("WCL_GUILD_ID", "").strip()
 # Each page is one API call; a trial window is three weeks, so a few pages of the
 # most recent reports is plenty. Bounded so a misconfig can't page forever.
 PER_PAGE = int(os.environ.get("WCL_PER_PAGE", "25"))
@@ -64,8 +84,11 @@ DB_PATH = Path(os.environ.get("GUILDNAMES_DB", "./data/guildnames.db")).expandus
 RESET_WEEKDAY = int(os.environ.get("LOOT_RESET_WEEKDAY", "1"))   # Mon=0 .. Sun=6
 RESET_HOUR_UTC = int(os.environ.get("LOOT_RESET_HOUR_UTC", "15"))
 
-TOKEN_URL = "https://www.warcraftlogs.com/oauth/token"
-API_URL = "https://www.warcraftlogs.com/api/v2/client"
+# Both default to the retail (`www.`) host; override per Classic subdomain. The
+# token endpoint and the GraphQL host must match — a token minted on `fresh.` is
+# only valid against `fresh.`.
+TOKEN_URL = os.environ.get("WCL_TOKEN_URL", "https://www.warcraftlogs.com/oauth/token")
+API_URL = os.environ.get("WCL_API_URL", "https://www.warcraftlogs.com/api/v2/client")
 USER_AGENT = "hype-portal/1.0 (+https://hype.swagcounty.com)"
 HTTP_TIMEOUT = 25
 
@@ -90,10 +113,11 @@ CREATE INDEX IF NOT EXISTS idx_attend_week ON raid_attendance(reset_week);
 # The attendance query. guild.attendance returns the per-report player list with
 # a presence flag — exactly the "who raided this night" data the trial tracker
 # needs. Kept small: code + startTime for bucketing, players{name,presence}.
-ATTENDANCE_QUERY = """
-query($name:String!,$server:String!,$region:String!,$limit:Int!,$page:Int!){
-  guildData{
-    guild(name:$name, serverSlug:$server, serverRegion:$region){
+#
+# The guild can be addressed two ways: by WCL id (stable, subdomain-correct) when
+# WCL_GUILD_ID is set, else by name + realm. We build the matching query/variables
+# so an unused variable never reaches the API (WCL rejects declared-but-unused).
+_ATTENDANCE_FIELDS = """
       id
       attendance(limit:$limit, page:$page){
         has_more_pages
@@ -104,11 +128,21 @@ query($name:String!,$server:String!,$region:String!,$limit:Int!,$page:Int!){
           zone{ name }
           players{ name type presence }
         }
-      }
-    }
-  }
-}
-"""
+      }"""
+
+ATTENDANCE_QUERY_BY_ID = (
+    "query($id:Int!,$limit:Int!,$page:Int!){\n"
+    "  guildData{\n"
+    "    guild(id:$id){" + _ATTENDANCE_FIELDS + "\n"
+    "    }\n  }\n}"
+)
+
+ATTENDANCE_QUERY_BY_NAME = (
+    "query($name:String!,$server:String!,$region:String!,$limit:Int!,$page:Int!){\n"
+    "  guildData{\n"
+    "    guild(name:$name, serverSlug:$server, serverRegion:$region){" + _ATTENDANCE_FIELDS + "\n"
+    "    }\n  }\n}"
+)
 
 
 class WclError(RuntimeError):
@@ -183,21 +217,35 @@ def _ms_to_iso(start_time) -> str:
 
 def fetch_attendance() -> list[dict]:
     """Return [{report_code, character, presence, start_time, reset_week, zone}, ...]."""
-    if not GUILD_NAME:
-        raise WclError("WCL_GUILD_NAME not set")
+    # Address the guild by WCL id when given (subdomain-correct, exact), else by
+    # name + realm. Id wins because a Classic/Fresh guild can't be name-resolved
+    # against the wrong subdomain.
+    if GUILD_ID:
+        try:
+            gid = int(GUILD_ID)
+        except ValueError as exc:
+            raise WclError(f"WCL_GUILD_ID must be an integer, got {GUILD_ID!r}") from exc
+        query = ATTENDANCE_QUERY_BY_ID
+        base_vars = {"id": gid}
+        who = f"guild id {gid}"
+    elif GUILD_NAME:
+        query = ATTENDANCE_QUERY_BY_NAME
+        base_vars = {"name": GUILD_NAME, "server": SERVER_SLUG, "region": SERVER_REGION}
+        who = f"guild '{GUILD_NAME}' on {SERVER_REGION}/{SERVER_SLUG}"
+    else:
+        raise WclError("set WCL_GUILD_ID (preferred) or WCL_GUILD_NAME")
+
     token = _token()
     out: list[dict] = []
     page = 1
     while page <= MAX_PAGES:
-        data = _graphql(token, ATTENDANCE_QUERY, {
-            "name": GUILD_NAME, "server": SERVER_SLUG, "region": SERVER_REGION,
-            "limit": PER_PAGE, "page": page,
-        })
+        data = _graphql(token, query, {**base_vars, "limit": PER_PAGE, "page": page})
         guild = ((data.get("guildData") or {}).get("guild")) or {}
         if not guild:
             raise WclError(
-                f"no guild '{GUILD_NAME}' on {SERVER_REGION}/{SERVER_SLUG} "
-                "(check WCL_GUILD_NAME / WCL_SERVER_SLUG / WCL_SERVER_REGION)")
+                f"no {who} on {API_URL} — check WCL_GUILD_ID / WCL_GUILD_NAME and "
+                "that WCL_API_URL points at the right Classic subdomain (e.g. "
+                "fresh.warcraftlogs.com for an Anniversary/Fresh guild)")
         att = guild.get("attendance") or {}
         reports = att.get("data") or []
         for rep in reports:
