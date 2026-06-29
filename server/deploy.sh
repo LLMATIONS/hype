@@ -22,10 +22,21 @@ mkdir -p "$RUNTIME/data"
 "$RUNTIME/venv/bin/pip" install -q --upgrade pip
 "$RUNTIME/venv/bin/pip" install -q -r "$SRC/requirements.txt"
 cp "$SRC/app.py" "$RUNTIME/app.py"
+cp "$SRC/ingest_gargul.py" "$RUNTIME/ingest_gargul.py"
 
 if sudo -n /bin/systemctl restart "$UNIT" 2>/dev/null; then
   echo "deploy: restarted $UNIT"
 else
   echo "deploy: code in place; could not restart unattended." >&2
   echo "        run: sudo systemctl restart $UNIT   (or run server/install.sh first)" >&2
+fi
+
+# Refresh the loot log once now so a deploy reflects the latest Gargul data
+# immediately (the 15-min timer otherwise picks it up on its next tick).
+if systemctl list-unit-files hype-gargul-ingest.service >/dev/null 2>&1; then
+  if systemctl start hype-gargul-ingest.service 2>/dev/null; then
+    echo "deploy: ran loot-log ingest once"
+  else
+    echo "deploy: loot ingest not run unattended; the timer will catch up" >&2
+  fi
 fi

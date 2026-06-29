@@ -58,7 +58,7 @@ footer a:focus-visible{color:var(--sky);outline:2px solid var(--sky);outline-off
 <p class="effective">Effective 2026-06-03</p>
 
 <h2>What we store about you</h2>
-<p>The hub and the leveling guide are static pages: no account, no signup, no analytics, no advertising, no tracking pixels, and nothing about you kept on our server. Two tools are the exceptions: the raid application keeps what you send so the officers can read it, and the now-closed guild-name vote still holds the names and votes people submitted before we picked a name. Each gets its own section below.</p>
+<p>The hub and the leveling guide are static pages: no account, no signup, no analytics, no advertising, no tracking pixels, and nothing about you kept on our server. Two tools are the exceptions: the raid application keeps what you send so the officers can read it, and the now-closed guild-name vote still holds the names and votes people submitted before we picked a name. The loot log shows in-game raid loot but collects nothing about you as a viewer. Each gets its own section below.</p>
 
 <h2>The leveling guide and your browser</h2>
 <p>The TBC leveling guide remembers which steps, keys, and rep goals you have checked off using <strong>localStorage</strong> in your browser, under the key <code>tbcGuide.progress.v1</code>. That data:</p>
@@ -130,6 +130,15 @@ footer a:focus-visible{color:var(--sky);outline:2px solid var(--sky);outline-off
 
 <h3>How long we keep it, and removing it</h3>
 <p>Applications stay until we have dealt with them; there is no automatic expiry. The site owner can delete any application. If you want yours gone, before or after we review it, email the address below with your character name and we will take it out.</p>
+
+<h2>The loot log</h2>
+<p>The loot log shows who has won gear on raid nights. The data comes from the guild's own <a href="https://www.curseforge.com/wow/addons/gargul">Gargul</a> loot addon — the same record the raid keeps in-game — exported by an officer and read by our server on a timer. It is about in-game raid characters, not site visitors: <strong>viewing the page stores nothing about you</strong> (beyond the static-page and Wowhead-tooltip notes above). What the page shows for each award is:</p>
+<ul>
+  <li>the winning <strong>character name</strong> (in-game only — no real names, no Discord, no account info) and its class;</li>
+  <li>the <strong>item</strong> won, whether it was a main-spec or off-spec award, and the date;</li>
+  <li>the character who <strong>handed it out</strong> (the master looter for that drop).</li>
+</ul>
+<p>These are public in-game character names tied to public in-game loot, with nothing that identifies a real person. If you raid with us and want your character left off the log, message an officer or email the address below with your character name and we will exclude it.</p>
 
 <h2 id="rights">Your rights</h2>
 <p>The guide holds no personal data about you on our side. The vote keeps an anonymous browser id and the votes tied to it; because that id is random and not linked to your identity, we generally cannot connect it to a specific person on our own. If you are in the EU, UK, or California and want a name you pitched or the votes from your browser removed, email the address below and bring your browser id (it is in localStorage under <code>guildVote.voterId.v1</code>), and we will delete the records tied to it. If you sent in a raid application, email us your character name and we will remove it.</p>
