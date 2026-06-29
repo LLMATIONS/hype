@@ -71,6 +71,7 @@ CLASS_MAX = 32         # class (free text — no expansion pinned)
 EXPERIENCE_MAX = 1500  # raiding-experience paragraph
 WHY_APPLY_MAX = 1500   # why-join paragraph
 LOGS_MAX = 300         # optional logs URL
+GEARSCORE_MAX = 5      # required gearscore — digits only (addon tops out ~4 digits)
 MAX_APPLICATIONS = 2000  # global ceiling so the table can't be flooded
 
 # per-IP sliding-window limits: (max events, window seconds)
@@ -196,6 +197,7 @@ def _connect() -> sqlite3.Connection:
             wow_class         TEXT NOT NULL,
             why               TEXT NOT NULL,
             logs              TEXT,
+            gearscore         TEXT,
             ack_consumables   INTEGER NOT NULL,
             ack_friend        INTEGER NOT NULL,
             created_at        TEXT NOT NULL,
@@ -228,6 +230,11 @@ def _connect() -> sqlite3.Connection:
         CREATE INDEX IF NOT EXISTS idx_loot_winner ON loot_awards(winner);
         """
     )
+    # Lightweight migration: CREATE TABLE IF NOT EXISTS never alters an existing
+    # table, so add columns introduced after the table was first created.
+    app_cols = {r["name"] for r in conn.execute("PRAGMA table_info(applications)")}
+    if "gearscore" not in app_cols:
+        conn.execute("ALTER TABLE applications ADD COLUMN gearscore TEXT")
     conn.commit()
     return conn
 
@@ -519,9 +526,13 @@ def _post_discord(a: dict) -> str:
         field("Character", a["character"], True),
         field("Class", a["wow_class"], True),
         field("Discord", a["discord"], True),
+    ]
+    if a.get("gearscore"):
+        fields.append(field("Gearscore", a["gearscore"], True))
+    fields.extend([
         field("Raiding experience", a["experience"]),
         field("Why they want to join", a["why"]),
-    ]
+    ])
     if a.get("logs"):
         fields.append(field("Logs", a["logs"]))
     fields.append(field(
@@ -552,6 +563,7 @@ def _email_text(a: dict) -> str:
         "",
         "Character:  " + a["character"],
         "Class:      " + a["wow_class"],
+        "Gearscore:  " + (a["gearscore"] if a.get("gearscore") else "(not provided)"),
         "Discord:    " + a["discord"],
         "Submitted:  " + _pacific(a["created_at"]),
         "",
@@ -615,6 +627,7 @@ class ApplyBody(BaseModel):
     wow_class: str
     why: str
     logs: Optional[str] = None
+    gearscore: Optional[str] = None
     ack_consumables: bool = False
     ack_friend: bool = False
     token: Optional[str] = None   # Cloudflare Turnstile token
@@ -951,6 +964,12 @@ def submit_application(body: ApplyBody, request: Request):
             return _err(422, "That logs link needs to start with http:// or https://.")
     logs = logs or None
 
+    gearscore = _clean(body.gearscore or "")
+    if not gearscore:
+        return _err(422, "Your gearscore is required.")
+    if len(gearscore) > GEARSCORE_MAX or not gearscore.isascii() or not gearscore.isdigit():
+        return _err(422, "Gearscore should be numbers only.")
+
     if not body.ack_consumables:
         return _err(422, "Please confirm the consumables and gear requirement.")
     if not body.ack_friend:
@@ -970,10 +989,10 @@ def submit_application(body: ApplyBody, request: Request):
             return _err(409, "We can't take applications right now. Reach out on Discord.")
         _db.execute(
             """INSERT INTO applications
-                 (id, character, discord, experience, wow_class, why, logs,
+                 (id, character, discord, experience, wow_class, why, logs, gearscore,
                   ack_consumables, ack_friend, created_at)
-               VALUES (?,?,?,?,?,?,?,?,?,?)""",
-            (app_id, character, discord, experience, wow_class, why, logs, 1, 1, created),
+               VALUES (?,?,?,?,?,?,?,?,?,?,?)""",
+            (app_id, character, discord, experience, wow_class, why, logs, gearscore, 1, 1, created),
         )
         _db.commit()
 
@@ -982,7 +1001,7 @@ def submit_application(body: ApplyBody, request: Request):
     record = {
         "id": app_id, "character": character, "discord": discord,
         "experience": experience, "wow_class": wow_class, "why": why,
-        "logs": logs, "created_at": created,
+        "logs": logs, "gearscore": gearscore, "created_at": created,
     }
     d_status = _post_discord(record)
     e_status = _send_email(record)

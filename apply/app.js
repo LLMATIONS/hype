@@ -8,7 +8,7 @@
 (function () {
   "use strict";
 
-  var CAPS = { character: 40, discord: 64, wow_class: 32, wow_spec: 20, experience: 1500, why: 1500, logs: 300 };
+  var CAPS = { character: 40, discord: 64, wow_class: 32, wow_spec: 20, experience: 1500, why: 1500, logs: 300, gearscore: 5 };
 
   // --- tiny dom + fetch helpers --------------------------------------------
   var $ = function (sel, root) { return (root || document).querySelector(sel); };
@@ -78,7 +78,8 @@
 
   var fields = {
     character: $("#character"), discord: $("#discord"), wow_class: $("#wow_class"),
-    wow_spec: $("#wow_spec"), experience: $("#experience"), why: $("#why"), logs: $("#logs")
+    wow_spec: $("#wow_spec"), gearscore: $("#gearscore"), experience: $("#experience"),
+    why: $("#why"), logs: $("#logs")
   };
   var ackConsumables = $("#ack_consumables");
   var ackFriend = $("#ack_friend");
@@ -89,6 +90,13 @@
   wireCounter(fields.experience, "experience-count", CAPS.experience);
   wireCounter(fields.why, "why-count", CAPS.why);
   wireCounter(fields.logs, "logs-count", CAPS.logs);
+
+  // Gearscore is numbers only — live-strip anything else so the field can never
+  // hold a value the server will reject.
+  fields.gearscore.addEventListener("input", function () {
+    var clean = fields.gearscore.value.replace(/\D/g, "").slice(0, CAPS.gearscore);
+    if (clean !== fields.gearscore.value) fields.gearscore.value = clean;
+  });
 
   function setStatus(msg, kind) {
     statusEl.textContent = msg || "";
@@ -110,6 +118,9 @@
     if (!val("character")) return [fields.character, "Your character name's required."];
     if (!val("discord")) return [fields.discord, "Your Discord username's required."];
     if (!val("wow_class")) return [fields.wow_class, "Pick your class."];
+    var gearscore = val("gearscore");
+    if (!gearscore) return [fields.gearscore, "Your gearscore is required."];
+    if (!/^\d+$/.test(gearscore)) return [fields.gearscore, "Gearscore should be numbers only."];
     if (!val("experience")) return [fields.experience, "Tell us a bit about your raiding experience."];
     if (!val("why")) return [fields.why, "Tell us why you want to join."];
     var logs = val("logs");
@@ -133,6 +144,7 @@
           character: val("character"),
           discord: val("discord"),
           wow_class: composedClass(),
+          gearscore: val("gearscore") || null,
           experience: val("experience"),
           why: val("why"),
           logs: val("logs") || null,
