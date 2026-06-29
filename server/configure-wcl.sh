@@ -11,6 +11,13 @@
 #   WCL_GUILD_NAME       the guild's display name exactly as it appears on WCL.
 #   WCL_SERVER_SLUG      realm slug (default nightslayer).
 #   WCL_SERVER_REGION    region (default us).
+#   WCL subdomain        WCL splits Classic data by subdomain — retail on www.,
+#                        Anniversary/Fresh on fresh. Entering one sets WCL_API_URL
+#                        + WCL_TOKEN_URL to that host (they must match, and a Fresh
+#                        guild is invisible to the retail host).
+#   WCL_GUILD_ID         the guild's WCL id (warcraftlogs.com/guild/id/<n>).
+#                        Preferred over name+realm — exact and subdomain-correct,
+#                        and the only thing that resolves a Fresh guild.
 #   BLIZZARD_TRIAL_RANK  the in-game guild rank index (0..9, 0 = GM) that means
 #                        "Trial". This is what turns the tracker ON — unset/blank
 #                        leaves it off and no trials are surfaced.
@@ -48,6 +55,8 @@ read -r -s -p "WCL client secret (hidden, blank = skip):        " WSEC; echo
 read -r    -p "WCL guild name (exact, blank = skip):            " WGUILD
 read -r    -p "WCL server slug (default nightslayer, blank=skip):" WSLUG
 read -r    -p "WCL server region (default us, blank = skip):    " WREGION
+read -r    -p "WCL subdomain (www retail / fresh Anniversary, blank=skip): " WSUB
+read -r    -p "WCL guild id (warcraftlogs.com/guild/id/N, blank=skip): " WGID
 read -r    -p "In-game Trial rank index 0-9 (blank = skip):     " TRANK
 read -r    -p "Lockouts required for eval (default 3, blank=skip):" TLOCK
 
@@ -57,6 +66,13 @@ changed=()
 [ -n "$WGUILD" ]  && { set_kv WCL_GUILD_NAME    "$WGUILD";  changed+=("WCL_GUILD_NAME"); }
 [ -n "$WSLUG" ]   && { set_kv WCL_SERVER_SLUG   "$WSLUG";   changed+=("WCL_SERVER_SLUG"); }
 [ -n "$WREGION" ] && { set_kv WCL_SERVER_REGION "$WREGION"; changed+=("WCL_SERVER_REGION"); }
+# A subdomain sets both hosts together — the GraphQL host and the token endpoint
+# must live on the same subdomain (a token minted on fresh. is www.-invalid).
+if [ -n "$WSUB" ]; then
+  set_kv WCL_API_URL   "https://${WSUB}.warcraftlogs.com/api/v2/client"; changed+=("WCL_API_URL")
+  set_kv WCL_TOKEN_URL "https://${WSUB}.warcraftlogs.com/oauth/token";   changed+=("WCL_TOKEN_URL")
+fi
+[ -n "$WGID" ]    && { set_kv WCL_GUILD_ID      "$WGID";    changed+=("WCL_GUILD_ID"); }
 [ -n "$TRANK" ]   && { set_kv BLIZZARD_TRIAL_RANK "$TRANK"; changed+=("BLIZZARD_TRIAL_RANK"); }
 [ -n "$TLOCK" ]   && { set_kv TRIAL_LOCKOUTS    "$TLOCK";   changed+=("TRIAL_LOCKOUTS"); }
 unset WSEC

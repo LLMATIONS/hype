@@ -179,6 +179,16 @@ and `BLIZZARD_TRIAL_RANK` / `TRIAL_LOCKOUTS` to the mode-600 env file, never the
 repo. `install.sh` arms an hourly `hype-wcl-sync.timer`; `deploy.sh` ships the
 fetcher and runs one sync.
 
+**Classic / Fresh guilds.** WCL splits Classic data by subdomain — retail on
+`www.`, Anniversary/Fresh on `fresh.` — each its own GraphQL host, token
+endpoint, and guild ids. A Fresh guild is invisible to the retail host and to a
+name+realm lookup. `configure-wcl.sh` asks for a **subdomain** (sets
+`WCL_API_URL` + `WCL_TOKEN_URL` to that host together) and a **WCL guild id**
+(`WCL_GUILD_ID`, from `warcraftlogs.com/guild/id/<n>`), which addresses the guild
+directly and is preferred over name+realm. Ours is Fresh, guild id `828086`:
+enter subdomain `fresh` and id `828086`. Leave both blank for a retail
+`www.`/name-resolved guild.
+
 ## Runtime layout
 
 Code lives in the repo; the service runs from `~/hype-vote/` outside any git
