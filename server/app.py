@@ -708,11 +708,25 @@ def _post_discord_bot(a: dict) -> str:
     if not (200 <= status < 300 and body and body.get("id")):
         return "failed"
     msg_id = body["id"]
-    _discord_bot(
+    tstatus, tbody = _discord_bot(
         "POST",
         f"{DISCORD_API}/channels/{channel_id}/messages/{msg_id}/threads",
         {"name": _thread_title(a), "auto_archive_duration": 4320},
     )
+    # Seed one line into the new thread. Discord hides empty threads from the
+    # channel's thread list, so without this the per-applicant thread doesn't
+    # surface until someone posts; the starter also gives officers a prompt. A
+    # thread started from a message has id == that message id, so we post there.
+    if 200 <= tstatus < 300:
+        thread_id = (tbody or {}).get("id") or msg_id
+        _discord_bot(
+            "POST",
+            f"{DISCORD_API}/channels/{thread_id}/messages",
+            {"content": "Vote with the **Approve** / **Reject** buttons on the "
+                        "application above — it's anonymous. Use this thread to "
+                        "talk the applicant over.",
+             "allowed_mentions": {"parse": []}},
+        )
     return "sent"
 
 
