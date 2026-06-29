@@ -125,6 +125,11 @@ DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL", "").strip()
 DISCORD_BOT_TOKEN = os.environ.get("DISCORD_BOT_TOKEN", "").strip()
 DISCORD_APPLICATIONS_CHANNEL_ID = os.environ.get(
     "DISCORD_APPLICATIONS_CHANNEL_ID", "").strip()
+# Optional officer role id. When set, the per-applicant thread's starter message
+# @mentions it — Discord adds every member of a (<100-member) role to the thread,
+# which surfaces it in their sidebars and pings them that a new application
+# landed. Unset ⇒ no mention (thread is reachable but not auto-pinned).
+DISCORD_OFFICER_ROLE_ID = os.environ.get("DISCORD_OFFICER_ROLE_ID", "").strip()
 # The bot app's public key (Discord Developer Portal → General Information).
 # Used to Ed25519-verify interaction webhooks (officer-vote button clicks).
 # Not a secret, but config-driven so it tracks the app. Empty ⇒ the
@@ -719,13 +724,21 @@ def _post_discord_bot(a: dict) -> str:
     # thread started from a message has id == that message id, so we post there.
     if 200 <= tstatus < 300:
         thread_id = (tbody or {}).get("id") or msg_id
+        # An officer-role @mention adds every member of the role to the thread,
+        # so it surfaces in their sidebars (a bot post alone doesn't make them
+        # members) and pings them. allowed_mentions scopes the ping to that role.
+        if DISCORD_OFFICER_ROLE_ID:
+            mention = f"<@&{DISCORD_OFFICER_ROLE_ID}> "
+            allowed = {"parse": [], "roles": [DISCORD_OFFICER_ROLE_ID]}
+        else:
+            mention, allowed = "", {"parse": []}
         _discord_bot(
             "POST",
             f"{DISCORD_API}/channels/{thread_id}/messages",
-            {"content": "Vote with the **Approve** / **Reject** buttons on the "
-                        "application above — it's anonymous. Use this thread to "
-                        "talk the applicant over.",
-             "allowed_mentions": {"parse": []}},
+            {"content": mention + "New application — vote with the **Approve** / "
+                        "**Reject** buttons above (anonymous). Discuss the "
+                        "applicant here.",
+             "allowed_mentions": allowed},
         )
     return "sent"
 

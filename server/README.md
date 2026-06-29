@@ -100,6 +100,13 @@ the message displays aggregate counts only, so officers vote anonymously. Anyone
 who can see the channel can vote; `#guild-applicants` being officer-only is the
 gate.
 
+Set `DISCORD_OFFICER_ROLE_ID` (optional) to have the per-applicant thread's
+starter message @mention that role. Discord adds every member of a sub-100-member
+role to the thread when it's mentioned, so the thread surfaces in each officer's
+sidebar (a bot post alone doesn't make them members) and pings them that a new
+application landed. Unset ⇒ no mention; the thread is still reachable via the
+message's **See Thread** link and the channel's threads browser.
+
 Clicks arrive as Discord *interaction webhooks* at `POST /api/discord/interactions`
 (reached through the same-origin `/api/*` Caddy route). Every request is
 Ed25519-verified against the app's public key; unsigned/forged requests get a
