@@ -140,7 +140,7 @@ chmod 644 "$INGEST_TIMER_PATH"
 
 systemctl daemon-reload
 systemctl enable "$UNIT"
-systemctl enable "$INGEST_TIMER"
+systemctl enable --now "$INGEST_TIMER"   # --now arms the timer this session, not just at boot
 echo "install: $UNIT_PATH + $SUDOERS_PATH written."
 echo "install: $INGEST_UNIT_PATH + $INGEST_TIMER_PATH written (timer enabled)."
 echo "install: set GARGUL_LUA_PATH in $RUNTIME/hype-vote.env if not already. Now run: bash server/deploy.sh"
