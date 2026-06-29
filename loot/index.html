@@ -74,6 +74,21 @@ h1{font-size:1.9rem;font-weight:800;margin:0 0 .35rem}
 .hcard .pname{font-weight:700;font-size:.96rem}
 .hcard .pmeta{font-size:.76rem;color:var(--dim);margin-top:.15rem}
 
+/* trial cards */
+.trials{display:grid;grid-template-columns:repeat(auto-fill,minmax(11rem,1fr));gap:.6rem}
+.tcard{border:1px solid var(--card-border);border-left:3px solid var(--card-border);border-radius:9px;
+  padding:.6rem .7rem;background:rgba(0,0,0,.18);display:flex;flex-direction:column;gap:.45rem}
+.tcard.due{border-left-color:var(--mint);background:rgba(143,243,194,.06)}
+.thead-row{display:flex;align-items:center;justify-content:space-between;gap:.5rem}
+.tcard .pname{font-weight:700;font-size:.98rem}
+.tcard .tmeta{font-size:.76rem;color:var(--dim)}
+.pips{display:flex;gap:.3rem;align-items:center;flex-wrap:wrap}
+.pip{width:1.2rem;height:.42rem;border-radius:999px;background:rgba(120,170,255,.16);border:1px solid var(--card-border)}
+.pip.on{background:var(--sky);border-color:var(--sky)}
+.pips .tmeta{margin-left:.15rem}
+.badge-due{display:inline-block;font-size:.66rem;font-weight:800;color:#0a1020;background:var(--mint);
+  border-radius:999px;padding:.05rem .5rem;letter-spacing:.03em;white-space:nowrap}
+
 /* standings table */
 .tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 table.standings{width:100%;border-collapse:collapse;font-size:.9rem}
@@ -133,6 +148,12 @@ footer a:hover,footer a:focus-visible{color:var(--sky)}
 
   <section class="summary" id="summary" hidden></section>
 
+  <section class="panel" id="trials-panel" hidden>
+    <h2>Trials</h2>
+    <p class="note">Three lockouts raided with us and you're up for evaluation. Counts raid attendance from Warcraft Logs, not loot &mdash; show up and it counts, gear or no gear.</p>
+    <div class="trials" id="trials"></div>
+  </section>
+
   <section class="panel" id="needs-panel" hidden>
     <h2>Needs gear</h2>
     <p class="note">Fewest main-spec pieces, longest dry streak first. These are who the council weighs for need and reciprocity.</p>
@@ -180,6 +201,6 @@ footer a:hover,footer a:focus-visible{color:var(--sky)}
 
 <script>const whTooltips = {colorLinks:true, iconizeLinks:true, renameLinks:false};</script>
 <script async src="https://wow.zamimg.com/js/tooltips.js"></script>
-<script src="/loot/app.js?v=2026-06-29" defer></script>
+<script src="/loot/app.js?v=2026-06-29b" defer></script>
 </body>
 </html>

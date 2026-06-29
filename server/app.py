@@ -292,6 +292,39 @@ def _connect() -> sqlite3.Connection:
             last_synced TEXT NOT NULL
         );
         CREATE INDEX IF NOT EXISTS idx_roster_present ON guild_roster(present);
+
+        -- Raid attendance. Populated out-of-band by fetch_wcl_attendance.py (a
+        -- systemd timer pulls the Warcraft Logs API); this service only reads it,
+        -- to count how many weekly lockouts a trial has actually raided —
+        -- presence, independent of loot. DDL mirrored in fetch_wcl_attendance.py,
+        -- both IF NOT EXISTS.
+        CREATE TABLE IF NOT EXISTS raid_attendance (
+            report_code TEXT NOT NULL,
+            character   TEXT NOT NULL COLLATE NOCASE,
+            present     INTEGER NOT NULL DEFAULT 1,
+            presence    INTEGER,
+            start_time  TEXT NOT NULL,
+            reset_week  TEXT NOT NULL,
+            zone        TEXT,
+            ingested_at TEXT NOT NULL,
+            PRIMARY KEY (report_code, character)
+        );
+        CREATE INDEX IF NOT EXISTS idx_attend_char ON raid_attendance(character);
+        CREATE INDEX IF NOT EXISTS idx_attend_week ON raid_attendance(reset_week);
+
+        -- Trials. Managed on the loot read path by _sync_trials() from the
+        -- Blizzard roster (a present member at TRIAL_RANK is a trial). started_at
+        -- is stamped the first time we see them ranked, and the lockout count is
+        -- measured from it; notified_at guards the one-time "due for evaluation"
+        -- Discord ping; status flips to 'resolved' when they leave the trial rank.
+        CREATE TABLE IF NOT EXISTS trials (
+            character   TEXT PRIMARY KEY COLLATE NOCASE,
+            started_at  TEXT NOT NULL,
+            status      TEXT NOT NULL DEFAULT 'active',
+            notified_at TEXT,
+            resolved_at TEXT
+        );
+        CREATE INDEX IF NOT EXISTS idx_trials_status ON trials(status);
         """
     )
     # Lightweight migration: CREATE TABLE IF NOT EXISTS never alters an existing
@@ -930,6 +963,25 @@ LOOT_HURTING_LIMIT = 8      # players surfaced in the "needs gear" panel
 # roster "show everyone" fallback is preserved.
 LOOT_HONORARY_MEMBERS = frozenset({"goshi", "darkside", "ysl"})
 
+# Trial tracker. A guild member at this Blizzard roster rank is a "trial"; we
+# count the distinct weekly lockouts they've raided (from raid_attendance, pulled
+# off Warcraft Logs — presence, not loot) since their clock started, and flag
+# them due for evaluation at TRIAL_LOCKOUTS. Loot is a lossy attendance proxy (a
+# trial can raid a full lockout and win nothing), so attendance is the signal.
+# Rank is a guild-defined 0..9 index (0 = GM); set BLIZZARD_TRIAL_RANK to your
+# in-game Trial/Initiate rank. Unset (negative) => the whole feature is inert:
+# no trials surfaced, nothing posted.
+TRIAL_RANK = int(os.environ.get("BLIZZARD_TRIAL_RANK", "-1"))
+TRIAL_LOCKOUTS = int(os.environ.get("TRIAL_LOCKOUTS", "3"))
+
+# Blizzard playable-class id -> Gargul/Wowhead class slug, for class-colouring a
+# trial who has no loot yet (their class comes from the roster's class_id, not a
+# loot award). TBC classes; DK included harmlessly.
+CLASS_ID_TO_SLUG = {
+    1: "warrior", 2: "paladin", 3: "hunter", 4: "rogue", 5: "priest",
+    6: "deathknight", 7: "shaman", 8: "mage", 9: "warlock", 11: "druid",
+}
+
 
 def _pacific_date(iso_utc: Optional[str]) -> Optional[str]:
     if not iso_utc:
@@ -955,8 +1007,170 @@ def _lockout_start() -> datetime:
     return start
 
 
+# --- trial tracker ----------------------------------------------------------
+# A trial = a present guild-roster member at TRIAL_RANK. "Done" = they've raided
+# TRIAL_LOCKOUTS distinct weekly lockouts (from raid_attendance / Warcraft Logs)
+# since their clock started. All of this runs on the loot read path under _lock,
+# so these helpers use _db directly and must NOT re-acquire _lock.
+
+def _trials_enabled() -> bool:
+    return TRIAL_RANK >= 0
+
+
+def _sync_trials() -> None:
+    """Reconcile the trials table against the current roster. A present member at
+    TRIAL_RANK is an active trial (started_at stamped on first sighting); anyone
+    no longer at that rank is resolved (promoted or gone). Idempotent + cheap.
+    No-op when the feature is disabled or the roster has never synced (so we never
+    invent trials from an empty roster — mirrors the loot 'show everyone'
+    fallback)."""
+    if not _trials_enabled():
+        return
+    if not _db.execute(
+        "SELECT COUNT(*) AS n FROM guild_roster WHERE present = 1"
+    ).fetchone()["n"]:
+        return
+    current = [
+        row["name"] for row in _db.execute(
+            "SELECT name FROM guild_roster WHERE present = 1 AND rank = ?",
+            (TRIAL_RANK,),
+        ).fetchall()
+    ]
+    now = _now()
+    for name in current:
+        _db.execute(
+            "INSERT INTO trials (character, started_at, status) VALUES (?, ?, 'active') "
+            "ON CONFLICT(character) DO NOTHING",
+            (name, now),
+        )
+    current_lower = {n.lower() for n in current}
+    for row in _db.execute(
+        "SELECT character FROM trials WHERE status = 'active'"
+    ).fetchall():
+        if row["character"].lower() not in current_lower:
+            _db.execute(
+                "UPDATE trials SET status='resolved', resolved_at=? WHERE character=?",
+                (now, row["character"]),
+            )
+    _db.commit()
+
+
+def _trial_lockouts(character: str) -> int:
+    """Distinct weekly lockouts this trial has raided with us — every lockout
+    they appear in on Warcraft Logs, presence not loot. We count all of their
+    attendance rather than gating on a clock-start date: a lockout they raided as
+    a PUG before getting the in-game rank still counts as "raided with us" (the
+    GM's own definition), and it means trials already mid-run when the tracker
+    goes live are credited correctly instead of resetting to zero. started_at is
+    kept purely as the informational "trial since" date."""
+    row = _db.execute(
+        "SELECT COUNT(DISTINCT reset_week) AS n FROM raid_attendance "
+        "WHERE character = ? AND present = 1",
+        (character,),
+    ).fetchone()
+    return row["n"] if row else 0
+
+
+def _trials_view() -> list:
+    """Active trials with lockout progress, for the /loot/ payload. Most progress
+    first; the ones already due float to the top."""
+    if not _trials_enabled():
+        return []
+    classes = {
+        row["name"].lower(): row["class_id"]
+        for row in _db.execute(
+            "SELECT name, class_id FROM guild_roster WHERE present = 1"
+        ).fetchall()
+    }
+    out = []
+    for t in _db.execute(
+        "SELECT character, started_at FROM trials WHERE status = 'active'"
+    ).fetchall():
+        n = _trial_lockouts(t["character"])
+        cid = classes.get(t["character"].lower())
+        out.append({
+            "player": t["character"],
+            "class": CLASS_ID_TO_SLUG.get(cid),
+            "lockouts": n,
+            "needed": TRIAL_LOCKOUTS,
+            "due": n >= TRIAL_LOCKOUTS,
+            "started": _pacific_date(t["started_at"]),
+        })
+    out.sort(key=lambda x: (not x["due"], -x["lockouts"], x["player"].lower()))
+    return out
+
+
+def _post_trial_due(name: str, lockouts: int) -> bool:
+    """Best-effort Discord ping that a trial has raided their lockouts and is due
+    for evaluation. Bot path (with optional officer-role mention) if a token is
+    set, else the plain webhook. True on a successful post."""
+    text = (
+        f"\N{DIRECT HIT} **{name}** has raided **{lockouts} lockouts** as a trial "
+        "— they're due for an evaluation."
+    )
+    if DISCORD_BOT_TOKEN:
+        channel_id = _applications_channel_id()
+        if not channel_id:
+            return False
+        if DISCORD_OFFICER_ROLE_ID:
+            content = f"<@&{DISCORD_OFFICER_ROLE_ID}> " + text
+            allowed = {"parse": [], "roles": [DISCORD_OFFICER_ROLE_ID]}
+        else:
+            content, allowed = text, {"parse": []}
+        status, _body = _discord_bot(
+            "POST", f"{DISCORD_API}/channels/{channel_id}/messages",
+            {"content": content, "allowed_mentions": allowed},
+        )
+        return 200 <= status < 300
+    if DISCORD_WEBHOOK_URL:
+        status = _http_post_json(
+            DISCORD_WEBHOOK_URL,
+            {"username": "hype — trials", "content": text,
+             "allowed_mentions": {"parse": []}},
+        )
+        return 200 <= status < 300
+    return False
+
+
+def _maybe_notify_trials() -> None:
+    """Fire the one-time 'due for evaluation' ping for any trial that has crossed
+    the lockout threshold and hasn't been announced. Guarded by notified_at so it
+    posts exactly once per trial. Best-effort and self-locking — call it OUTSIDE
+    the loot read lock. Never raises into the request."""
+    if not _trials_enabled() or not (DISCORD_BOT_TOKEN or DISCORD_WEBHOOK_URL):
+        return
+    try:
+        with _lock:
+            due = []  # (character, lockout_count) for trials past the threshold
+            for t in _db.execute(
+                "SELECT character FROM trials "
+                "WHERE status = 'active' AND notified_at IS NULL"
+            ).fetchall():
+                n = _trial_lockouts(t["character"])
+                if n >= TRIAL_LOCKOUTS:
+                    due.append((t["character"], n))
+        if not due:
+            return
+        posted = [name for name, n in due if _post_trial_due(name, n)]
+        if posted:
+            stamp = _now()
+            with _lock:
+                for name in posted:
+                    _db.execute(
+                        "UPDATE trials SET notified_at = ? WHERE character = ?",
+                        (stamp, name),
+                    )
+                _db.commit()
+    except Exception:
+        # A Discord hiccup must never break the public loot endpoint.
+        pass
+
+
 def _loot_payload() -> dict:
     """Aggregate loot_awards into standings / hurting / recent. Read-only."""
+    # Keep the trials table current with the roster before reading it out.
+    _sync_trials()
+
     now = datetime.now(timezone.utc)
     lockout_start = _lockout_start()
     lockout_iso = lockout_start.isoformat()
@@ -1092,6 +1306,8 @@ def _loot_payload() -> dict:
         "standings": standings,
         "hurting": hurting,
         "recent": recent,
+        "trials_enabled": _trials_enabled(),
+        "trials": _trials_view(),
     }
 
 
@@ -1116,7 +1332,12 @@ def get_loot():
     public by design ("visible to the raid"). Character names only, no PII.
     """
     with _lock:
-        return _loot_payload()
+        payload = _loot_payload()
+    # Best-effort, self-locking, idempotent: pings officers once when a trial
+    # crosses the lockout threshold. Outside the read lock so a slow Discord
+    # call never blocks the endpoint.
+    _maybe_notify_trials()
+    return payload
 
 
 @app.get("/api/ideas")

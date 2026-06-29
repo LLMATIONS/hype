@@ -140,6 +140,45 @@ and never sets that header, so the same endpoints are unreachable from it
 To moderate, open `https://hype-admin.swagcounty.com/` from the internal
 network and sign in with your usual SSO. No token to set, save, or rotate.
 
+## Trial tracker (Warcraft Logs attendance)
+
+The loot log doubles as a trial tracker: it shows each trial's progress toward
+evaluation, measured as **how many weekly lockouts they've actually raided** —
+presence from Warcraft Logs, not loot. Loot is a lossy attendance proxy (a trial
+can raid a full lockout and win nothing), so attendance is the signal.
+
+Two inputs, both config-gated and inert until set:
+
+- **Who is a trial** comes from the Blizzard guild roster (the same sync that
+  powers the guildie-vs-PUG loot filter). A present member at the in-game rank
+  index `BLIZZARD_TRIAL_RANK` (0–9, 0 = GM) is a trial; unset/negative ⇒ the
+  whole feature is off and nothing is surfaced. The backend reconciles a `trials`
+  table on the loot read path: a member at that rank becomes an active trial,
+  and anyone who leaves the rank (promoted or gone) is marked resolved.
+- **Lockouts raided** comes from `fetch_wcl_attendance.py`, which pulls
+  `guild.attendance` off the Warcraft Logs v2 GraphQL API (OAuth2
+  client-credentials, like the roster sync) into a `raid_attendance` table. We
+  count the distinct weekly lockouts a trial appears in. Counting *all* of their
+  attendance (not gating on a start date) means a lockout raided as a PUG before
+  they got the rank still counts as "raided with us", and trials already mid-run
+  when the tracker goes live are credited correctly.
+
+When a trial reaches `TRIAL_LOCKOUTS` (default 3) the `/loot/` page flags them
+**READY**, and — best-effort, exactly once per trial — the Discord bot (or
+webhook) posts a "due for evaluation" ping to the applications channel,
+@mentioning `DISCORD_OFFICER_ROLE_ID` if set.
+
+```sh
+bash server/configure-wcl.sh   # prompts for the WCL client + guild + trial rank, restarts
+```
+
+Register a Warcraft Logs API client at `warcraftlogs.com/api/clients`
+(client-credentials grant). The script writes `WCL_CLIENT_ID` /
+`WCL_CLIENT_SECRET` / `WCL_GUILD_NAME` / `WCL_SERVER_SLUG` / `WCL_SERVER_REGION`
+and `BLIZZARD_TRIAL_RANK` / `TRIAL_LOCKOUTS` to the mode-600 env file, never the
+repo. `install.sh` arms an hourly `hype-wcl-sync.timer`; `deploy.sh` ships the
+fetcher and runs one sync.
+
 ## Runtime layout
 
 Code lives in the repo; the service runs from `~/hype-vote/` outside any git
