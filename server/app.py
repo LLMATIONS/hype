@@ -51,6 +51,16 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
+# Ed25519 verification for Discord interaction webhooks. Guarded so a missing
+# dependency degrades to "interactions endpoint disabled" rather than a boot
+# failure for the rest of the service.
+try:
+    from nacl.exceptions import BadSignatureError
+    from nacl.signing import VerifyKey
+    _HAVE_NACL = True
+except Exception:  # pragma: no cover - dependency-presence guard
+    _HAVE_NACL = False
+
 # --- configuration ----------------------------------------------------------
 # DB path is host-side and gitignored; default keeps preview self-contained.
 DB_PATH = Path(os.environ.get("GUILDNAMES_DB", "./data/guildnames.db")).expanduser()
@@ -62,6 +72,11 @@ VOTER_ID_MAX = 64      # a UUID is 36; allow slack but cap to stop abuse
 MAX_IDEAS = 500        # global ceiling so the table can't be flooded
 MAX_BODY = 16384       # request body cap (bytes); an application is two short
                        # paragraphs + a few fields + a ~2 KB Turnstile token
+# Discord interaction payloads bundle the full source message + the clicker's
+# member object (role-id array, permissions), so they run larger than our own
+# writes. This path is Ed25519-verified downstream, so a roomier-but-bounded cap
+# is safe; it only ever sees traffic Discord signed.
+DISCORD_MAX_BODY = 262144
 
 # Guild-application field caps (the /apply page). Free text is cleaned and
 # length-capped, then stored faithfully and rendered with textContent.
@@ -110,6 +125,11 @@ DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL", "").strip()
 DISCORD_BOT_TOKEN = os.environ.get("DISCORD_BOT_TOKEN", "").strip()
 DISCORD_APPLICATIONS_CHANNEL_ID = os.environ.get(
     "DISCORD_APPLICATIONS_CHANNEL_ID", "").strip()
+# The bot app's public key (Discord Developer Portal → General Information).
+# Used to Ed25519-verify interaction webhooks (officer-vote button clicks).
+# Not a secret, but config-driven so it tracks the app. Empty ⇒ the
+# interactions endpoint fails closed (rejects everything with 401).
+DISCORD_PUBLIC_KEY = os.environ.get("DISCORD_PUBLIC_KEY", "").strip()
 DISCORD_API = "https://discord.com/api/v10"
 RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "").strip()
 APPLY_MAIL_FROM = os.environ.get("APPLY_MAIL_FROM", "").strip()
@@ -155,9 +175,11 @@ async def guard_request(request: Request, call_next):
         if ctype != "application/json":
             return JSONResponse({"error": "Send JSON."}, status_code=415)
         clen = request.headers.get("content-length")
+        cap = (DISCORD_MAX_BODY if request.url.path == "/api/discord/interactions"
+               else MAX_BODY)
         if clen is not None:
             try:
-                if int(clen) > MAX_BODY:
+                if int(clen) > cap:
                     return JSONResponse({"error": "That's too much data."}, status_code=413)
             except ValueError:
                 return JSONResponse({"error": "Bad request."}, status_code=400)
@@ -213,6 +235,19 @@ def _connect() -> sqlite3.Connection:
             delivered_email   TEXT
         );
         CREATE INDEX IF NOT EXISTS idx_apps_created ON applications(created_at);
+
+        -- Officer votes on an application, cast via the Discord message buttons.
+        -- voter_id is the Discord user id, stored ONLY to dedup and let a voter
+        -- change/clear their vote — it is never displayed: the message shows
+        -- aggregate counts, so voting is anonymous to other officers.
+        CREATE TABLE IF NOT EXISTS app_votes (
+            app_id      TEXT NOT NULL REFERENCES applications(id) ON DELETE CASCADE,
+            voter_id    TEXT NOT NULL,
+            value       INTEGER NOT NULL CHECK (value IN (-1, 1)),
+            updated_at  TEXT NOT NULL,
+            PRIMARY KEY (app_id, voter_id)
+        );
+        CREATE INDEX IF NOT EXISTS idx_app_votes_app ON app_votes(app_id);
 
         -- Loot log. Populated out-of-band by ingest_gargul.py (a systemd timer
         -- parses Gargul's award history off the gaming rig); this service only
@@ -625,16 +660,50 @@ def _applications_channel_id() -> str:
     return _app_channel_id
 
 
+def _vote_tally_text(up: int, down: int) -> str:
+    return f"✅ {up}  ·  ❌ {down}"
+
+
+def _set_vote_field(embed: dict, up: int, down: int) -> None:
+    """Set (or append) the 'Votes' tally field on an application embed in place."""
+    fields = embed.setdefault("fields", [])
+    for f in fields:
+        if f.get("name") == "Votes":
+            f["value"] = _vote_tally_text(up, down)
+            f["inline"] = False
+            return
+    fields.append({"name": "Votes", "value": _vote_tally_text(up, down), "inline": False})
+
+
+def _vote_components(app_id: str) -> list:
+    """The Approve/Reject button row. custom_id carries the application id so the
+    interaction webhook knows which row to tally; it's `vote:<up|down>:<id>`."""
+    return [{
+        "type": 1,  # action row
+        "components": [
+            {"type": 2, "style": 3, "label": "Approve",  # 3 = green
+             "emoji": {"name": "✅"}, "custom_id": f"vote:up:{app_id}"},
+            {"type": 2, "style": 4, "label": "Reject",   # 4 = red
+             "emoji": {"name": "❌"}, "custom_id": f"vote:down:{app_id}"},
+        ],
+    }]
+
+
 def _post_discord_bot(a: dict) -> str:
-    """Post the embed, open a thread named '<character> — <class>' off it, and
-    pre-seed ✅/❌ for officers to vote. The embed is the gate: thread + reactions
-    are best-effort follow-ups so a hiccup there still counts as delivered."""
+    """Post the embed with a 0/0 vote tally + Approve/Reject buttons, then open a
+    thread named '<character> — <class>' off it for discussion. The message post
+    is the gate; the thread is a best-effort follow-up. Officers vote via the
+    buttons (anonymous — see the /api/discord/interactions handler), not real
+    reactions, so nothing is pre-seeded here."""
     channel_id = _applications_channel_id()
     if not channel_id:
         return "failed"
+    embed = _application_embed(a)
+    _set_vote_field(embed, 0, 0)
     status, body = _discord_bot(
         "POST", f"{DISCORD_API}/channels/{channel_id}/messages",
-        {"embeds": [_application_embed(a)], "allowed_mentions": {"parse": []}},
+        {"embeds": [embed], "components": _vote_components(a["id"]),
+         "allowed_mentions": {"parse": []}},
     )
     if not (200 <= status < 300 and body and body.get("id")):
         return "failed"
@@ -644,19 +713,13 @@ def _post_discord_bot(a: dict) -> str:
         f"{DISCORD_API}/channels/{channel_id}/messages/{msg_id}/threads",
         {"name": _thread_title(a), "auto_archive_duration": 4320},
     )
-    for emoji in ("✅", "❌"):  # ✅ then ❌
-        _discord_bot(
-            "PUT",
-            f"{DISCORD_API}/channels/{channel_id}/messages/{msg_id}"
-            f"/reactions/{urllib.parse.quote(emoji)}/@me",
-        )
     return "sent"
 
 
 def _post_discord(a: dict) -> str:
     """Deliver the application to Discord. A bot token (preferred) gets the
-    per-applicant thread + officer-vote reactions; otherwise fall back to a
-    plain webhook embed. Either path is best-effort and never blocks the form."""
+    per-applicant thread + officer-vote buttons; otherwise fall back to a plain
+    webhook embed. Either path is best-effort and never blocks the form."""
     if DISCORD_BOT_TOKEN:
         return _post_discord_bot(a)
     if not DISCORD_WEBHOOK_URL:
@@ -668,6 +731,82 @@ def _post_discord(a: dict) -> str:
     }
     status = _http_post_json(DISCORD_WEBHOOK_URL, payload)
     return "sent" if 200 <= status < 300 else "failed"
+
+
+# --- Discord interaction webhook (officer-vote buttons) ---------------------
+# Discord POSTs button clicks here. Every request is Ed25519-signed with the
+# app's key; we MUST verify and reject bad/unsigned requests with 401 (Discord
+# tests exactly this when you register the endpoint URL). A click toggles the
+# clicker's vote in app_votes and updates the message's aggregate tally —
+# individual votes are never revealed, so officers vote anonymously.
+
+def _verify_discord_sig(raw: bytes, signature: str, timestamp: str) -> bool:
+    """True iff `raw` carries a valid Ed25519 signature for the app key. Fails
+    closed: no library, no key, or any malformed input ⇒ False."""
+    if not (_HAVE_NACL and DISCORD_PUBLIC_KEY and signature and timestamp):
+        return False
+    try:
+        key = VerifyKey(bytes.fromhex(DISCORD_PUBLIC_KEY))
+        key.verify(timestamp.encode("utf-8") + raw, bytes.fromhex(signature))
+        return True
+    except (BadSignatureError, ValueError):
+        return False
+
+
+def _ephemeral(content: str) -> dict:
+    """A type-4 interaction response only the clicker sees (flags=64)."""
+    return {"type": 4, "data": {"content": content, "flags": 64}}
+
+
+def _handle_vote_component(payload: dict) -> dict:
+    """Record an officer's anonymous Approve/Reject click and return an updated
+    message (type 7) so the public tally ticks; clicking your current choice
+    again clears it. Errors fall back to an ephemeral note to the clicker."""
+    data = payload.get("data") or {}
+    parts = (data.get("custom_id") or "").split(":")
+    if len(parts) != 3 or parts[0] != "vote":
+        return _ephemeral("That button isn't one I know.")
+    value = {"up": 1, "down": -1}.get(parts[1])
+    app_id = parts[2]
+    user = (payload.get("member") or {}).get("user") or payload.get("user") or {}
+    voter_id = user.get("id") or ""
+    if value is None or not voter_id:
+        return _ephemeral("Couldn't record that vote — try again.")
+
+    with _lock:
+        if not _db.execute(
+                "SELECT 1 FROM applications WHERE id = ?", (app_id,)).fetchone():
+            return _ephemeral("That application's no longer on file.")
+        current = _db.execute(
+            "SELECT value FROM app_votes WHERE app_id = ? AND voter_id = ?",
+            (app_id, voter_id)).fetchone()
+        if current and current["value"] == value:
+            _db.execute(
+                "DELETE FROM app_votes WHERE app_id = ? AND voter_id = ?",
+                (app_id, voter_id))
+        else:
+            _db.execute(
+                """INSERT INTO app_votes (app_id, voter_id, value, updated_at)
+                   VALUES (?,?,?,?)
+                   ON CONFLICT(app_id, voter_id)
+                   DO UPDATE SET value=excluded.value, updated_at=excluded.updated_at""",
+                (app_id, voter_id, value, _now()))
+        up = _db.execute(
+            "SELECT COUNT(*) AS n FROM app_votes WHERE app_id = ? AND value = 1",
+            (app_id,)).fetchone()["n"]
+        down = _db.execute(
+            "SELECT COUNT(*) AS n FROM app_votes WHERE app_id = ? AND value = -1",
+            (app_id,)).fetchone()["n"]
+        _db.commit()
+
+    msg = payload.get("message") or {}
+    embeds = msg.get("embeds") or []
+    embed = embeds[0] if embeds else {
+        "title": "New guild application", "color": 0xC0A0FF, "fields": []}
+    _set_vote_field(embed, up, down)
+    # type 7 = UPDATE_MESSAGE: edit the source message in place (anonymous
+    # aggregate counts), no extra REST round-trip, well within the 3s ack window.
+    return {"type": 7, "data": {"embeds": [embed], "components": _vote_components(app_id)}}
 
 
 def _email_text(a: dict) -> str:
@@ -1170,6 +1309,29 @@ def submit_application(body: ApplyBody, request: Request):
         _db.commit()
 
     return JSONResponse({"ok": True}, status_code=201)
+
+
+@app.post("/api/discord/interactions")
+async def discord_interactions(request: Request):
+    """Public Discord interactions webhook for the officer-vote buttons. Every
+    request is Ed25519-verified; PING is answered, button clicks are tallied
+    anonymously. Reached via the same-origin /api/* Caddy route → loopback."""
+    raw = await request.body()
+    if not _verify_discord_sig(
+            raw,
+            request.headers.get("x-signature-ed25519", ""),
+            request.headers.get("x-signature-timestamp", "")):
+        return JSONResponse({"error": "invalid request signature"}, status_code=401)
+    try:
+        payload = json.loads(raw or b"{}")
+    except ValueError:
+        return _err(400, "Bad request.")
+    itype = payload.get("type")
+    if itype == 1:          # PING (URL registration + Discord health checks)
+        return {"type": 1}  # PONG
+    if itype == 3:          # MESSAGE_COMPONENT (a button click)
+        return _handle_vote_component(payload)
+    return _err(400, "Unsupported interaction type.")
 
 
 @app.get("/api/admin/applications")
