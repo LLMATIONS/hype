@@ -72,23 +72,45 @@ bash server/configure-apply.sh   # prompts (hidden) for each secret, restarts
 Discord has two modes:
 
 - **Webhook only** (`DISCORD_WEBHOOK_URL`) — posts the application as a rich
-  embed. It cannot create a named thread or add reactions, so thread titles and
-  officer voting depend on whatever else is watching the channel.
+  embed. It cannot create a named thread or attach vote buttons, so thread titles
+  and officer voting depend on whatever else is watching the channel.
 - **Bot token** (`DISCORD_BOT_TOKEN`, preferred) — supersedes the webhook for
-  posting and additionally opens a thread titled **`<character> — <class>`** off
-  each application and pre-seeds ✅ / ❌ reactions for officers to vote. Keep
-  `DISCORD_WEBHOOK_URL` set alongside it: the target channel is read off the
-  webhook automatically (override with `DISCORD_APPLICATIONS_CHANNEL_ID`).
+  posting, opens a thread titled **`<character> — <class>`** off each
+  application, and attaches **Approve / Reject** buttons for anonymous officer
+  voting (see below). Keep `DISCORD_WEBHOOK_URL` set alongside it: the target
+  channel is read off the webhook automatically (override with
+  `DISCORD_APPLICATIONS_CHANNEL_ID`).
 
 Bot setup (Discord Developer Portal → New Application → Bot → copy token):
 invite it to the server and grant it, in the applications channel, **View
-Channel · Send Messages · Create Public Threads · Send Messages in Threads ·
-Add Reactions**. No gateway connection or privileged intents are needed — it's
-pure outbound REST.
+Channel · Send Messages · Create Public Threads · Send Messages in Threads**.
+No gateway connection or privileged intents are needed — it's pure outbound REST.
 
 > If a separate bot is already auto-creating threads in that channel, turn its
 > auto-threading **off** for the applications channel — otherwise every
 > submission gets two threads.
+
+### Anonymous officer voting (buttons)
+
+When the bot posts an application it adds **Approve / Reject** buttons and a
+`Votes: ✅ 0 · ❌ 0` tally line. A click is recorded in `app_votes` keyed by the
+clicker's Discord id — stored only to dedupe and let someone change or clear
+their vote (click your current choice again to clear). The id is **never shown**:
+the message displays aggregate counts only, so officers vote anonymously. Anyone
+who can see the channel can vote; `#guild-applicants` being officer-only is the
+gate.
+
+Clicks arrive as Discord *interaction webhooks* at `POST /api/discord/interactions`
+(reached through the same-origin `/api/*` Caddy route). Every request is
+Ed25519-verified against the app's public key; unsigned/forged requests get a
+`401`. Two one-time setup steps in the Developer Portal:
+
+1. **Public key** — copy it from *General Information* and set `DISCORD_PUBLIC_KEY`
+   (via `configure-apply.sh`; it's not a secret). Voting fails closed until it's set.
+2. **Interactions Endpoint URL** — paste `https://<public-host>/api/discord/interactions`
+   into the field on *General Information* and save. Discord sends a signed PING
+   to validate it; it only saves if verification is working, so a successful save
+   is itself the smoke test. (Requires `PyNaCl`, already in `requirements.txt`.)
 
 ## Admin moderation (owner-only)
 
