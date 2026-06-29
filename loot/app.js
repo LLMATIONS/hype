@@ -50,6 +50,33 @@
     box.hidden = false;
   }
 
+  function renderTrials(d) {
+    var panel = $("#trials-panel"), wrap = $("#trials");
+    if (!d.trials_enabled || !d.trials || !d.trials.length) { panel.hidden = true; return; }
+    wrap.textContent = "";
+    d.trials.forEach(function (t) {
+      var card = el("div", "tcard" + (t.due ? " due" : ""));
+      var head = el("div", "thead-row");
+      var name = el("div", classCls(t.class)); name.textContent = t.player;
+      head.appendChild(name);
+      if (t.due) { var b = el("span", "badge-due"); b.textContent = "READY"; head.appendChild(b); }
+      // progress pips: one per required lockout, filled up to what they've raided
+      var pips = el("div", "pips");
+      for (var i = 0; i < t.needed; i++) {
+        pips.appendChild(el("span", "pip" + (i < t.lockouts ? " on" : "")));
+      }
+      var count = el("span", "tmeta");
+      count.textContent = t.lockouts + " / " + t.needed + " lockouts";
+      pips.appendChild(count);
+      var meta = el("div", "tmeta");
+      meta.textContent = t.due ? "Ready to evaluate"
+        : (t.started ? "Trial since " + t.started : "In trial");
+      card.appendChild(head); card.appendChild(pips); card.appendChild(meta);
+      wrap.appendChild(card);
+    });
+    panel.hidden = false;
+  }
+
   function renderHurting(d) {
     var wrap = $("#hurting");
     wrap.textContent = "";
@@ -166,8 +193,13 @@
     var status = $("#status");
     try {
       var d = await api("/api/loot");
+      // Trials are attendance-driven, not loot-driven: render them even before
+      // any loot has been logged.
+      renderTrials(d);
+      var hasTrials = !!(d.trials_enabled && d.trials && d.trials.length);
       if (!d.totals || !d.totals.awards) {
-        status.textContent = "No loot logged yet. Awards show up here after the next raid syncs.";
+        if (hasTrials) { status.hidden = true; }
+        else { status.textContent = "No loot logged yet. Awards show up here after the next raid syncs."; }
         return;
       }
       STANDINGS = d.standings.slice();

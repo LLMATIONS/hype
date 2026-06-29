@@ -24,6 +24,7 @@ mkdir -p "$RUNTIME/data"
 cp "$SRC/app.py" "$RUNTIME/app.py"
 cp "$SRC/ingest_gargul.py" "$RUNTIME/ingest_gargul.py"
 cp "$SRC/fetch_roster.py" "$RUNTIME/fetch_roster.py"
+cp "$SRC/fetch_wcl_attendance.py" "$RUNTIME/fetch_wcl_attendance.py"
 
 if sudo -n /bin/systemctl restart "$UNIT" 2>/dev/null; then
   echo "deploy: restarted $UNIT"
@@ -49,5 +50,15 @@ if systemctl list-unit-files hype-roster-sync.service >/dev/null 2>&1; then
     echo "deploy: ran guild-roster sync once"
   else
     echo "deploy: roster sync not run unattended; the timer will catch up" >&2
+  fi
+fi
+
+# Sync Warcraft Logs attendance once now so the trial tracker reflects the latest
+# raids immediately (the hourly timer otherwise picks it up on its next tick).
+if systemctl list-unit-files hype-wcl-sync.service >/dev/null 2>&1; then
+  if systemctl start hype-wcl-sync.service 2>/dev/null; then
+    echo "deploy: ran Warcraft Logs attendance sync once"
+  else
+    echo "deploy: WCL sync not run unattended; the timer will catch up" >&2
   fi
 fi

@@ -32,6 +32,14 @@ ROSTER_UNIT="hype-roster-sync.service"
 ROSTER_TIMER="hype-roster-sync.timer"
 ROSTER_UNIT_PATH="/etc/systemd/system/$ROSTER_UNIT"
 ROSTER_TIMER_PATH="/etc/systemd/system/$ROSTER_TIMER"
+# Warcraft Logs attendance sync (pulls the WCL API, writes raid_attendance — the
+# trial tracker's "did they actually raid" signal, presence not loot). Creds +
+# guild name live in hype-vote.env (WCL_*), never the repo. Hourly is plenty
+# (raids are ~2x/week).
+WCL_UNIT="hype-wcl-sync.service"
+WCL_TIMER="hype-wcl-sync.timer"
+WCL_UNIT_PATH="/etc/systemd/system/$WCL_UNIT"
+WCL_TIMER_PATH="/etc/systemd/system/$WCL_TIMER"
 
 if [ "$(id -u)" -ne 0 ]; then
   echo "install: re-run with sudo (sudo -E bash server/install.sh)" >&2
@@ -80,6 +88,9 @@ if [ ! -f "$ENV_FILE" ]; then
     '# Turnstile (configure-turnstile.sh): TURNSTILE_SITEKEY, TURNSTILE_SECRET' \
     '# Apply     (configure-apply.sh):     DISCORD_WEBHOOK_URL, RESEND_API_KEY, APPLY_MAIL_FROM, APPLY_MAIL_TO' \
     '# Loot      (loot ingest):            GARGUL_LUA_PATH (Gargul.lua file or dir of them)' \
+    '# Roster    (fetch_roster.py):        BLIZZARD_CLIENT_ID, BLIZZARD_CLIENT_SECRET, BLIZZARD_REALM_SLUG, BLIZZARD_GUILD_SLUG' \
+    '# Trials    (fetch_wcl_attendance.py + app): WCL_CLIENT_ID, WCL_CLIENT_SECRET, WCL_GUILD_NAME, WCL_SERVER_SLUG, WCL_SERVER_REGION' \
+    '#           BLIZZARD_TRIAL_RANK (in-game rank index that = Trial; unset => trial tracker off), TRIAL_LOCKOUTS (default 3)' \
     '# Admin: no secret here — moderation is Authentik SSO on hype-admin.swagcounty.com' \
     > "$ENV_FILE"
   chown "$SVC_USER:$SVC_USER" "$ENV_FILE"
@@ -190,11 +201,57 @@ WantedBy=timers.target
 ROSTER_TIMER_EOF
 chmod 644 "$ROSTER_TIMER_PATH"
 
+# --- Warcraft Logs attendance sync: oneshot service + hourly timer ----------
+# Pulls the WCL API (WCL_* in hype-vote.env) and upserts raid_attendance, the
+# trial tracker's attendance signal. Needs outbound HTTPS; hardened like the
+# roster sync (writable DB dir only, no new privileges).
+cat > "$WCL_UNIT_PATH" <<WCL_EOF
+[Unit]
+Description=hype — Warcraft Logs attendance sync (API -> raid_attendance)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=$SVC_USER
+WorkingDirectory=$RUNTIME
+Environment=GUILDNAMES_DB=$RUNTIME/data/guildnames.db
+EnvironmentFile=-$RUNTIME/hype-vote.env
+ExecStart=$RUNTIME/venv/bin/python $RUNTIME/fetch_wcl_attendance.py
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=$RUNTIME/data
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+LockPersonality=true
+WCL_EOF
+chmod 644 "$WCL_UNIT_PATH"
+
+cat > "$WCL_TIMER_PATH" <<WCL_TIMER_EOF
+[Unit]
+Description=hype — sync Warcraft Logs attendance hourly
+
+[Timer]
+OnBootSec=4min
+OnCalendar=hourly
+Persistent=true
+AccuracySec=2min
+
+[Install]
+WantedBy=timers.target
+WCL_TIMER_EOF
+chmod 644 "$WCL_TIMER_PATH"
+
 systemctl daemon-reload
 systemctl enable "$UNIT"
 systemctl enable --now "$INGEST_TIMER"   # --now arms the timer this session, not just at boot
 systemctl enable --now "$ROSTER_TIMER"
+systemctl enable --now "$WCL_TIMER"
 echo "install: $UNIT_PATH + $SUDOERS_PATH written."
 echo "install: $INGEST_UNIT_PATH + $INGEST_TIMER_PATH written (timer enabled)."
 echo "install: $ROSTER_UNIT_PATH + $ROSTER_TIMER_PATH written (timer enabled)."
-echo "install: set GARGUL_LUA_PATH + BLIZZARD_* in $RUNTIME/hype-vote.env if not already. Now run: bash server/deploy.sh"
+echo "install: $WCL_UNIT_PATH + $WCL_TIMER_PATH written (timer enabled)."
+echo "install: set GARGUL_LUA_PATH + BLIZZARD_* + WCL_* + BLIZZARD_TRIAL_RANK in $RUNTIME/hype-vote.env if not already. Now run: bash server/deploy.sh"
