@@ -314,9 +314,11 @@ def _connect() -> sqlite3.Connection:
 
         -- Trials. Managed on the loot read path by _sync_trials() from the
         -- Blizzard roster (a present member at TRIAL_RANK is a trial). started_at
-        -- is stamped the first time we see them ranked, and the lockout count is
-        -- measured from it; notified_at guards the one-time "due for evaluation"
-        -- Discord ping; status flips to 'resolved' when they leave the trial rank.
+        -- is stamped the first time we see them ranked (it starts the clock but is
+        -- NOT the displayed "trial since" date — that's the earliest attended raid,
+        -- see _trial_first_raid); notified_at guards the one-time "due for
+        -- evaluation" Discord ping; status flips to 'resolved' when they leave the
+        -- trial rank.
         CREATE TABLE IF NOT EXISTS trials (
             character   TEXT PRIMARY KEY COLLATE NOCASE,
             started_at  TEXT NOT NULL,
@@ -1061,14 +1063,28 @@ def _trial_lockouts(character: str) -> int:
     attendance rather than gating on a clock-start date: a lockout they raided as
     a PUG before getting the in-game rank still counts as "raided with us" (the
     GM's own definition), and it means trials already mid-run when the tracker
-    goes live are credited correctly instead of resetting to zero. started_at is
-    kept purely as the informational "trial since" date."""
+    goes live are credited correctly instead of resetting to zero. The displayed
+    "trial since" date comes from _trial_first_raid (earliest attended raid), not
+    started_at, which is just the deploy-day roster sighting."""
     row = _db.execute(
         "SELECT COUNT(DISTINCT reset_week) AS n FROM raid_attendance "
         "WHERE character = ? AND present = 1",
         (character,),
     ).fetchone()
     return row["n"] if row else 0
+
+
+def _trial_first_raid(character: str) -> Optional[str]:
+    """Start time of the earliest raid this trial actually attended (present), from
+    Warcraft Logs. This is the meaningful "trial since" date — when they first
+    raided with us — as opposed to started_at, which is just the deploy-day roster
+    sighting that started their clock. None until they've raided at least once."""
+    row = _db.execute(
+        "SELECT MIN(start_time) AS t FROM raid_attendance "
+        "WHERE character = ? AND present = 1",
+        (character,),
+    ).fetchone()
+    return row["t"] if row else None
 
 
 def _trials_view() -> list:
@@ -1094,7 +1110,7 @@ def _trials_view() -> list:
             "lockouts": n,
             "needed": TRIAL_LOCKOUTS,
             "due": n >= TRIAL_LOCKOUTS,
-            "started": _pacific_date(t["started_at"]),
+            "started": _pacific_date(_trial_first_raid(t["character"]) or t["started_at"]),
         })
     out.sort(key=lambda x: (not x["due"], -x["lockouts"], x["player"].lower()))
     return out
