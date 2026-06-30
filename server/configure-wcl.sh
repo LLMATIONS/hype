@@ -18,9 +18,12 @@
 #   WCL_GUILD_ID         the guild's WCL id (warcraftlogs.com/guild/id/<n>).
 #                        Preferred over name+realm — exact and subdomain-correct,
 #                        and the only thing that resolves a Fresh guild.
-#   BLIZZARD_TRIAL_RANK  the in-game guild rank index (0..9, 0 = GM) that means
-#                        "Trial". This is what turns the tracker ON — unset/blank
-#                        leaves it off and no trials are surfaced.
+#   BLIZZARD_TRIAL_RANK  the Blizzard-API guild rank index that means "Trial".
+#                        0-INDEXED (GM = 0), so it is ONE LESS than the number the
+#                        in-game Guild Control window shows: in-game "Rank 5: Trial"
+#                        is API rank 4. Getting this off by one silently surfaces
+#                        the wrong rank's members (e.g. your Alt rank). This is what
+#                        turns the tracker ON — unset/blank leaves it off.
 #   TRIAL_LOCKOUTS       lockouts required before evaluation (default 3).
 #
 # Each value is independent; blank = skip (leaves whatever is already set). Every
@@ -57,7 +60,7 @@ read -r    -p "WCL server slug (default nightslayer, blank=skip):" WSLUG
 read -r    -p "WCL server region (default us, blank = skip):    " WREGION
 read -r    -p "WCL subdomain (www retail / fresh Anniversary, blank=skip): " WSUB
 read -r    -p "WCL guild id (warcraftlogs.com/guild/id/N, blank=skip): " WGID
-read -r    -p "In-game Trial rank index 0-9 (blank = skip):     " TRANK
+read -r    -p "Trial rank — API index, 0-indexed (GM=0; in-game Rank N = N-1), blank=skip: " TRANK
 read -r    -p "Lockouts required for eval (default 3, blank=skip):" TLOCK
 
 changed=()

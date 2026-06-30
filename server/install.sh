@@ -91,7 +91,7 @@ if [ ! -f "$ENV_FILE" ]; then
     '# Roster    (fetch_roster.py):        BLIZZARD_CLIENT_ID, BLIZZARD_CLIENT_SECRET, BLIZZARD_REALM_SLUG, BLIZZARD_GUILD_SLUG' \
     '# Trials    (fetch_wcl_attendance.py + app): WCL_CLIENT_ID, WCL_CLIENT_SECRET, WCL_GUILD_NAME, WCL_SERVER_SLUG, WCL_SERVER_REGION' \
     '#           WCL_GUILD_ID (preferred over name+realm), WCL_API_URL + WCL_TOKEN_URL (Classic subdomain, e.g. fresh.warcraftlogs.com)' \
-    '#           BLIZZARD_TRIAL_RANK (in-game rank index that = Trial; unset => trial tracker off), TRIAL_LOCKOUTS (default 3)' \
+    '#           BLIZZARD_TRIAL_RANK (Blizzard-API rank index = Trial; 0-indexed GM=0, so in-game Rank N => N-1; unset => off), TRIAL_LOCKOUTS (default 3)' \
     '# Admin: no secret here — moderation is Authentik SSO on hype-admin.swagcounty.com' \
     > "$ENV_FILE"
   chown "$SVC_USER:$SVC_USER" "$ENV_FILE"
