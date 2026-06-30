@@ -150,11 +150,14 @@ can raid a full lockout and win nothing), so attendance is the signal.
 Two inputs, both config-gated and inert until set:
 
 - **Who is a trial** comes from the Blizzard guild roster (the same sync that
-  powers the guildie-vs-PUG loot filter). A present member at the in-game rank
-  index `BLIZZARD_TRIAL_RANK` (0–9, 0 = GM) is a trial; unset/negative ⇒ the
-  whole feature is off and nothing is surfaced. The backend reconciles a `trials`
-  table on the loot read path: a member at that rank becomes an active trial,
-  and anyone who leaves the rank (promoted or gone) is marked resolved.
+  powers the guildie-vs-PUG loot filter). A present member at the Blizzard-API
+  rank index `BLIZZARD_TRIAL_RANK` is a trial; unset/negative ⇒ the whole feature
+  is off and nothing is surfaced. **The index is 0-indexed (GM = 0), so it's one
+  less than the in-game Guild Control number** — in-game "Rank 5: Trial" is
+  `BLIZZARD_TRIAL_RANK=4`. An off-by-one silently tracks the adjacent rank (e.g.
+  your Alt rank) instead. The backend reconciles a `trials` table on the loot read
+  path: a member at that rank becomes an active trial, and anyone who leaves the
+  rank (promoted or gone) is marked resolved.
 - **Lockouts raided** comes from `fetch_wcl_attendance.py`, which pulls
   `guild.attendance` off the Warcraft Logs v2 GraphQL API (OAuth2
   client-credentials, like the roster sync) into a `raid_attendance` table. We
