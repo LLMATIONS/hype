@@ -83,8 +83,11 @@ Discord has two modes:
 
 Bot setup (Discord Developer Portal → New Application → Bot → copy token):
 invite it to the server and grant it, in the applications channel, **View
-Channel · Send Messages · Create Public Threads · Send Messages in Threads**.
-No gateway connection or privileged intents are needed — it's pure outbound REST.
+Channel · Send Messages · Create Public Threads · Send Messages in Threads ·
+Manage Threads · Create Invite**. The last two power the auto-approval flow
+below — `Create Invite` (on the invite channel) to mint the join link, `Manage
+Threads` to lock the thread on close. No gateway connection or privileged intents
+are needed — it's pure outbound REST.
 
 > If a separate bot is already auto-creating threads in that channel, turn its
 > auto-threading **off** for the applications channel — otherwise every
@@ -118,6 +121,28 @@ Ed25519-verified against the app's public key; unsigned/forged requests get a
    into the field on *General Information* and save. Discord sends a signed PING
    to validate it; it only saves if verification is working, so a successful save
    is itself the smoke test. (Requires `PyNaCl`, already in `requirements.txt`.)
+
+### Auto-close + invite on approval
+
+When an application's **net** tally (Approve − Reject) first reaches
+`APP_APPROVE_THRESHOLD` (default `3`), the bot latches the approval — stamped in
+`applications.approved_at`, so it fires **exactly once** even under concurrent
+clicks — and, off the interaction thread (the work is several REST calls, past
+Discord's 3 s ack window):
+
+1. mints a **7-day server invite** on `DISCORD_INVITE_CHANNEL_ID` (unset ⇒ the
+   applications channel),
+2. posts it into the applicant's thread with their stored handle so an officer
+   can relay it — the bot can't DM a non-member (we hold their handle as text,
+   not a user id, and there's no bot API to resolve one to the other),
+3. strips the Approve/Reject buttons off the parent message, and
+4. **archives + locks** the thread.
+
+Every step is best-effort: if the invite can't be minted the thread still closes
+with a "invite them manually" note. Tunables (all optional, via the env file):
+`APP_APPROVE_THRESHOLD`, `DISCORD_INVITE_CHANNEL_ID`, `APP_INVITE_MAX_AGE`
+(seconds, default `604800`), `APP_INVITE_MAX_USES` (default `0` = unlimited
+within the window, so an officer's test-click can't burn the applicant's join).
 
 ## Admin moderation (owner-only)
 

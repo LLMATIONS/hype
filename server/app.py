@@ -130,6 +130,19 @@ DISCORD_APPLICATIONS_CHANNEL_ID = os.environ.get(
 # which surfaces it in their sidebars and pings them that a new application
 # landed. Unset ⇒ no mention (thread is reachable but not auto-pinned).
 DISCORD_OFFICER_ROLE_ID = os.environ.get("DISCORD_OFFICER_ROLE_ID", "").strip()
+# When an application clears the approval bar (net Approve − Reject votes ≥
+# APP_APPROVE_THRESHOLD) the bot creates a server invite, posts it into the
+# applicant's thread for an officer to relay, and archives + locks the thread.
+# The invite is created on DISCORD_INVITE_CHANNEL_ID; unset ⇒ the applications
+# channel is used. The bot can't DM a non-member (we only hold their handle
+# text, not a user id), so the link goes in the thread, not to the applicant.
+APP_APPROVE_THRESHOLD = int(os.environ.get("APP_APPROVE_THRESHOLD", "3") or "3")
+DISCORD_INVITE_CHANNEL_ID = os.environ.get("DISCORD_INVITE_CHANNEL_ID", "").strip()
+# Invite lifetime knobs. A week-long, unlimited-use link inside that window: the
+# expiry bounds exposure while max_uses=0 avoids an officer's test-click burning
+# the applicant's only join. unique=true so each approval mints a fresh code.
+INVITE_MAX_AGE = int(os.environ.get("APP_INVITE_MAX_AGE", "604800") or "604800")
+INVITE_MAX_USES = int(os.environ.get("APP_INVITE_MAX_USES", "0") or "0")
 # The bot app's public key (Discord Developer Portal → General Information).
 # Used to Ed25519-verify interaction webhooks (officer-vote button clicks).
 # Not a secret, but config-driven so it tracks the app. Empty ⇒ the
@@ -334,6 +347,10 @@ def _connect() -> sqlite3.Connection:
     app_cols = {r["name"] for r in conn.execute("PRAGMA table_info(applications)")}
     if "gearscore" not in app_cols:
         conn.execute("ALTER TABLE applications ADD COLUMN gearscore TEXT")
+    # Stamped once when the vote tally first crosses the approval bar; latches the
+    # close-thread + invite side-effect so it fires exactly once per application.
+    if "approved_at" not in app_cols:
+        conn.execute("ALTER TABLE applications ADD COLUMN approved_at TEXT")
     conn.commit()
     return conn
 
@@ -820,6 +837,78 @@ def _ephemeral(content: str) -> dict:
     return {"type": 4, "data": {"content": content, "flags": 64}}
 
 
+def _create_invite(channel_id: str) -> Optional[str]:
+    """Mint a server invite on `channel_id` and return its https://discord.gg/…
+    URL, or None on any failure. Best-effort — the caller degrades to a
+    link-less approval note."""
+    if not (DISCORD_BOT_TOKEN and channel_id):
+        return None
+    status, body = _discord_bot(
+        "POST", f"{DISCORD_API}/channels/{channel_id}/invites",
+        {"max_age": INVITE_MAX_AGE, "max_uses": INVITE_MAX_USES, "unique": True},
+    )
+    code = (body or {}).get("code") if 200 <= status < 300 else None
+    return f"https://discord.gg/{code}" if code else None
+
+
+def _finalize_approval(payload: dict, app_id: str, up: int, down: int) -> None:
+    """Fired once, off-thread, when an application's net tally first clears the
+    approval bar. Creates an invite, posts it into the applicant's thread with
+    their handle so an officer can relay it, strips the vote buttons off the
+    parent message, then archives + locks the thread. Every step is best-effort;
+    a Discord hiccup must never leave the interaction hanging (we already acked).
+    A thread started from a message shares that message's id, so the parent
+    message id doubles as the thread id."""
+    try:
+        if not DISCORD_BOT_TOKEN:
+            return
+        msg = payload.get("message") or {}
+        msg_id = msg.get("id") or ""
+        channel_id = payload.get("channel_id") or msg.get("channel_id") or ""
+        thread_id = msg_id  # thread-from-message: thread id == source message id
+        if not (msg_id and channel_id):
+            return
+
+        with _lock:
+            row = _db.execute(
+                "SELECT character, wow_class, discord FROM applications WHERE id = ?",
+                (app_id,)).fetchone()
+        who = f"**{row['character']}** ({row['wow_class']})" if row else "The applicant"
+        handle = (row["discord"] if row else "").strip()
+
+        invite_channel = DISCORD_INVITE_CHANNEL_ID or channel_id
+        url = _create_invite(invite_channel)
+
+        lines = [f"\N{WHITE HEAVY CHECK MARK} **Approved**: {who} cleared "
+                 f"the vote (\N{WHITE HEAVY CHECK MARK} {up} · \N{CROSS MARK} {down})."]
+        if url:
+            handle_txt = f" (`{handle}`)" if handle else ""
+            lines.append(f"Invite for the applicant{handle_txt}: {url}")
+            lines.append("Send it their way. Closing this thread.")
+        else:
+            lines.append("Couldn't mint an invite link automatically; invite "
+                         "them manually. Closing this thread.")
+        # Post into the thread BEFORE archiving; a locked+archived thread rejects
+        # new messages. allowed_mentions is empty so the stored handle can't ping.
+        _discord_bot(
+            "POST", f"{DISCORD_API}/channels/{thread_id}/messages",
+            {"content": "\n".join(lines), "allowed_mentions": {"parse": []}},
+        )
+        # Strip the buttons off the parent message so voting stops once decided.
+        _discord_bot(
+            "PATCH", f"{DISCORD_API}/channels/{channel_id}/messages/{msg_id}",
+            {"components": []},
+        )
+        # Archive + lock: lock keeps non-moderators from reopening it.
+        _discord_bot(
+            "PATCH", f"{DISCORD_API}/channels/{thread_id}",
+            {"archived": True, "locked": True},
+        )
+    except Exception:
+        # Already acked the click; never surface a finalize error to Discord.
+        pass
+
+
 def _handle_vote_component(payload: dict) -> dict:
     """Record an officer's anonymous Approve/Reject click and return an updated
     message (type 7) so the public tally ticks; clicking your current choice
@@ -859,7 +948,27 @@ def _handle_vote_component(payload: dict) -> dict:
         down = _db.execute(
             "SELECT COUNT(*) AS n FROM app_votes WHERE app_id = ? AND value = -1",
             (app_id,)).fetchone()["n"]
+        # Latch the approval the instant the net tally first clears the bar. The
+        # `approved_at IS NULL` guard makes the claim atomic under the lock, so a
+        # 4th concurrent click can't fire the close/invite side-effect twice.
+        approved = False
+        if up - down >= APP_APPROVE_THRESHOLD:
+            cur = _db.execute(
+                "UPDATE applications SET approved_at = ? "
+                "WHERE id = ? AND approved_at IS NULL",
+                (_now(), app_id))
+            approved = cur.rowcount == 1
         _db.commit()
+
+    # The heavy side-effect (create invite, post to the thread, archive + lock)
+    # is several Discord REST calls — far past the 3s interaction ack window — so
+    # it runs off-thread while we return the tally update immediately below.
+    if approved:
+        threading.Thread(
+            target=_finalize_approval,
+            args=(payload, app_id, up, down),
+            daemon=True,
+        ).start()
 
     msg = payload.get("message") or {}
     embeds = msg.get("embeds") or []
