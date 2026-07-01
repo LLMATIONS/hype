@@ -18,6 +18,11 @@
 #                        Role ID, Developer Mode on). The thread starter message
 #                        @mentions it so officers are added to the thread (it
 #                        surfaces in their sidebar) and pinged. Unset ⇒ no mention.
+#   DISCORD_INVITE_CHANNEL_ID  optional channel id the auto-invite points to when
+#                        an application clears the vote (net Approve − Reject ≥ 3).
+#                        Unset ⇒ the applications channel. The bot mints a 7-day
+#                        invite, posts it in the applicant's thread for an officer
+#                        to relay, then archives + locks the thread.
 #   RESEND_API_KEY       a Resend API key (re_...)
 #   APPLY_MAIL_FROM      verified sender, e.g.  hype <apply@send.swagcounty.com>
 #   APPLY_MAIL_TO        comma-separated recipient address(es)
@@ -54,6 +59,7 @@ read -r -s -p "Discord webhook URL (hidden, blank = skip): " WEBHOOK; echo
 read -r -s -p "Discord bot token (hidden, blank = skip):    " BTOKEN; echo
 read -r    -p "Discord app public key (visible, blank = skip): " PUBKEY
 read -r    -p "Discord officer role id (visible, blank = skip): " ROLEID
+read -r    -p "Discord invite channel id (visible, blank = skip): " INVCH
 read -r -s -p "Resend API key (hidden, blank = skip):      " RKEY; echo
 read -r    -p "Mail FROM (e.g. hype <apply@send.swagcounty.com>, blank = skip): " MFROM
 read -r    -p "Mail TO   (comma-separated, blank = skip):   " MTO
@@ -63,6 +69,7 @@ changed=()
 [ -n "$BTOKEN" ]  && { set_kv DISCORD_BOT_TOKEN   "$BTOKEN";  changed+=("DISCORD_BOT_TOKEN"); }
 [ -n "$PUBKEY" ]  && { set_kv DISCORD_PUBLIC_KEY  "$PUBKEY";  changed+=("DISCORD_PUBLIC_KEY"); }
 [ -n "$ROLEID" ]  && { set_kv DISCORD_OFFICER_ROLE_ID "$ROLEID"; changed+=("DISCORD_OFFICER_ROLE_ID"); }
+[ -n "$INVCH" ]   && { set_kv DISCORD_INVITE_CHANNEL_ID "$INVCH"; changed+=("DISCORD_INVITE_CHANNEL_ID"); }
 [ -n "$RKEY" ]    && { set_kv RESEND_API_KEY     "$RKEY";    changed+=("RESEND_API_KEY"); }
 [ -n "$MFROM" ]   && { set_kv APPLY_MAIL_FROM    "$MFROM";   changed+=("APPLY_MAIL_FROM"); }
 [ -n "$MTO" ]     && { set_kv APPLY_MAIL_TO      "$MTO";     changed+=("APPLY_MAIL_TO"); }
