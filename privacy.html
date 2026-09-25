@@ -54,25 +54,20 @@ footer a:focus-visible{color:var(--sky);outline:2px solid var(--sky);outline-off
 <a class="home-link" href="/">&larr; hype</a>
 
 <h1>Privacy</h1>
-<p class="lede">hype is a guild fan site. The leveling guide keeps your progress in your own browser; the apply form sends your raid application to the guild's officers; tooltips go to Wowhead. Here is the whole map. (The guild-name vote is closed now that we picked a name — what it stored, and how to remove it, is still documented below.)</p>
-<p class="effective">Effective 2026-06-03</p>
+<p class="lede">hype is a guild fan site. Right now it is a handful of static pages that store nothing about you. The apply form and the loot log are paused until we raid again in World of Warcraft: Forever, and the guild-name vote is closed. What each of those stored, and how to have it removed, is still documented below. Here is the whole map.</p>
+<p class="effective">Effective 2026-09-25</p>
 
 <h2>What we store about you</h2>
-<p>The hub and the leveling guide are static pages: no account, no signup, no analytics, no advertising, no tracking pixels, and nothing about you kept on our server. Two tools are the exceptions: the raid application keeps what you send so the officers can read it, and the now-closed guild-name vote still holds the names and votes people submitted before we picked a name. The loot log shows in-game raid loot but collects nothing about you as a viewer. Each gets its own section below.</p>
+<p>The hub, the rules, and the about page are static pages: no account, no signup, no analytics, no advertising, no tracking pixels, and nothing about you kept on our server. Two paused or closed tools still hold data: raid applications people already sent, and the names and votes from the guild-name vote. The loot log, also paused, holds in-game raid loot but never collected anything about you as a viewer. Each gets its own section below.</p>
 
-<h2>The leveling guide and your browser</h2>
-<p>The TBC leveling guide remembers which steps, keys, and rep goals you have checked off using <strong>localStorage</strong> in your browser, under the key <code>tbcGuide.progress.v1</code>. That data:</p>
-<ul>
-  <li>never leaves your device and is never sent to us or anyone else;</li>
-  <li>is specific to that one browser on that one device — it does not sync;</li>
-  <li>can be wiped any time with the <strong>Reset progress</strong> button on the guide, or by clearing site data for this domain.</li>
-</ul>
+<h2>The retired leveling guide</h2>
+<p>We took down The Burning Crusade leveling guide when the guild moved off TBC. While it was up, it remembered which steps, keys, and rep goals you had checked off using <strong>localStorage</strong> in your browser, under the key <code>tbcGuide.progress.v1</code>. That data never left your device and was never sent to us. Nothing writes to it anymore; if some is still sitting in your browser, clearing site data for this domain removes it.</p>
 
 <h2>Wowhead tooltips (third party)</h2>
-<p>The leveling guide links every in-game item, quest, NPC, zone, and faction to <a href="https://www.wowhead.com">Wowhead</a> and shows a tooltip when you hover. To do that, the page loads Wowhead's tooltip widget and fetches each entity's data from Wowhead's servers (<code>wow.zamimg.com</code>, <code>nether.wowhead.com</code>, <code>wowhead.com</code>). As a result, <strong>Wowhead receives your IP address and which entities you hover or click</strong>, the same as if you visited Wowhead directly. Their handling of that is covered by <a href="https://www.wowhead.com/privacy-policy">Wowhead's privacy policy</a>, not ours. Clicking a link opens Wowhead in a new tab.</p>
+<p>The loot log is paused right now, so no page on the site currently loads anything from Wowhead. When it is back, it links each item to <a href="https://www.wowhead.com">Wowhead</a> and shows a tooltip when you hover. To do that, the page loads Wowhead's tooltip widget and fetches each entity's data from Wowhead's servers (<code>wow.zamimg.com</code>, <code>nether.wowhead.com</code>, <code>wowhead.com</code>). As a result, <strong>Wowhead receives your IP address and which entities you hover or click</strong>, the same as if you visited Wowhead directly. Their handling of that is covered by <a href="https://www.wowhead.com/privacy-policy">Wowhead's privacy policy</a>, not ours. Clicking a link opens Wowhead in a new tab.</p>
 
-<h2>Fonts (third party)</h2>
-<p>The guide's heading font (Cinzel) loads from Google Fonts (<code>fonts.googleapis.com</code>, <code>fonts.gstatic.com</code>), so Google receives your IP address for that request. No cookies are set by it.</p>
+<h2>Fonts</h2>
+<p>Every page uses your device's own system fonts. Nothing loads fonts from a third party.</p>
 
 <h2>Cookies</h2>
 <p>hype sets no cookies of its own and registers no service worker.</p>
@@ -105,7 +100,8 @@ footer a:focus-visible{color:var(--sky);outline:2px solid var(--sky);outline-off
 <p>The names and votes are never sold, shared, or used to profile anyone. They exist to pick a guild name, and that is the end of it.</p>
 <p>The site owner can remove any submitted name (and the votes attached to it) — for example to take down something abusive. There is no public delete; it is owner-only.</p>
 
-<h2>The raid application</h2>
+<h2>The raid application (paused)</h2>
+<p>The apply form is closed until we recruit for Forever. Applications already sent are still stored and handled exactly as described here, and the same rules will apply when the form reopens.</p>
 <p>If you fill out the <a href="/apply/">apply form</a>, you are choosing to send us real details about yourself so we can consider you for the raid team. Unlike the rest of the site, this is identifying information you hand over on purpose, so here is exactly where it goes.</p>
 
 <h3>What you send us</h3>
@@ -131,7 +127,8 @@ footer a:focus-visible{color:var(--sky);outline:2px solid var(--sky);outline-off
 <h3>How long we keep it, and removing it</h3>
 <p>Applications stay until we have dealt with them; there is no automatic expiry. The site owner can delete any application. If you want yours gone, before or after we review it, email the address below with your character name and we will take it out.</p>
 
-<h2>The loot log</h2>
+<h2>The loot log (paused)</h2>
+<p>The loot log is offline until we raid again, and nothing new is being read in. The awards already recorded stay stored as described here.</p>
 <p>The loot log shows who has won gear on raid nights. The data comes from the guild's own <a href="https://www.curseforge.com/wow/addons/gargul">Gargul</a> loot addon — the same record the raid keeps in-game — exported by an officer and read by our server on a timer. It is about in-game raid characters, not site visitors: <strong>viewing the page stores nothing about you</strong> (beyond the static-page and Wowhead-tooltip notes above). What the page shows for each award is:</p>
 <ul>
   <li>the winning <strong>character name</strong> (in-game only — no real names, no Discord, no account info) and its class;</li>
@@ -141,7 +138,7 @@ footer a:focus-visible{color:var(--sky);outline:2px solid var(--sky);outline-off
 <p>These are public in-game character names tied to public in-game loot, with nothing that identifies a real person. If you raid with us and want your character left off the log, message an officer or email the address below with your character name and we will exclude it.</p>
 
 <h2 id="rights">Your rights</h2>
-<p>The guide holds no personal data about you on our side. The vote keeps an anonymous browser id and the votes tied to it; because that id is random and not linked to your identity, we generally cannot connect it to a specific person on our own. If you are in the EU, UK, or California and want a name you pitched or the votes from your browser removed, email the address below and bring your browser id (it is in localStorage under <code>guildVote.voterId.v1</code>), and we will delete the records tied to it. If you sent in a raid application, email us your character name and we will remove it.</p>
+<p>The retired guide never held personal data about you on our side. The vote keeps an anonymous browser id and the votes tied to it; because that id is random and not linked to your identity, we generally cannot connect it to a specific person on our own. If you are in the EU, UK, or California and want a name you pitched or the votes from your browser removed, email the address below and bring your browser id (it is in localStorage under <code>guildVote.voterId.v1</code>), and we will delete the records tied to it. If you sent in a raid application, email us your character name and we will remove it.</p>
 
 <h2>Contact</h2>
 <p>Privacy questions, data requests, or anything else: <a href="mailto:nerds@swagcounty.com">nerds@swagcounty.com</a>.</p>

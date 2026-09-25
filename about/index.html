@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>About Us — hype</title>
-<meta name="description" content="Who we are, when we raid, and what we've cleared. Raid times convert to your time zone automatically.">
+<meta name="description" content="Who we are, what we've cleared, and where we're headed: World of Warcraft: Forever.">
 <link rel="canonical" href="https://hype.swagcounty.com/about/">
 <meta property="og:title" content="About Us — hype">
-<meta property="og:description" content="Who we are, when we raid, and what we've cleared. Raid times convert to your time zone automatically.">
+<meta property="og:description" content="Who we are, what we've cleared, and where we're headed: World of Warcraft: Forever.">
 <meta property="og:url" content="https://hype.swagcounty.com/about/">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://hype.swagcounty.com/assets/og-card.png?v=2026-06-24b">
@@ -16,7 +16,7 @@
 <meta property="og:image:alt" content="&lt;hype&gt; — WoW guild portal">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="About Us — hype">
-<meta name="twitter:description" content="Who we are, when we raid, and what we've cleared. Raid times convert to your time zone automatically.">
+<meta name="twitter:description" content="Who we are, what we've cleared, and where we're headed: World of Warcraft: Forever.">
 <meta name="twitter:image" content="https://hype.swagcounty.com/assets/og-card.png?v=2026-06-24b">
 <link rel="icon" href="/assets/favicon.ico?v=2026-06-24" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=2026-06-24">
@@ -46,27 +46,12 @@ strong{font-weight:700;color:var(--yellow)}
 .handle{font-weight:700;color:var(--sky)}
 ul{margin:.55rem 0;padding-left:1.2rem}li{margin:.3rem 0}
 
-/* Raid schedule card */
-.sched{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.2rem 1.3rem;margin:.4rem 0 0}
-.sched .days{font-size:1.05rem;font-weight:700;margin:0 0 .9rem}
-.sched .days strong{color:var(--yellow)}
-table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
-caption{text-align:left;font-size:.85rem;color:var(--dim);padding-bottom:.6rem;caption-side:top}
-th,td{padding:.55rem .5rem;text-align:left;border-bottom:1px solid var(--card-border)}
-thead th{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);font-weight:700}
-tbody th{font-weight:700;color:var(--fg);white-space:nowrap}
-td.you{font-weight:700;color:var(--sky)}
-tbody tr:last-child td,tbody tr:last-child th{border-bottom:0}
-.tzline{margin:.9rem 0 0;font-size:.9rem;color:var(--dim)}
-.tzline b{color:var(--fg)}
-.next{margin:.9rem 0 0;font-size:.95rem;background:rgba(86,170,255,.08);border:1px solid var(--card-border);border-radius:10px;padding:.6rem .8rem}
-.next b{color:var(--yellow)}
+/* Next-stop card */
+.callout{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.2rem 1.3rem;margin:.4rem 0 0}
+.callout .big{font-size:1.05rem;font-weight:700;margin:0 0 .5rem}
 .facts{display:grid;grid-template-columns:auto 1fr;gap:.35rem 1rem;margin:.4rem 0 0;font-size:.97rem}
 .facts dt{color:var(--dim)}
 .facts dd{margin:0;font-weight:600}
-.cta{display:inline-block;margin-top:.4rem;background:var(--cool);color:#0a1020;font-weight:800;text-decoration:none;padding:.6rem 1.1rem;border-radius:999px}
-.cta:hover{filter:brightness(1.05);color:#0a1020}
-.cta:focus-visible{outline:2px solid var(--sky);outline-offset:3px}
 footer{border-top:1px solid var(--card-border);padding:1.4rem;text-align:center;font-size:.85rem;color:var(--dim)}
 footer a{display:inline-flex;align-items:center;min-height:44px;vertical-align:middle;padding:0 .5rem;color:var(--dim);text-decoration:underline;text-decoration-color:var(--card-border);text-underline-offset:3px}
 footer a:hover{color:var(--sky)}
@@ -78,47 +63,21 @@ footer a:focus-visible{color:var(--sky);outline:2px solid var(--sky);outline-off
 <a class="home-link" href="/">&larr; hype</a>
 
 <h1>About Us</h1>
-<p class="lede">&lt;hype&gt; is a semi-hardcore Horde progression guild built around focused, efficient raiding without sacrificing the good times that come from hanging out with your team.</p>
+<p class="lede">&lt;hype&gt; is a semi-hardcore progression guild built around focused, efficient raiding without sacrificing the good times that come from hanging out with your team.</p>
 
-<!-- ============================ RAID SCHEDULE ============================ -->
-<section id="raids">
-<h2><span class="emoji" aria-hidden="true">🗓️</span> When we raid</h2>
-<div class="sched">
-  <p class="days">Every <strong>Tuesday</strong> &amp; <strong>Thursday</strong></p>
-  <table>
-    <caption>Invites go out at start — show up gemmed, enchanted, and stocked.</caption>
-    <thead>
-      <tr>
-        <th scope="col">Raid night</th>
-        <th scope="col">Central</th>
-        <th scope="col">Realm time</th>
-        <th scope="col">Your time <span id="tzlabel"></span></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <th scope="row">Tuesday</th>
-        <td>8:00&nbsp;PM</td>
-        <td>7:00&nbsp;PM</td>
-        <td class="you" data-day="2">&mdash;</td>
-      </tr>
-      <tr>
-        <th scope="row">Thursday</th>
-        <td>8:00&nbsp;PM</td>
-        <td>7:00&nbsp;PM</td>
-        <td class="you" data-day="4">&mdash;</td>
-      </tr>
-    </tbody>
-  </table>
-  <p class="next" id="nextraid" hidden></p>
-  <p class="tzline" id="tzline">Realm time runs one hour behind Central. Your column fills in automatically once the page loads.</p>
+<!-- ============================ NEXT STOP ============================ -->
+<section id="next">
+<h2><span class="emoji" aria-hidden="true">🗓️</span> Where we're headed</h2>
+<div class="callout">
+  <p class="big">Next stop: <strong>World of Warcraft: Forever</strong>, launching <strong>November 4, 2026</strong>.</p>
+  <p>We've stepped away from The Burning Crusade Anniversary and we're sitting tight until launch. Faction, realm, and raid nights get locked in closer to the date, and they'll show up here when they do.</p>
 </div>
 </section>
 
 <!-- ============================ EXPERIENCE ============================ -->
 <section id="experience">
 <h2><span class="emoji" aria-hidden="true">⚔️</span> What we've cleared</h2>
-<p><strong>Karazhan</strong>, <strong>Gruul's Lair</strong>, and <strong>Magtheridon</strong> are cleared. We only formed a few weeks ago, so Serpentshrine Cavern and Tempest Keep are what's next.</p>
+<p>In The Burning Crusade Anniversary we cleared <strong>Karazhan</strong>, <strong>Gruul's Lair</strong>, and <strong>Magtheridon</strong> within weeks of forming.</p>
 <p>The roster isn't new to this. We took a <strong>Realm First Champion of the Frozen Wastes</strong> in Wrath of the Lich King Classic, and the ranks include multiple Rank 1 players from Vanilla, Wrath, and Mists of Pandaria.</p>
 </section>
 
@@ -126,10 +85,11 @@ footer a:focus-visible{color:var(--sky);outline:2px solid var(--sky);outline-off
 <section id="guild">
 <h2><span class="emoji" aria-hidden="true">🏰</span> The guild</h2>
 <dl class="facts">
-  <dt>Faction</dt><dd>Horde</dd>
-  <dt>Realm</dt><dd>Nightslayer</dd>
-  <dt>Version</dt><dd>WoW: The Burning Crusade (Anniversary)</dd>
-  <dt>Schedule</dt><dd>Tue &amp; Thu, 8:00 PM Central</dd>
+  <dt>Game</dt><dd>World of Warcraft: Forever</dd>
+  <dt>Launch</dt><dd>November 4, 2026</dd>
+  <dt>Faction</dt><dd>TBD</dd>
+  <dt>Realm</dt><dd>TBD</dd>
+  <dt>Schedule</dt><dd>TBD</dd>
 </dl>
 </section>
 
@@ -142,15 +102,8 @@ footer a:focus-visible{color:var(--sky);outline:2px solid var(--sky);outline-off
 
 <!-- ============================ RECRUITMENT ============================ -->
 <section id="recruiting">
-<h2><span class="emoji" aria-hidden="true">📣</span> Who we're recruiting</h2>
-<p>We're considering <strong>all applicants</strong> while we build toward a core 25. We're already deep on melee, so healers and ranged DPS stand out, but bring your best and we'll find you a spot. New raiders trial before they're promoted to core.</p>
-<p><a class="cta" href="/apply/">Apply to raid &rarr;</a></p>
-</section>
-
-<!-- ============================ CONTACT ============================ -->
-<section id="contact">
-<h2><span class="emoji" aria-hidden="true">💬</span> How to reach us</h2>
-<p>Questions before you apply? Message <span class="handle">@ivorycrayon</span> on Discord. We don't bite (in chat).</p>
+<h2><span class="emoji" aria-hidden="true">📣</span> Recruiting</h2>
+<p>Applications are closed until we're closer to launch. If you want in for Forever, message <span class="handle">@ivorycrayon</span> on Discord and we'll keep you in mind. We don't bite (in chat).</p>
 </section>
 
 </main>
@@ -165,6 +118,5 @@ footer a:focus-visible{color:var(--sky);outline:2px solid var(--sky);outline-off
   <a href="https://github.com/LLMATIONS/hype" target="_blank" rel="noopener">Source</a>
 </footer>
 
-<script src="/about/app.js?v=2026-06-29"></script>
 </body>
 </html>
