@@ -89,7 +89,7 @@ CLASS_MAX = 32         # class (free text — no expansion pinned)
 EXPERIENCE_MAX = 1500  # raiding-experience paragraph
 WHY_APPLY_MAX = 1500   # why-join paragraph
 LOGS_MAX = 300         # optional logs URL
-GEARSCORE_MAX = 5      # required gearscore — digits only (addon tops out ~4 digits)
+GEARSCORE_MAX = 5      # legacy optional gearscore, digits only (dropped from the form 2026-09-25)
 MAX_APPLICATIONS = 2000  # global ceiling so the table can't be flooded
 
 # per-IP sliding-window limits: (max events, window seconds)
@@ -998,7 +998,6 @@ def _email_text(a: dict) -> str:
         "",
         "Character:  " + a["character"],
         "Class:      " + a["wow_class"],
-        "Gearscore:  " + (a["gearscore"] if a.get("gearscore") else "(not provided)"),
         "Discord:    " + a["discord"],
         "Submitted:  " + _pacific(a["created_at"]),
         "",
@@ -1070,8 +1069,9 @@ class ApplyBody(BaseModel):
 
 # --- loot log ---------------------------------------------------------------
 # The 2/3 rule (win 2-3 pieces in a run -> you're loot-locked) is per weekly
-# lockout, so "this lockout" = awards since the most recent raid reset. US TBC
-# realms reset Tuesday ~15:00 UTC; both are env-overridable.
+# lockout, so "this lockout" = awards since the most recent raid reset. The
+# default (Tuesday 15:00 UTC) is the US TBC Anniversary reset; WoW: Forever's
+# reset was unannounced as of 2026-09-25, so set LOOT_RESET_* once it is.
 LOOT_RESET_WEEKDAY = int(os.environ.get("LOOT_RESET_WEEKDAY", "1"))  # Mon=0 .. Sun=6
 LOOT_RESET_HOUR_UTC = int(os.environ.get("LOOT_RESET_HOUR_UTC", "15"))
 LOOT_LOCK_THRESHOLD = 2     # >= this many MS pieces this lockout => loot-locked
@@ -1099,7 +1099,7 @@ TRIAL_LOCKOUTS = int(os.environ.get("TRIAL_LOCKOUTS", "3"))
 
 # Blizzard playable-class id -> Gargul/Wowhead class slug, for class-colouring a
 # trial who has no loot yet (their class comes from the roster's class_id, not a
-# loot award). TBC classes; DK included harmlessly.
+# loot award). The nine Classic classes; DK included harmlessly.
 CLASS_ID_TO_SLUG = {
     1: "warrior", 2: "paladin", 3: "hunter", 4: "rogue", 5: "priest",
     6: "deathknight", 7: "shaman", 8: "mage", 9: "warlock", 11: "druid",
@@ -1661,7 +1661,7 @@ def delete_idea(idea_id: str, request: Request):
 
 
 # --- guild applications -----------------------------------------------------
-TBC_CLASSES = (
+PLAYABLE_CLASSES = (
     "druid", "hunter", "mage", "paladin", "priest",
     "rogue", "shaman", "warlock", "warrior",
 )
@@ -1690,8 +1690,8 @@ def submit_application(body: ApplyBody, request: Request):
     # The form sends "<spec> <Class>" from a fixed select, so a real class
     # name is always present. This only rejects direct-API garbage, which
     # otherwise lands in the officers' review queue unfilterable by class.
-    if not any(c in wow_class.casefold() for c in TBC_CLASSES):
-        return _err(422, "Pick one of the nine TBC classes.")
+    if not any(c in wow_class.casefold() for c in PLAYABLE_CLASSES):
+        return _err(422, "Pick one of the nine classes.")
 
     experience = _clean_multiline(body.experience or "")
     if not _has_content(experience):
@@ -1713,10 +1713,11 @@ def submit_application(body: ApplyBody, request: Request):
             return _err(422, "That logs link needs to start with http:// or https://.")
     logs = logs or None
 
-    gearscore = _clean(body.gearscore or "")
-    if not gearscore:
-        return _err(422, "Your gearscore is required.")
-    if len(gearscore) > GEARSCORE_MAX or not gearscore.isascii() or not gearscore.isdigit():
+    # Gearscore was dropped from the form for WoW: Forever (fresh start, no gear
+    # score in the game). Still accepted if a cached old form sends it, and the
+    # column keeps older applications' values.
+    gearscore = _clean(body.gearscore or "") or None
+    if gearscore and (len(gearscore) > GEARSCORE_MAX or not gearscore.isascii() or not gearscore.isdigit()):
         return _err(422, "Gearscore should be numbers only.")
 
     if not body.ack_consumables:
