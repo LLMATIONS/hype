@@ -9,7 +9,7 @@
 #                        The secret is read WITHOUT echo and written straight to
 #                        the mode-600 env file — never shell history.
 #   WCL_GUILD_NAME       the guild's display name exactly as it appears on WCL.
-#   WCL_SERVER_SLUG      realm slug (default nightslayer).
+#   WCL_SERVER_SLUG      realm slug (needed only with WCL_GUILD_NAME).
 #   WCL_SERVER_REGION    region (default us).
 #   WCL subdomain        WCL splits Classic data by subdomain — retail on www.,
 #                        Anniversary/Fresh on fresh. Entering one sets WCL_API_URL
@@ -56,7 +56,7 @@ set_kv() {
 read -r    -p "WCL client id (visible, blank = skip):           " WID
 read -r -s -p "WCL client secret (hidden, blank = skip):        " WSEC; echo
 read -r    -p "WCL guild name (exact, blank = skip):            " WGUILD
-read -r    -p "WCL server slug (default nightslayer, blank=skip):" WSLUG
+read -r    -p "WCL server slug (realm, blank = skip):             " WSLUG
 read -r    -p "WCL server region (default us, blank = skip):    " WREGION
 read -r    -p "WCL subdomain (www retail / fresh Anniversary, blank=skip): " WSUB
 read -r    -p "WCL guild id (warcraftlogs.com/guild/id/N, blank=skip): " WGID

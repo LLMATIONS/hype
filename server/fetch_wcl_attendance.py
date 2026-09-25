@@ -38,14 +38,14 @@ Design notes (mirrors fetch_roster.py — same OAuth2 client-credentials shape):
 Run standalone:
 
     # Fresh/Anniversary guild, addressed by WCL id:
-    WCL_CLIENT_ID=... WCL_CLIENT_SECRET=... WCL_GUILD_ID=828086 \
+    WCL_CLIENT_ID=... WCL_CLIENT_SECRET=... WCL_GUILD_ID=<wcl-guild-id> \
         WCL_API_URL=https://fresh.warcraftlogs.com/api/v2/client \
         WCL_TOKEN_URL=https://fresh.warcraftlogs.com/oauth/token \
         GUILDNAMES_DB=./data/guildnames.db python fetch_wcl_attendance.py
 
     # Retail guild, addressed by name + realm (the www. defaults):
-    WCL_CLIENT_ID=... WCL_CLIENT_SECRET=... WCL_GUILD_NAME="Hype" \
-        WCL_SERVER_SLUG=nightslayer WCL_SERVER_REGION=us \
+    WCL_CLIENT_ID=... WCL_CLIENT_SECRET=... WCL_GUILD_NAME="<guild name>" \
+        WCL_SERVER_SLUG=<realm-slug> WCL_SERVER_REGION=us \
         GUILDNAMES_DB=./data/guildnames.db python fetch_wcl_attendance.py
 """
 from __future__ import annotations
@@ -69,7 +69,7 @@ from http_retry import urlopen_retry
 CLIENT_ID = os.environ.get("WCL_CLIENT_ID", "")
 CLIENT_SECRET = os.environ.get("WCL_CLIENT_SECRET", "")
 GUILD_NAME = os.environ.get("WCL_GUILD_NAME", "")
-SERVER_SLUG = os.environ.get("WCL_SERVER_SLUG", "nightslayer")
+SERVER_SLUG = os.environ.get("WCL_SERVER_SLUG", "")
 SERVER_REGION = os.environ.get("WCL_SERVER_REGION", "us")
 # WCL id of the guild (warcraftlogs.com/guild/id/<n>). When set it addresses the
 # guild directly — required for Classic/Fresh guilds, which a name+realm lookup on
@@ -231,6 +231,8 @@ def fetch_attendance() -> list[dict]:
         base_vars = {"id": gid}
         who = f"guild id {gid}"
     elif GUILD_NAME:
+        if not SERVER_SLUG:
+            raise WclError("WCL_GUILD_NAME needs WCL_SERVER_SLUG (the realm slug)")
         query = ATTENDANCE_QUERY_BY_NAME
         base_vars = {"name": GUILD_NAME, "server": SERVER_SLUG, "region": SERVER_REGION}
         who = f"guild '{GUILD_NAME}' on {SERVER_REGION}/{SERVER_SLUG}"

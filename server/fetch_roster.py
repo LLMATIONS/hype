@@ -29,7 +29,7 @@ Design notes:
 Run standalone:
 
     BLIZZARD_CLIENT_ID=... BLIZZARD_CLIENT_SECRET=... \
-        BLIZZARD_REALM_SLUG=nightslayer BLIZZARD_GUILD_SLUG=hype \
+        BLIZZARD_REALM_SLUG=<realm-slug> BLIZZARD_GUILD_SLUG=<guild-slug> \
         GUILDNAMES_DB=./data/guildnames.db python fetch_roster.py
 """
 from __future__ import annotations
@@ -53,8 +53,10 @@ from http_retry import urlopen_retry
 CLIENT_ID = os.environ.get("BLIZZARD_CLIENT_ID", "")
 CLIENT_SECRET = os.environ.get("BLIZZARD_CLIENT_SECRET", "")
 REGION = os.environ.get("BLIZZARD_REGION", "us")
-REALM_SLUG = os.environ.get("BLIZZARD_REALM_SLUG", "nightslayer")
-GUILD_SLUG = os.environ.get("BLIZZARD_GUILD_SLUG", "hype")
+# No realm/guild defaults: those are guild-specific, not generic, so they live
+# in hype-vote.env (host-side), never as a fallback baked into this public repo.
+REALM_SLUG = os.environ.get("BLIZZARD_REALM_SLUG", "")
+GUILD_SLUG = os.environ.get("BLIZZARD_GUILD_SLUG", "")
 NAMESPACE = os.environ.get("BLIZZARD_NAMESPACE", "profile-classicann-us")
 LOCALE = os.environ.get("BLIZZARD_LOCALE", "en_US")
 DB_PATH = Path(os.environ.get("GUILDNAMES_DB", "./data/guildnames.db")).expanduser()
@@ -120,6 +122,8 @@ def _token() -> str:
 
 def fetch_members() -> list[dict]:
     """Return [{name, realm, rank, level, class_id}, ...] from the live roster."""
+    if not REALM_SLUG or not GUILD_SLUG:
+        raise RosterError("BLIZZARD_REALM_SLUG / BLIZZARD_GUILD_SLUG not set")
     token = _token()
     qs = urllib.parse.urlencode({"namespace": NAMESPACE, "locale": LOCALE})
     url = (
