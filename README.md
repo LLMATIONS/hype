@@ -9,6 +9,7 @@ Lives at <https://hype.swagcounty.com>.
 - `index.html`: the portal hub. **Generated** from `hub/shell.html` + `hub/tiles/*.html` by `hub/build_hub.py`; never hand-edit it (CI blocks drift). See `hub/README.md`.
 - `hub/`: the hub source: the page shell, one fragment per tile, and the generator.
 - `about/`: who we are and where we're headed (static page).
+- `forever/`: the WoW: Forever launch prep page. Static, plus a small same-origin `app.js` for the launch countdown in your time zone.
 - `apply/`: the raid-application form. **Parked** until Forever recruiting opens: unlinked from the hub and redirected to it. Static page that posts to a loopback `/api/*` backend.
 - `loot/`: the loot log and trial tracker. **Parked** the same way; its ingest and sync jobs are stopped and will be pointed at the new realm and guild once we raid again.
 - `rules/`: the guild rules (static page).

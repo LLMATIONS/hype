@@ -163,7 +163,7 @@
       var item;
       if (r.item_id) {
         item = el("a", "wh");
-        item.href = "https://www.wowhead.com/tbc/item=" + encodeURIComponent(r.item_id);
+        item.href = "https://www.wowhead.com/forever/item=" + encodeURIComponent(r.item_id);
         item.target = "_blank"; item.rel = "noopener";
         item.textContent = r.item_name || ("item " + r.item_id);
       } else {
