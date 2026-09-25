@@ -3,8 +3,8 @@
 
 Why this exists
 ---------------
-The hub is a portal whose tiles each belong to a different tool lane (the TBC
-guide, the guild-name vote, "more soon"). When more than one lane hand-edits a
+The hub is a portal whose tiles each belong to a different tool lane (rules,
+about, "more soon"). When more than one lane hand-edits a
 single index.html, their changes collide. So the hub is split:
 
   hub/shell.html        the page chrome — head, branding copy, footer.

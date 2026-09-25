@@ -1,27 +1,24 @@
 # hype
 
-A World of Warcraft guild portal under [LLMATIONS](https://github.com/LLMATIONS) → Swag County. Small tools for our Burning Crusade guild, built for the love of the grind.
+A World of Warcraft guild portal under [LLMATIONS](https://github.com/LLMATIONS) → Swag County. Small tools for our guild, built for the love of the grind. Between games right now: we left The Burning Crusade Anniversary and we're waiting on World of Warcraft: Forever.
 
 Lives at <https://hype.swagcounty.com>.
 
 ## What's in here
 
-- `index.html` — the portal hub. **Generated** from `hub/shell.html` + `hub/tiles/*.html` by `hub/build_hub.py`; never hand-edit it (CI blocks drift). See `hub/README.md`.
-- `hub/` — the hub source: the page shell, one fragment per tile, and the generator.
-- `tbc/` — the TBC dungeon-rep leveling guide. `build_tbc_guide.py` is the source of truth; it renders `tbc/index.html`. Edit the generator, never the HTML.
-- `apply/` — the raid-application form. Static page that posts to a loopback `/api/*` backend.
-- `rules/` — the guild rules (static page).
-- `server/` — the backend for the apply form (FastAPI + SQLite, loopback-only). Also still hosts the retired guild-name vote's endpoints and data, frozen and unlinked. See `server/README.md`.
-- `assets/` — branding, favicons, social card.
-- `privacy.html` — what each tool stores and what leaves your browser.
+- `index.html`: the portal hub. **Generated** from `hub/shell.html` + `hub/tiles/*.html` by `hub/build_hub.py`; never hand-edit it (CI blocks drift). See `hub/README.md`.
+- `hub/`: the hub source: the page shell, one fragment per tile, and the generator.
+- `about/`: who we are and where we're headed (static page).
+- `apply/`: the raid-application form. **Parked** until Forever recruiting opens: unlinked from the hub and redirected to it. Static page that posts to a loopback `/api/*` backend.
+- `loot/`: the loot log and trial tracker. **Parked** the same way; its ingest and sync jobs are stopped and will be pointed at the new realm and guild once we raid again.
+- `rules/`: the guild rules (static page).
+- `server/`: the backend for the apply form and loot log (FastAPI + SQLite, loopback-only). Also still hosts the retired guild-name vote's endpoints and data, frozen and unlinked. See `server/README.md`.
+- `assets/`: branding, favicons, social card.
+- `privacy.html`: what each tool stores and what leaves your browser.
 
-## The leveling guide
+## Retired
 
-`tbc/build_tbc_guide.py` carries the whole route — factions, dungeons, keys, rep sources, quests — as structured Python and renders one themed, self-contained page. Every in-game reference links to Wowhead (TBC Classic) with hover tooltips, and the route is checkable with your progress saved in the browser (no account, nothing leaves your device). Rebuild with:
-
-```sh
-cd tbc && python3 build_tbc_guide.py
-```
+- The Burning Crusade dungeon-rep leveling guide (`tbc/`) came out with the move off TBC. It lives in git history if anyone wants it back.
 
 ## Contributing
 

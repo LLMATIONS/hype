@@ -3,15 +3,15 @@
 `index.html` at the repo root is **generated**. Do not hand-edit it.
 
 The hub is a portal of tiles, and each tile belongs to a different tool lane
-(the TBC guide, the guild-name vote, more soon). To keep two lanes from ever
+(rules, about, and whatever comes next). To keep two lanes from ever
 editing the same file, the hub is split into single-owner pieces:
 
 | Path | What | Owner |
 |---|---|---|
 | `hub/shell.html` | page chrome — head, branding copy, footer | presentation lane |
 | `hub/build_hub.py` | the generator | presentation lane |
-| `hub/tiles/10-tbc.html` | TBC Leveling Route tile | tbc lane |
-| `hub/tiles/20-guild-names.html` | Guild Name Vote tile | guild-name-vote lane |
+| `hub/tiles/30-rules.html` | Guild Rules tile | rules lane |
+| `hub/tiles/40-about.html` | About Us tile | about lane |
 | `index.html` | build artifact, served as-is by Caddy | nobody hand-edits |
 
 Tiles render in filename sort order — the `NN-` prefix sets position on the page.
@@ -35,6 +35,6 @@ it or forgot to rebuild.
 ## The lane rule
 
 A tool lane touches **only** its own tile fragment plus its own subtree
-(`guild-names/`, `server/`, …). It never edits `index.html`, `hub/shell.html`,
+(`about/`, `rules/`, `server/`, …). It never edits `index.html`, `hub/shell.html`,
 or another lane's tile. That single-owner split is what makes concurrent work on
 the hub safe — no two lanes can land in the same file.
