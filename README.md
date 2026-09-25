@@ -9,11 +9,12 @@ Lives at <https://hype.swagcounty.com>.
 - `index.html`: the portal hub. **Generated** from `hub/shell.html` + `hub/tiles/*.html` by `hub/build_hub.py`; never hand-edit it (CI blocks drift). See `hub/README.md`.
 - `hub/`: the hub source: the page shell, one fragment per tile, and the generator.
 - `about/`: who we are and where we're headed (static page).
+- `guild-names/`: the guild-name vote, reopened for our WoW: Forever name. Pitch and vote up/down, Reddit-style. Static page + the loopback `/api/*` backend (`server/`).
 - `forever/`: the WoW: Forever launch prep page. Static, plus a small same-origin `app.js` for the launch countdown in your time zone.
 - `apply/`: the raid-application form. **Parked** until Forever recruiting opens: unlinked from the hub and redirected to it. Static page that posts to a loopback `/api/*` backend.
 - `loot/`: the loot log and trial tracker. **Parked** the same way; its ingest and sync jobs are stopped and will be pointed at the new realm and guild once we raid again.
 - `rules/`: the guild rules (static page).
-- `server/`: the backend for the apply form and loot log (FastAPI + SQLite, loopback-only). Also still hosts the retired guild-name vote's endpoints and data, frozen and unlinked. See `server/README.md`.
+- `server/`: the backend for the apply form and loot log (FastAPI + SQLite, loopback-only). Also serves the guild-name vote. See `server/README.md`.
 - `assets/`: branding, favicons, social card.
 - `privacy.html`: what each tool stores and what leaves your browser.
 
