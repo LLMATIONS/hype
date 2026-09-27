@@ -23,6 +23,10 @@ Tiles render in filename sort order — the `NN-` prefix sets position on the pa
 - Branding / copy / footer ........ edit `hub/shell.html`
 - Add a tile ...................... add `hub/tiles/NN-name.html`
 - Flip your tool Soon → Live ...... edit ONLY your `hub/tiles/NN-*.html`
+  (a not-yet-live tile is `<a class="entry soon">`; drop `soon` to go live)
+
+Styling lives in `assets/hype.css`, shared by every public page. Tiles use
+`.entry` / `.entry-title` / `.entry-desc` / `.entry-note`; no inline styles.
 
 Then rebuild and commit the result:
 
