@@ -19,10 +19,25 @@
   } catch (e) { /* old browser: the PST line stands on its own */ }
 
   function pad(n) { return (n < 10 ? "0" : "") + n; }
+
+  // Four fixed cells (days / hours / min / sec), built once and updated in
+  // place each second so the layout never reflows.
+  var cells = [];
+  ["days", "hours", "min", "sec"].forEach(function (label) {
+    var u = document.createElement("span"); u.className = "u";
+    var n = document.createElement("span"); n.className = "n";
+    var l = document.createElement("span"); l.className = "l"; l.textContent = label;
+    u.appendChild(n); u.appendChild(l); count.appendChild(u);
+    cells.push(n);
+  });
+
   function tick() {
     var ms = launch.getTime() - Date.now();
     if (ms <= 0) {
-      count.textContent = "It's live. Log in.";
+      count.textContent = "";
+      var done = document.createElement("span"); done.className = "done";
+      done.textContent = "It's live. Log in.";
+      count.appendChild(done);
       count.hidden = false;
       return;
     }
@@ -30,7 +45,10 @@
     var d = Math.floor(s / 86400); s -= d * 86400;
     var h = Math.floor(s / 3600); s -= h * 3600;
     var m = Math.floor(s / 60); s -= m * 60;
-    count.textContent = d + "d " + pad(h) + "h " + pad(m) + "m " + pad(s) + "s";
+    cells[0].textContent = String(d);
+    cells[1].textContent = pad(h);
+    cells[2].textContent = pad(m);
+    cells[3].textContent = pad(s);
     count.hidden = false;
     setTimeout(tick, 1000);
   }
