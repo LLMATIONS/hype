@@ -19,6 +19,10 @@
   --accent-hi:#f07a70;
   --accent-wash:rgba(232,90,79,.12);
   --ok:#7fbf8f;
+  /* WoW item quality = parse colors. Rare/epic lightened a touch for AA. */
+  --q-poor:#9d9d9d; --q-uncommon:#1eff00; --q-rare:#3d9bff; --q-epic:#b86cf2;
+  --q-legendary:#ff8000; --q-pink:#e268a8; --q-artifact:#e6cc80; --q-gold:#ffd100;
+  --tip-bg:#0c0f1c; --tip-edge:#5d6275;
   --sans:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
   --measure:40rem;
@@ -105,7 +109,9 @@ ol.rules p{margin:.3rem 0 0}
 .facts dd{color:var(--fg)}
 
 /* ---------- panel ---------- */
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:1.25rem 1.35rem}
+.panel{background:var(--tip-bg);border:1px solid var(--tip-edge);border-radius:5px;padding:1.25rem 1.35rem;
+  box-shadow:0 0 0 1px #000,inset 0 0 0 1px #000,0 14px 30px -12px rgba(0,0,0,.8)}
+.panel .field input{background:#070914}
 .panel > :first-child{margin-top:0}
 .panel > :last-child{margin-bottom:0}
 
@@ -132,21 +138,42 @@ td.num,th.num{text-align:right;padding-right:0;white-space:nowrap}
   text-decoration:none}
 .foot a:hover{color:var(--fg)}
 
-/* ---------- hub ---------- */
-.hub main{max-width:var(--measure);padding-top:4rem}
-.hub-head{margin:0 0 2.5rem}
-.hub-logo{display:block;width:168px;height:auto;margin:0 0 2rem}
-.hub-tag{font-size:clamp(1.9rem,1.3rem + 2.6vw,2.7rem);line-height:1.1;letter-spacing:-.025em;
-  font-weight:750;color:var(--fg);margin:0;text-wrap:balance}
-.hub-sub{color:var(--muted);margin:.6rem 0 0}
+/* ---------- quality colors (usable anywhere) ---------- */
+.q2{color:var(--q-uncommon)} .q3{color:var(--q-rare)} .q4{color:var(--q-epic)}
+.q5{color:var(--q-legendary)} .q6{color:var(--q-artifact)} .gold{color:var(--q-gold)}
+.horde{color:var(--accent)}
+strong.q2,strong.q3,strong.q4,strong.q5,strong.q6{color:inherit}
+strong.q2{color:var(--q-uncommon)} strong.q3{color:var(--q-rare)} strong.q4{color:var(--q-epic)}
+strong.q5{color:var(--q-legendary)} strong.q6{color:var(--q-artifact)}
+.ilink::before{content:"["} .ilink::after{content:"]"}
+.ach{color:var(--q-gold)}
+strong.ach{color:var(--q-gold)}
+.kicker{font-size:1rem;font-weight:700;margin:0 0 .6rem;letter-spacing:.005em}
 
-.standing{display:grid;grid-template-columns:repeat(4,auto);justify-content:start;gap:0;margin:0 0 3rem;
+/* ---------- hub ---------- */
+.hub{background:var(--bg) url("/assets/hype-mark.svg?v=2026-09-27") no-repeat;
+  background-size:min(1100px,140vw) auto;background-position:calc(100% + 22vw) -6rem}
+.hub::before{content:"";position:fixed;inset:0;background:rgba(18,18,18,.955);z-index:-1}
+.hub main,.hub .foot-in{max-width:58rem}
+.hub main{padding-top:4.5rem}
+.hub-head{margin:0 0 2.25rem;max-width:44rem}
+.hub-logo{display:block;width:150px;height:auto;margin:0 0 2.25rem}
+.hub-tag{font-size:clamp(2.3rem,1.4rem + 4vw,4.25rem);line-height:1.02;letter-spacing:-.035em;
+  font-weight:800;color:var(--fg);margin:0;text-wrap:balance}
+.parse{display:flex;width:min(22rem,100%);height:6px;margin:1.4rem 0 0;border-radius:1px;overflow:hidden}
+.parse i{display:block;height:100%}
+.parse .p-grey{flex:25;background:var(--q-poor)} .parse .p-green{flex:25;background:var(--q-uncommon)}
+.parse .p-blue{flex:25;background:var(--q-rare)} .parse .p-purple{flex:20;background:var(--q-epic)}
+.parse .p-orange{flex:4;background:var(--q-legendary)} .parse .p-pink{flex:1;background:var(--q-pink)}
+.parse .p-gold{flex:1;background:var(--q-gold)}
+.hub-sub{color:var(--muted);margin:.9rem 0 0}
+
+.standing{display:grid;grid-template-columns:repeat(4,auto);justify-content:start;gap:0;margin:0 0 2.75rem;
   border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .standing div{padding:.8rem 1.75rem .8rem 0}
 .standing div + div{padding-left:1.25rem;border-left:1px solid var(--line)}
 .standing dt{font-size:.75rem;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
 .standing dd{margin:.1rem 0 0;color:var(--fg);font-weight:600;white-space:nowrap}
-.standing .hot{color:var(--accent)}
 @media (max-width:560px){
   .standing{grid-template-columns:1fr 1fr}
   .standing div,.standing div + div{padding:.7rem 0;border-left:0}
@@ -154,19 +181,23 @@ td.num,th.num{text-align:right;padding-right:0;white-space:nowrap}
   .standing div:nth-child(n+3){border-top:1px solid var(--line)}
 }
 
-.entry{position:relative;display:block;padding:1.15rem 2.5rem 1.15rem 0;border-bottom:1px solid var(--line);
-  text-decoration:none;color:inherit}
-.entry::after{content:"\2192";position:absolute;right:.25rem;top:1.05rem;font-size:1.15rem;color:var(--faint);
-  transition:color .15s ease,transform .15s ease}
-.entry-title{display:block;font-size:1.15rem;font-weight:650;color:var(--fg);letter-spacing:-.01em}
-.entry-desc{display:block;margin:.2rem 0 0;color:var(--text)}
-.entry-note{display:block;margin:.25rem 0 0;font-size:.9rem;color:var(--muted)}
-.entry:hover{color:inherit}
-.entry:hover .entry-title{text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:.2em}
-.entry:hover::after,.entry:focus-visible::after{color:var(--accent);transform:translateX(3px)}
-.entry.soon{pointer-events:none}
-.entry.soon::after{content:"Soon";font-size:.75rem;letter-spacing:.04em;text-transform:uppercase;top:1.3rem}
-.entry.soon .entry-title{color:var(--muted)}
+/* ---------- item tooltips (hub tiles) ---------- */
+.bags{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,24rem),1fr));gap:1.25rem;align-items:start}
+.tip{display:flex;flex-direction:column;gap:.12rem;padding:.8rem 1rem .95rem;text-decoration:none;
+  color:#fff;font-size:.95rem;line-height:1.4;background:var(--tip-bg);
+  border:1px solid var(--tip-edge);border-radius:5px;
+  box-shadow:0 0 0 1px #000,inset 0 0 0 1px #000,0 14px 30px -12px rgba(0,0,0,.8);
+  transition:border-color .15s ease,transform .15s ease}
+.tip:hover,.tip:focus-visible{color:#fff;border-color:#c9cedf}
+.tip:focus-visible{outline:2px solid var(--q-gold);outline-offset:3px}
+.tip-name{font-size:1.2rem;font-weight:700;line-height:1.25;margin:0 0 .1rem}
+.tip:hover .tip-name{text-decoration:underline;text-underline-offset:.18em;text-decoration-thickness:1px}
+.tip-line{display:block}
+.tip-split{display:flex;justify-content:space-between;gap:1rem}
+.tip-ilvl{color:var(--q-gold)}
+.tip-use{color:var(--q-uncommon);margin-top:.25rem}
+.tip-flavor{color:var(--q-gold);margin-top:.25rem}
+.tip.soon{pointer-events:none;opacity:.55}
 
 /* ---------- forever: launch + countdown ---------- */
 .launch{padding:1.5rem 1.35rem}
@@ -194,12 +225,20 @@ td.num,th.num{text-align:right;padding-right:0;white-space:nowrap}
 .grid thead th{font-size:.68rem;letter-spacing:0;text-transform:none;font-weight:500}
 .grid thead th:first-child,.grid tbody th{text-align:left;width:auto;padding-left:0}
 .grid tbody th .flag{display:block;margin:.1rem 0 0}
-.grid .y{color:var(--text)}
+/* Class columns wear their class colors. Playable = dot, new in Forever = star.
+   The markup keeps a check / "NEW" for screen readers. */
+.grid tr > :nth-child(2){--cls:#ff7c0a} .grid tr > :nth-child(3){--cls:#aad372}
+.grid tr > :nth-child(4){--cls:#3fc7eb} .grid tr > :nth-child(5){--cls:#f48cba}
+.grid tr > :nth-child(6){--cls:#ffffff} .grid tr > :nth-child(7){--cls:#fff468}
+.grid tr > :nth-child(8){--cls:#2a8cff} .grid tr > :nth-child(9){--cls:#8788ee}
+.grid tr > :nth-child(10){--cls:#c69b6d}
+.grid thead th:not(:first-child){color:var(--cls);font-weight:650}
+.grid .y,.grid .new{font-size:0;color:var(--cls)}
+.grid .y::before{content:"\25CF";font-size:.7rem;opacity:.75}
+.grid .new::before{content:"\2605";font-size:1.05rem}
 .grid .no{color:var(--faint)}
-/* "NEW" stays in the markup for screen readers; sighted readers get a red check */
-.grid .new,.legend .new{font-size:0;color:var(--accent)}
-.grid .new::before,.legend .new::before{content:"\2713";font-size:.93rem;font-weight:800}
 .legend{display:flex;flex-wrap:wrap;gap:.25rem 1.25rem;font-size:.82rem;color:var(--muted);margin:.6rem 0 0}
+.legend .k{color:var(--fg)}
 @media (max-width:520px){.grid thead th{font-size:.6rem}.grid th,.grid td{padding:.55rem .1rem}}
 
 /* ---------- guild-name vote ---------- */
@@ -247,12 +286,20 @@ ul.ideas{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
 .score.neg{color:var(--muted)}
 .body{flex:1;min-width:0}
 .idea-name{margin:0;font-size:1.05rem;font-weight:650;color:var(--fg);overflow-wrap:anywhere}
+.idea-name::before{content:"<"} .idea-name::after{content:">"}
+/* the ballot comes back sorted by score: top three with a positive score wear legendary, epic, rare */
+.ideas .idea:nth-child(1):has(.score.pos) .idea-name{color:var(--q-legendary)}
+.ideas .idea:nth-child(2):has(.score.pos) .idea-name{color:var(--q-epic)}
+.ideas .idea:nth-child(3):has(.score.pos) .idea-name{color:var(--q-rare)}
 .idea-why{margin:.15rem 0 0;font-size:.92rem;color:var(--muted);overflow-wrap:anywhere}
 .empty,.loading{color:var(--muted);padding:1.5rem 0;margin:0}
 
+@media (max-width:560px){.hub{background-image:none}}
 @media (max-width:520px){
   main{padding:2rem 1rem 3rem}
   .foot-in{padding:.75rem 1rem}
+  .foot ul{gap:0 1rem}
+  .foot a{min-height:40px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none !important;scroll-behavior:auto !important}}
 @media (forced-colors:active){.bar nav a[aria-current="page"]{border-bottom-color:CanvasText}}
