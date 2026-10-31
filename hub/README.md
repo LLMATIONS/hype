@@ -14,6 +14,7 @@ editing the same file, the hub is split into single-owner pieces:
 | `hub/tiles/20-guild-names.html` | Guild Name Vote tile | guild-name-vote lane |
 | `hub/tiles/30-rules.html` | Guild Rules tile | rules lane |
 | `hub/tiles/40-about.html` | About Us tile | about lane |
+| `hub/app.js` | keeps the hub's dates current (served as `/hub/app.js`) | presentation lane |
 | `index.html` | build artifact, served as-is by Caddy | nobody hand-edits |
 
 Tiles render in filename sort order — the `NN-` prefix sets position on the page.
@@ -24,6 +25,21 @@ Tiles render in filename sort order — the `NN-` prefix sets position on the pa
 - Add a tile ...................... add `hub/tiles/NN-name.html`
 - Flip your tool Soon → Live ...... edit ONLY your `hub/tiles/NN-*.html`
   (a not-yet-live tile is `<a class="entry soon">`; drop `soon` to go live)
+
+## Dates that update themselves
+
+`hub/app.js` reads three attributes, so a date on the hub never needs a hand
+edit as it passes. Any tile or the shell can use them:
+
+- `data-at="2026-11-04T23:00:00Z"`: an exact instant in UTC. Shows "in 4 days",
+  "in 5 hours", "in 40 min", then the `data-done` label once it has passed.
+- `data-day="2026-12-09"`: a date with no announced hour, read as a Pacific
+  calendar day. Shows "in N days", "tomorrow", "today", then `data-done`.
+- `data-flip-at="<UTC instant>" data-after="<text>"`: swaps the element's
+  text for `data-after` once the instant passes.
+
+The static text is what JS-off visitors see, so write it to make sense before
+the date.
 
 Styling lives in `assets/hype.css`, shared by every public page. Tiles use
 `.entry` / `.entry-title` / `.entry-desc` / `.entry-note`; no inline styles.

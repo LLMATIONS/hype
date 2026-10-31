@@ -7,7 +7,7 @@ Lives at <https://hype.swagcounty.com>.
 ## What's in here
 
 - `index.html`: the portal hub. **Generated** from `hub/shell.html` + `hub/tiles/*.html` by `hub/build_hub.py`; never hand-edit it (CI blocks drift). See `hub/README.md`.
-- `hub/`: the hub source: the page shell, one fragment per tile, and the generator.
+- `hub/`: the hub source: the page shell, one fragment per tile, the generator, and a small same-origin `app.js` that keeps the hub's dates current ("in 4 days", then "live now").
 - `about/`: who we are and where we're headed (static page).
 - `guild-names/`: the guild-name vote, reopened for our WoW: Forever name. Pitch and vote up/down, Reddit-style. Static page + the loopback `/api/*` backend (`server/`).
 - `forever/`: the WoW: Forever launch prep page. Static, plus a small same-origin `app.js` for the launch countdown in your time zone.
