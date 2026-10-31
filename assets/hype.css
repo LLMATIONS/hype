@@ -219,6 +219,14 @@ strong.ach{color:var(--q-gold)}
 .dates .d{color:var(--fg);font-weight:600;font-variant-numeric:tabular-nums}
 .dates .d small{display:block;font-weight:400;color:var(--muted);font-size:.8rem}
 .dates li.key .d{color:var(--accent)}
+/* forever/app.js marks entries by date: past ones step back, the running one gets a tag. */
+.dates li.past > span{color:var(--muted)}
+.dates li.past .d,.dates li.past strong{color:var(--muted)}
+.dates li.now .d{color:var(--accent)}
+.dates .tag-now{display:inline-block;margin-top:.3rem;padding:.05rem .45rem;border:1px solid var(--accent);border-radius:999px;
+  font-size:.7rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);background:var(--accent-wash)}
+.launch .next{margin:.9rem 0 0;color:var(--text)}
+.launch .next[hidden]{display:none}
 @media (max-width:520px){.dates li{grid-template-columns:1fr}}
 
 .grid th,.grid td{text-align:center;padding:.55rem .15rem;width:9%}

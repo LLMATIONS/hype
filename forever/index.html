@@ -22,7 +22,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=2026-06-24">
 <meta name="theme-color" content="#121212">
 <meta name="robots" content="index,follow">
-<link rel="stylesheet" href="/assets/hype.css?v=2026-09-27">
+<link rel="stylesheet" href="/assets/hype.css?v=2026-10-31">
 </head>
 <body>
 <header class="bar">
@@ -50,16 +50,17 @@
   <p class="when">Launch: <strong>Wednesday, November 4, 2026</strong> at 3:00 PM PST</p>
   <p class="local" id="launch-local" data-utc="2026-11-04T23:00:00Z" hidden></p>
   <div class="countdown" id="countdown" hidden></div>
+  <p class="next" id="next-up" data-utc="2026-12-09T08:00:00Z" hidden></p>
 </div>
 </section>
 
 <section id="dates">
 <h2>Key dates</h2>
-<ul class="dates">
-  <li><span class="d">Now to Oct 21<small>PST</small></span><span>Beta. Access comes with the Skyborne Epic Pack or the Forever Collection, plus opt-in invites. The level cap started at 20 and is now 30. A Server Slam test is planned, date not announced.</span></li>
-  <li><span class="d">Oct 27 to Nov 3<small>PST</small></span><span><strong>Early name reservation</strong>, first come first served, for the Skyborne Heroic Pack or higher. Names have two parts (first name and surname) and are unique across the whole region, so grab yours early if you can.</span></li>
-  <li class="key"><span class="d">Nov 4, 3:00 PM<small>PST, no head start</small></span><span><strong>Launch.</strong> Everyone starts fresh. Nothing has been announced about bringing TBC or Era characters over.</span></li>
-  <li><span class="d">Dec 9</span><span><strong>Raids open.</strong> See below.</span></li>
+<ul class="dates" id="dates-list">
+  <li data-start="2026-09-17T07:00:00Z" data-end="2026-10-22T07:00:00Z"><span class="d">Sep 17 to Oct 21<small>PST</small></span><span>Beta. Access comes with the Skyborne Epic Pack or the Forever Collection, plus opt-in invites. The level cap started at 20 and is now 30. A Server Slam test is planned, date not announced.</span></li>
+  <li data-start="2026-10-27T07:00:00Z" data-end="2026-11-04T08:00:00Z"><span class="d">Oct 27 to Nov 3<small>PST</small></span><span><strong>Early name reservation</strong>, first come first served, for the Skyborne Heroic Pack or higher. Names have two parts (first name and surname) and are unique across the whole region, so grab yours early if you can.</span></li>
+  <li class="key" data-start="2026-11-04T23:00:00Z"><span class="d">Nov 4, 3:00 PM<small>PST, no head start</small></span><span><strong>Launch.</strong> Everyone starts fresh. Nothing has been announced about bringing TBC or Era characters over.</span></li>
+  <li data-start="2026-12-09T08:00:00Z"><span class="d">Dec 9<small>PST, time not announced</small></span><span><strong>Raids open.</strong> See below.</span></li>
   <li><span class="d">This winter</span><span>Hardcore ruleset, date not announced.</span></li>
 </ul>
 </section>
@@ -180,6 +181,6 @@
   </div>
 </footer>
 
-<script src="/forever/app.js?v=2026-09-27" defer></script>
+<script src="/forever/app.js?v=2026-10-31" defer></script>
 </body>
 </html>
