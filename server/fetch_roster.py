@@ -62,7 +62,7 @@ LOCALE = os.environ.get("BLIZZARD_LOCALE", "en_US")
 DB_PATH = Path(os.environ.get("GUILDNAMES_DB", "./data/guildnames.db")).expanduser()
 
 # Descriptive UA so Cloudflare doesn't 403 us at the edge (see module docstring).
-USER_AGENT = "hype-portal/1.0 (+https://hype.swagcounty.com)"
+USER_AGENT = "hype-portal/1.0 (+https://blackwater.swagcounty.com)"
 HTTP_TIMEOUT = 20
 
 # guild_roster is created identically here and in the backend's _connect() —

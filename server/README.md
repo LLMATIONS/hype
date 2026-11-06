@@ -1,6 +1,6 @@
 # Guild-name voting backend
 
-The service behind `/guild-names/`. FastAPI + SQLite, loopback-only, fronted by
+The service behind the apply form and the retired guild-name vote (its page came down 2026-11-05; the endpoints and data stay frozen). FastAPI + SQLite, loopback-only, fronted by
 the same web server that serves the static site so the browser talks to it
 same-origin at `/api/*`.
 

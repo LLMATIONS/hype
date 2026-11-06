@@ -161,7 +161,7 @@ APPLY_CONTACT = "@ivorycrayon"  # the Discord handle applicants are told to reac
 # Cloudflare, which 403s the default "Python-urllib/x.y" UA as bot traffic; a
 # named UA is also what Discord's API guidelines require. Resend is fine either
 # way, but gets the same header for consistency.
-APPLY_UA = "Hype-Apply/1.0 (+https://hype.swagcounty.com)"
+APPLY_UA = "Blackwater-Apply/1.0 (+https://blackwater.swagcounty.com)"
 
 _WS_RUN = re.compile(r"\s+")
 _INLINE_WS = re.compile(r"[^\S\n]+")   # whitespace except newline (for paragraphs)
@@ -815,7 +815,7 @@ def _post_discord(a: dict) -> str:
     if not DISCORD_WEBHOOK_URL:
         return "off"
     payload = {
-        "username": "hype — applications",
+        "username": "Blackwater — applications",
         "embeds": [_application_embed(a)],
         "allowed_mentions": {"parse": []},  # applicant text can never ping
     }
@@ -994,7 +994,7 @@ def _handle_vote_component(payload: dict) -> dict:
 def _email_text(a: dict) -> str:
     """Plaintext application body — no HTML, so nothing in it can be injected."""
     lines = [
-        "New guild application — hype",
+        "New guild application — Blackwater",
         "",
         "Character:  " + a["character"],
         "Class:      " + a["wow_class"],
@@ -1017,7 +1017,7 @@ def _email_text(a: dict) -> str:
         "[x] Will send a friend request / DM " + APPLY_CONTACT + " on Discord",
         "",
         "--",
-        "Sent by the hype apply form. Manage entries on the admin review page.",
+        "Sent by the Blackwater apply form. Manage entries on the admin review page.",
     ]
     return "\n".join(lines)
 
@@ -1280,7 +1280,7 @@ def _post_trial_due(name: str, lockouts: int) -> bool:
     if DISCORD_WEBHOOK_URL:
         status = _http_post_json(
             DISCORD_WEBHOOK_URL,
-            {"username": "hype — trials", "content": text,
+            {"username": "Blackwater — trials", "content": text,
              "allowed_mentions": {"parse": []}},
         )
         return 200 <= status < 300
