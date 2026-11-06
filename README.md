@@ -10,7 +10,7 @@ Lives at <https://blackwater.swagcounty.com>.
 - `hub/`: the hub source: the page shell, one fragment per tile, the generator, and a small same-origin `app.js` that keeps the hub's dates current ("in 4 days", then "live now").
 - `about/`: who we are and where we're headed (static page).
 - `guild-names/`: the guild-name vote, reopened for our WoW: Forever name. Pitch and vote up/down, Reddit-style. Static page + the loopback `/api/*` backend (`server/`).
-- `forever/`: the WoW: Forever launch prep page. Static, plus a small same-origin `app.js` for the launch countdown in your time zone.
+- `forever/`: the WoW: Forever page (Alliance, RP-PvP). Static, plus a small same-origin `app.js` that marks past key dates and counts days to the first raids.
 - `apply/`: the raid-application form. **Parked** until Forever recruiting opens: unlinked from the hub and redirected to it. Static page that posts to a loopback `/api/*` backend.
 - `loot/`: the loot log and trial tracker. **Parked** the same way; its ingest and sync jobs are stopped and will be pointed at the new realm and guild once we raid again.
 - `rules/`: the guild rules (static page).
