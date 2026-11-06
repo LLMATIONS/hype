@@ -91,7 +91,7 @@ RESET_HOUR_UTC = int(os.environ.get("LOOT_RESET_HOUR_UTC", "15"))
 # only valid against `fresh.`.
 TOKEN_URL = os.environ.get("WCL_TOKEN_URL", "https://www.warcraftlogs.com/oauth/token")
 API_URL = os.environ.get("WCL_API_URL", "https://www.warcraftlogs.com/api/v2/client")
-USER_AGENT = "hype-portal/1.0 (+https://hype.swagcounty.com)"
+USER_AGENT = "hype-portal/1.0 (+https://blackwater.swagcounty.com)"
 HTTP_TIMEOUT = 25
 
 # raid_attendance is created identically here and in the backend's _connect() —

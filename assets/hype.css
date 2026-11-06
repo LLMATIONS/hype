@@ -1,23 +1,25 @@
-/* hype: one stylesheet for every public page.
-   The palette comes from the logo (white crest on #1c1c1c charcoal) plus one
-   accent, Horde red, used sparingly: links, focus, the launch date, "new"
-   markers. Everything else is neutral grey. System fonts only.
+/* Blackwater Company: one stylesheet for every public page.
+   The palette comes from the crest (gold and teal on #0c0f12 near-black):
+   one accent, the crest's gold, used sparingly: links, focus, the launch
+   date, "new" markers. Horde red stays on the word Horde only. Everything
+   else is neutral grey. System fonts only.
    Pages link this as /assets/hype.css?v=YYYY-MM-DD; bump the date on change. */
 
 :root{
   color-scheme:dark;
-  --bg:#121212;
-  --surface:#1c1c1c;      /* the logo's own ground */
-  --raise:#232323;
-  --line:#2b2b2b;
-  --line-strong:#3a3a3a;
-  --fg:#f2f2f2;           /* headings, the bold lead sentence, the logo's white */
+  --bg:#0c0f12;           /* the crest's own ground */
+  --surface:#141a1e;
+  --raise:#1b2227;
+  --line:#252d33;
+  --line-strong:#36424a;
+  --fg:#f2efe6;           /* headings, the bold lead sentence */
   --text:#cfcfcf;         /* body copy */
   --muted:#9a9a9a;        /* secondary copy, labels */
   --faint:#6b6b6b;        /* decoration only, never text */
-  --accent:#e85a4f;       /* Horde red, AA on --bg and --surface */
-  --accent-hi:#f07a70;
-  --accent-wash:rgba(232,90,79,.12);
+  --accent:#b08d4a;       /* crest gold, 6:1 on --bg */
+  --accent-hi:#cdab67;
+  --accent-wash:rgba(176,141,74,.13);
+  --horde:#e85a4f;
   --ok:#7fbf8f;
   /* WoW item quality = parse colors. Rare/epic lightened a touch for AA. */
   --q-poor:#9d9d9d; --q-uncommon:#1eff00; --q-rare:#3d9bff; --q-epic:#b86cf2;
@@ -37,7 +39,7 @@ body{
   min-height:100dvh;display:flex;flex-direction:column;
   -webkit-font-smoothing:antialiased;
 }
-::selection{background:var(--accent);color:#fff}
+::selection{background:var(--accent);color:#0c0f12}
 img{max-width:100%;height:auto}
 .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
@@ -141,7 +143,7 @@ td.num,th.num{text-align:right;padding-right:0;white-space:nowrap}
 /* ---------- quality colors (usable anywhere) ---------- */
 .q2{color:var(--q-uncommon)} .q3{color:var(--q-rare)} .q4{color:var(--q-epic)}
 .q5{color:var(--q-legendary)} .q6{color:var(--q-artifact)} .gold{color:var(--q-gold)}
-.horde{color:var(--accent)}
+.horde{color:var(--horde)}
 strong.q2,strong.q3,strong.q4,strong.q5,strong.q6{color:inherit}
 strong.q2{color:var(--q-uncommon)} strong.q3{color:var(--q-rare)} strong.q4{color:var(--q-epic)}
 strong.q5{color:var(--q-legendary)} strong.q6{color:var(--q-artifact)}
@@ -151,13 +153,13 @@ strong.ach{color:var(--q-gold)}
 .kicker{font-size:1rem;font-weight:700;margin:0 0 .6rem;letter-spacing:.005em}
 
 /* ---------- hub ---------- */
-.hub{background:var(--bg) url("/assets/hype-mark.svg?v=2026-09-27") no-repeat;
+.hub{background:var(--bg) url("/assets/blackwater-logo.svg?v=2026-11-05") no-repeat;
   background-size:min(1100px,140vw) auto;background-position:calc(100% + 22vw) -6rem}
-.hub::before{content:"";position:fixed;inset:0;background:rgba(18,18,18,.955);z-index:-1}
+.hub::before{content:"";position:fixed;inset:0;background:rgba(12,15,18,.955);z-index:-1}
 .hub main,.hub .foot-in{max-width:58rem}
 .hub main{padding-top:4.5rem}
 .hub-head{margin:0 0 2.25rem;max-width:44rem}
-.hub-logo{display:block;width:150px;height:auto;margin:0 0 2.25rem}
+.hub-logo{display:block;width:180px;height:auto;margin:0 0 2.25rem}
 .hub-tag{font-size:clamp(2.3rem,1.4rem + 4vw,4.25rem);line-height:1.02;letter-spacing:-.035em;
   font-weight:800;color:var(--fg);margin:0;text-wrap:balance}
 .parse{display:flex;width:min(22rem,100%);height:6px;margin:1.4rem 0 0;border-radius:1px;overflow:hidden}
@@ -268,7 +270,7 @@ button,a{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .cf-widget{margin:.25rem 0 1rem}
 .cf-widget[hidden]{display:none}
 .btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:.6rem 1.25rem;
-  border:0;border-radius:6px;background:var(--fg);color:#121212;font-weight:700;cursor:pointer;
+  border:0;border-radius:6px;background:var(--fg);color:#0c0f12;font-weight:700;cursor:pointer;
   transition:background .15s ease}
 .btn:hover{background:#fff}
 .btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}

@@ -1,8 +1,8 @@
 # hype
 
-A World of Warcraft guild portal under [LLMATIONS](https://github.com/LLMATIONS) → Swag County. Small tools for our guild, built for the love of the grind. Between games right now: we left The Burning Crusade Anniversary and we're waiting on World of Warcraft: Forever.
+The site for the World of Warcraft guild <Blackwater Company>, under [LLMATIONS](https://github.com/LLMATIONS) → Swag County. Small tools for our guild, built for the love of the grind. Between games right now: we left The Burning Crusade Anniversary and we're waiting on World of Warcraft: Forever.
 
-Lives at <https://hype.swagcounty.com>.
+Lives at <https://blackwater.swagcounty.com>.
 
 ## What's in here
 

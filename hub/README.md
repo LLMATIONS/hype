@@ -1,4 +1,4 @@
-# Hub — the hype.swagcounty.com landing page
+# Hub — the blackwater.swagcounty.com landing page
 
 `index.html` at the repo root is **generated**. Do not hand-edit it.
 
@@ -11,7 +11,6 @@ editing the same file, the hub is split into single-owner pieces:
 | `hub/shell.html` | page chrome — head, branding copy, footer | presentation lane |
 | `hub/build_hub.py` | the generator | presentation lane |
 | `hub/tiles/10-forever.html` | Forever launch prep tile | forever lane |
-| `hub/tiles/20-guild-names.html` | Guild Name Vote tile | guild-name-vote lane |
 | `hub/tiles/30-rules.html` | Guild Rules tile | rules lane |
 | `hub/tiles/40-about.html` | About Us tile | about lane |
 | `hub/app.js` | keeps the hub's dates current (served as `/hub/app.js`) | presentation lane |
