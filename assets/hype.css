@@ -1,8 +1,10 @@
 /* Blackwater Company: one stylesheet for every public page.
    The palette comes from the crest (gold and teal on #0c0f12 near-black):
    one accent, the crest's gold, used sparingly: links, focus, the launch
-   date, "new" markers. Horde red stays on the word Horde only. Everything
-   else is neutral grey. System fonts only.
+   date, "new" markers. Alliance blue stays on the word Alliance only. Everything
+   else is neutral grey. Body copy is system fonts; display type (headings,
+   kickers, the hub line) is IM Fell English SC, the crest's own face,
+   self-hosted from /assets/fonts/ under its OFL licence.
    Pages link this as /assets/hype.css?v=YYYY-MM-DD; bump the date on change. */
 
 :root{
@@ -20,15 +22,22 @@
   --accent-hi:#cdab67;
   --accent-wash:rgba(176,141,74,.13);
   --horde:#e85a4f;
+  --alliance:#5b9bf0;    /* Alliance blue, 6.9:1 on --bg; only on the word Alliance */
   --ok:#7fbf8f;
   /* WoW item quality = parse colors. Rare/epic lightened a touch for AA. */
   --q-poor:#9d9d9d; --q-uncommon:#1eff00; --q-rare:#3d9bff; --q-epic:#b86cf2;
   --q-legendary:#ff8000; --q-pink:#e268a8; --q-artifact:#e6cc80; --q-gold:#ffd100;
   --tip-bg:#0c0f1c; --tip-edge:#5d6275;
+  --sea:#0f3436;          /* crest teal, deep */
+  --sea-hi:#1d5a5c;       /* crest teal, light */
+  --display:"IM Fell English SC",Georgia,"Times New Roman",serif;
   --sans:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
   --measure:40rem;
 }
+
+@font-face{font-family:"IM Fell English SC";font-style:normal;font-weight:400;font-display:swap;
+  src:url("/assets/fonts/im-fell-english-sc.woff2") format("woff2")}
 
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
@@ -144,6 +153,8 @@ td.num,th.num{text-align:right;padding-right:0;white-space:nowrap}
 .q2{color:var(--q-uncommon)} .q3{color:var(--q-rare)} .q4{color:var(--q-epic)}
 .q5{color:var(--q-legendary)} .q6{color:var(--q-artifact)} .gold{color:var(--q-gold)}
 .horde{color:var(--horde)}
+.alliance{color:var(--alliance)}
+strong.alliance{color:var(--alliance)}
 strong.q2,strong.q3,strong.q4,strong.q5,strong.q6{color:inherit}
 strong.q2{color:var(--q-uncommon)} strong.q3{color:var(--q-rare)} strong.q4{color:var(--q-epic)}
 strong.q5{color:var(--q-legendary)} strong.q6{color:var(--q-artifact)}
@@ -315,3 +326,51 @@ ul.ideas{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none !important;scroll-behavior:auto !important}}
 @media (forced-colors:active){.bar nav a[aria-current="page"]{border-bottom-color:CanvasText}}
+
+/* ---------- the pirate pass (2026-11-06) ----------
+   Display face for headings, a compass mark on section heads, Roman-numeral
+   Articles, and a wave band over the footer. All of it is decoration: the
+   copy reads the same without it. */
+h1,h2,.hub-tag,.kicker,.tip-name{font-family:var(--display);font-weight:400;letter-spacing:.005em}
+h1{font-size:clamp(2.3rem,1.7rem + 2.6vw,3.2rem);line-height:1.05}
+h2{font-size:1.45rem;line-height:1.2}
+.kicker{font-size:1.15rem}
+.tip-name{font-size:1.35rem}
+.hub-tag{font-size:clamp(2.6rem,1.6rem + 4.4vw,4.75rem);line-height:1;letter-spacing:-.01em}
+
+/* compass rose ahead of every section heading */
+section > h2{display:flex;align-items:center;gap:.6rem}
+section > h2::before{content:"";flex:0 0 1.05rem;height:1.05rem;background:var(--accent);
+  -webkit-mask:var(--compass) center/contain no-repeat;mask:var(--compass) center/contain no-repeat}
+:root{--compass:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0l2.6 9.4L24 12l-9.4 2.6L12 24l-2.6-9.4L0 12l9.4-2.6z'/%3E%3C/svg%3E")}
+
+/* rope rule under the page head */
+.page-head{padding-bottom:1.75rem;
+  background:repeating-linear-gradient(115deg,var(--accent) 0 3px,transparent 3px 6px) left bottom/100% 3px no-repeat}
+.page-head .lede{max-width:36rem}
+
+/* Ship's Articles: Roman numerals in the crest face */
+ol.rules > li{padding-left:4.75rem}
+ol.rules > li::before{content:"Art. " counter(rule,upper-roman);font-family:var(--display);font-size:1.1rem;
+  font-weight:400;top:1.3rem;letter-spacing:.02em}
+ol.rules h2{font-size:1.3rem}
+.page-head + ol.rules{border-top:0}
+.oath{margin:2rem 0 0;font-family:var(--display);font-size:1.2rem;color:var(--accent-hi);text-align:center}
+
+/* panels read as a chart: gold hairline inside the tooltip edge */
+.panel{box-shadow:0 0 0 1px #000,inset 0 0 0 1px #000,inset 0 0 0 4px var(--tip-bg),inset 0 0 0 5px rgba(176,141,74,.35),
+  0 14px 30px -12px rgba(0,0,0,.8)}
+
+/* standing strip on the hub: labels in the crest face, no shouting caps */
+.standing dt{font-family:var(--display);font-size:1rem;letter-spacing:.01em;text-transform:none;color:var(--accent)}
+
+/* waves over the footer, crest teal */
+.foot{position:relative;border-top:0;margin-top:3.5rem;
+  background:linear-gradient(var(--sea),#0b2224)}
+.foot::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:28px;pointer-events:none;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 28' preserveAspectRatio='none'%3E%3Cpath d='M0 18 Q15 6 30 18 T60 18 T90 18 T120 18 V28 H0z' fill='%231d5a5c' opacity='.55'/%3E%3Cpath d='M0 22 Q15 12 30 22 T60 22 T90 22 T120 22 V28 H0z' fill='%230f3436'/%3E%3C/svg%3E") repeat-x left bottom/120px 28px}
+.foot a{color:#a9c4c2}
+.foot a:hover{color:var(--fg)}
+.hub-hail{margin:1.4rem 0 0;max-width:34rem;font-size:1.1rem;color:var(--text)}
+.foot .motto{margin:0;font-family:var(--display);font-size:1.05rem;color:var(--accent-hi)}
+@media (forced-colors:active){section > h2::before,.foot::before{display:none}}

@@ -22,7 +22,7 @@
 <meta name="twitter:title" content="Privacy · Blackwater">
 <meta name="twitter:description" content="What Blackwater Company stores, what stays in your browser, and what leaves it.">
 <meta name="twitter:image" content="https://blackwater.swagcounty.com/assets/og-card.png?v=2026-11-05">
-<link rel="stylesheet" href="/assets/hype.css?v=2026-11-05">
+<link rel="stylesheet" href="/assets/hype.css?v=2026-11-06">
 </head>
 <body>
 <header class="bar">
@@ -46,13 +46,13 @@
 </div>
 
 <h2>What we store about you</h2>
-<p>The hub, the rules, the about page, and the Forever launch prep page are static pages: no account, no signup, no analytics, no advertising, no tracking pixels, and nothing about you kept on our server. The closed guild-name vote still holds the names and votes people submitted. The paused apply form still holds the raid applications people already sent. The loot log, also paused, holds in-game raid loot but never collected anything about you as a viewer. Each gets its own section below.</p>
+<p>The hub, the rules, the about page, and the Forever page are static pages: no account, no signup, no analytics, no advertising, no tracking pixels, and nothing about you kept on our server. The closed guild-name vote still holds the names and votes people submitted. The paused apply form still holds the raid applications people already sent. The loot log, also paused, holds in-game raid loot but never collected anything about you as a viewer. Each gets its own section below.</p>
 
 <h2>The retired leveling guide</h2>
 <p>We took down The Burning Crusade leveling guide when the guild moved off TBC. While it was up, it remembered which steps, keys, and rep goals you had checked off using <strong>localStorage</strong> in your browser, under the key <code>tbcGuide.progress.v1</code>. That data never left your device and was never sent to us. Nothing writes to it anymore; if some is still sitting in your browser, clearing site data for this domain removes it.</p>
 
 <h2>Wowhead tooltips (third party)</h2>
-<p>The loot log is paused right now, so no page on the site currently loads anything from Wowhead. The Forever launch prep page only links to Wowhead's database; nothing from Wowhead loads until you click one of those links. When it is back, it links each item to <a href="https://www.wowhead.com">Wowhead</a> and shows a tooltip when you hover. To do that, the page loads Wowhead's tooltip widget and fetches each entity's data from Wowhead's servers (<code>wow.zamimg.com</code>, <code>nether.wowhead.com</code>, <code>wowhead.com</code>). As a result, <strong>Wowhead receives your IP address and which entities you hover or click</strong>, the same as if you visited Wowhead directly. Their handling of that is covered by <a href="https://www.wowhead.com/privacy-policy">Wowhead's privacy policy</a>, not ours. Clicking a link opens Wowhead in a new tab.</p>
+<p>The loot log is paused right now, so no page on the site currently loads anything from Wowhead. The Forever page only links to Wowhead's database; nothing from Wowhead loads until you click one of those links. When it is back, it links each item to <a href="https://www.wowhead.com">Wowhead</a> and shows a tooltip when you hover. To do that, the page loads Wowhead's tooltip widget and fetches each entity's data from Wowhead's servers (<code>wow.zamimg.com</code>, <code>nether.wowhead.com</code>, <code>wowhead.com</code>). As a result, <strong>Wowhead receives your IP address and which entities you hover or click</strong>, the same as if you visited Wowhead directly. Their handling of that is covered by <a href="https://www.wowhead.com/privacy-policy">Wowhead's privacy policy</a>, not ours. Clicking a link opens Wowhead in a new tab.</p>
 
 <h2>Fonts</h2>
 <p>Every page uses your device's own system fonts. Nothing loads fonts from a third party.</p>
@@ -137,6 +137,7 @@
 
 <footer class="foot">
   <div class="foot-in">
+    <p class="motto">Fair winds.</p>
     <ul>
       <li><a href="https://swagcounty.com">&larr; Swag County</a></li>
       <li><a href="mailto:nerds@swagcounty.com">nerds@swagcounty.com</a></li>
